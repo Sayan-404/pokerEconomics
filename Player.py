@@ -11,3 +11,7 @@ class Player:
         self.bankroll -= unit
         return unit
     
+    # def cardstring(self):
+    #     cards=[]
+    #     for i in range(2):
+    #         cards.append(f'{self.hand[i].strval}')
