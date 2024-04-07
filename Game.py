@@ -8,6 +8,7 @@ class Game:
         self.pot=0
         self.player1 = player1
         self.player2 = player2
+        self.communitycards=[]
         # deals cards to players
         for i in range(2):
             player1.receive_card(self.deck.deal_card())
@@ -27,20 +28,21 @@ class Game:
     #showdown
     def display(self,players): 
         #player1 strength
-        communitycards=[]
-        for i in range(5):
-            communitycards.append(self.deck.deal_card().strval())
-        #give the pot to the winner
-        print(communitycards)
+        # communitycards=[]
+        # for i in range(5):
+        #     communitycards.append(self.deck.deal_card().strval())
+        # #give the pot to the winner
+        # print(communitycards)
         player1 = players[0]
         player2 = players[1]
-        s = showdown(player1, player2,communitycards)
+        s = showdown(player1, player2,self.communitycards)
         winner=players[s.winner()]
         print(f"winner: {winner.name}")
         self.gameover()
 
     #handles the preflop action
     def preflop_action(self,prev):
+
         betsize = 1
         #decides the dealer according to the prev variable
         if prev in [2, 0]:
@@ -67,6 +69,148 @@ class Game:
         for card in opp.hand:
             print(f"{card.strval()}")
 
+        while 1:
+            if callcount == 2:
+                self.flop(prev)
+            print(f"pot -> {self.pot}")
+            action=input(f"{current.name}'s -> c / r / f \n")
+            if action == "f":
+                print(action)
+                opp.bankroll += self.pot
+                self.pot = 0
+                print(f"{current.name} folds")
+                self.gameover()
+            if action == "c":
+                if betsize >= 1:
+                    self.playerBet(current,betsize)
+                    print(f"{current.name} calls")
+                    players = [self.player1, self.player2]
+                    betsize=0
+                    callcount+=1
+                else:
+                    callcount+=1
+            if action == "r":
+                betsize = int(input("Enter the sizing"))
+                self.playerBet(current, betsize)
+                print(f"{current.name} raise: {betsize}")
+            temp=current
+            current=opp
+            opp=temp
+
+    def flop(self,prev):
+        print("-------FLOP------")
+        betsize = 0
+        #decides the dealer according to the prev variable
+        if prev in [2, 0]:
+            dealer = self.player1
+            bb = self.player2
+        else:
+            dealer = self.player1 
+            bb = self.player2
+
+        for i in range(3):
+            self.communitycards.append(self.deck.deal_card().strval())
+        
+        print(self.communitycards)
+        action = ""
+        current=bb
+        opp=dealer 
+        callcount=0
+        players=[dealer,bb]
+        while 1:
+            if callcount == 2:
+                self.turn(prev)
+            print(f"pot -> {self.pot}")
+            action=input(f"{current.name}'s -> c / r / f \n")
+            if action == "f":
+                print(action)
+                opp.bankroll += self.pot
+                self.pot = 0
+                print(f"{current.name} folds")
+                self.gameover()
+            if action == "c":
+                if betsize >= 1:
+                    self.playerBet(current,betsize)
+                    print(f"{current.name} calls")
+                    players = [self.player1, self.player2]
+                    betsize=0
+                    callcount+=1
+                else:
+                    callcount+=1
+            if action == "r":
+                betsize = int(input("Enter the sizing"))
+                self.playerBet(current, betsize)
+                print(f"{current.name} raise: {betsize}")
+            temp=current
+            current=opp
+            opp=temp
+
+    def turn(self,prev):
+        print("-------TURN------")
+        betsize = 0
+        #decides the dealer according to the prev variable
+        if prev in [2, 0]:
+            dealer = self.player1
+            bb = self.player2
+        else:
+            dealer = self.player1 
+            bb = self.player2
+        
+        self.communitycards.append(self.deck.deal_card().strval())
+        
+        print(self.communitycards)
+        action = ""
+        current=bb
+        opp=dealer 
+        callcount=0
+        players=[dealer,bb]
+        while 1:
+            if callcount == 2:
+                self.river(players)
+            print(f"pot -> {self.pot}")
+            action=input(f"{current.name}'s -> c / r / f \n")
+            if action == "f":
+                print(action)
+                opp.bankroll += self.pot
+                self.pot = 0
+                print(f"{current.name} folds")
+                self.gameover()
+            if action == "c":
+                if betsize >= 1:
+                    self.playerBet(current,betsize)
+                    print(f"{current.name} calls")
+                    players = [self.player1, self.player2]
+                    betsize=0
+                    callcount+=1
+                else:
+                    callcount+=1
+            if action == "r":
+                betsize = int(input("Enter the sizing"))
+                self.playerBet(current, betsize)
+                print(f"{current.name} raise: {betsize}")
+            temp=current
+            current=opp
+            opp=temp
+
+    def river(self,prev):
+        print("-------RIVER------")
+        betsize = 0
+        #decides the dealer according to the prev variable
+        if prev in [2, 0]:
+            dealer = self.player1
+            bb = self.player2
+        else:
+            dealer = self.player1 
+            bb = self.player2
+        
+        self.communitycards.append(self.deck.deal_card().strval())
+        
+        print(self.communitycards)
+        action = ""
+        current=bb
+        opp=dealer 
+        callcount=0
+        players=[dealer,bb]
         while 1:
             if callcount == 2:
                 self.display(players)
