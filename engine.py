@@ -19,15 +19,16 @@ if __name__ == "__main__":
     player2 = Player(players['player2']['name'], players['player2']['bankroll'])
 
     # Create deck and shuffle
-    deck = Deck()
-    deck.shuffle()
-
-    game1=Game(player1,player2)
-    players=[player1,player2]
 
     # for player in players:
     #     print(f"{player.name}'s cards")
     #     for card in player.hand:
     #         print(f"{card.rank}{card.suit}")
 
-    game1.preflop_action(0)
+    num=2
+    games=[]
+    prev=0
+    for i in range(num):
+        game = Game(player1,player2)
+        game.preflop_action(prev)
+        prev=(prev+1)%2

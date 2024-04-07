@@ -23,7 +23,7 @@ class Game:
         print("Hand Ended")
         print(f"player1 stack: {self.player1.bankroll}")
         print(f"player2 stack: {self.player2.bankroll}")
-        exit(1)
+        # exit(1)
     
     #showdown
     def display(self,players): 
@@ -37,6 +37,7 @@ class Game:
         player2 = players[1]
         s = showdown(player1, player2,self.communitycards)
         winner=players[s.winner()]
+        winner.bankroll += self.pot
         print(f"winner: {winner.name}")
         self.gameover()
 
@@ -157,3 +158,12 @@ class Game:
         callcount=0
         self.betting(bb,dealer,betsize)
         self.display([bb,dealer])
+
+
+    def play(self,num):
+        #assign the number of games to be played
+        prev=0
+        for i in range(num):
+            self.preflop_action(prev)
+            prev=(prev+1) % 2
+
