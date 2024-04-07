@@ -69,9 +69,14 @@ class Game:
         for card in opp.hand:
             print(f"{card.strval()}")
 
+        self.betting(current,opp,betsize)
+        self.flop(prev)
+
+    def betting(self,current,opp,betsize):
+        callcount=0
         while 1:
             if callcount == 2:
-                self.flop(prev)
+                return
             print(f"pot -> {self.pot}")
             action=input(f"{current.name}'s -> c / r / f \n")
             if action == "f":
@@ -96,6 +101,7 @@ class Game:
             temp=current
             current=opp
             opp=temp
+
 
     def flop(self,prev):
         print("-------FLOP------")
@@ -117,33 +123,9 @@ class Game:
         opp=dealer 
         callcount=0
         players=[dealer,bb]
-        while 1:
-            if callcount == 2:
-                self.turn(prev)
-            print(f"pot -> {self.pot}")
-            action=input(f"{current.name}'s -> c / r / f \n")
-            if action == "f":
-                print(action)
-                opp.bankroll += self.pot
-                self.pot = 0
-                print(f"{current.name} folds")
-                self.gameover()
-            if action == "c":
-                if betsize >= 1:
-                    self.playerBet(current,betsize)
-                    print(f"{current.name} calls")
-                    players = [self.player1, self.player2]
-                    betsize=0
-                    callcount+=1
-                else:
-                    callcount+=1
-            if action == "r":
-                betsize = int(input("Enter the sizing"))
-                self.playerBet(current, betsize)
-                print(f"{current.name} raise: {betsize}")
-            temp=current
-            current=opp
-            opp=temp
+        self.betting(current,opp,betsize)
+        self.turn(prev)
+
 
     def turn(self,prev):
         print("-------TURN------")
@@ -164,33 +146,8 @@ class Game:
         opp=dealer 
         callcount=0
         players=[dealer,bb]
-        while 1:
-            if callcount == 2:
-                self.river(players)
-            print(f"pot -> {self.pot}")
-            action=input(f"{current.name}'s -> c / r / f \n")
-            if action == "f":
-                print(action)
-                opp.bankroll += self.pot
-                self.pot = 0
-                print(f"{current.name} folds")
-                self.gameover()
-            if action == "c":
-                if betsize >= 1:
-                    self.playerBet(current,betsize)
-                    print(f"{current.name} calls")
-                    players = [self.player1, self.player2]
-                    betsize=0
-                    callcount+=1
-                else:
-                    callcount+=1
-            if action == "r":
-                betsize = int(input("Enter the sizing"))
-                self.playerBet(current, betsize)
-                print(f"{current.name} raise: {betsize}")
-            temp=current
-            current=opp
-            opp=temp
+        self.betting(current,opp,betsize)
+        self.river(prev)
 
     def river(self,prev):
         print("-------RIVER------")
@@ -211,30 +168,5 @@ class Game:
         opp=dealer 
         callcount=0
         players=[dealer,bb]
-        while 1:
-            if callcount == 2:
-                self.display(players)
-            print(f"pot -> {self.pot}")
-            action=input(f"{current.name}'s -> c / r / f \n")
-            if action == "f":
-                print(action)
-                opp.bankroll += self.pot
-                self.pot = 0
-                print(f"{current.name} folds")
-                self.gameover()
-            if action == "c":
-                if betsize >= 1:
-                    self.playerBet(current,betsize)
-                    print(f"{current.name} calls")
-                    players = [self.player1, self.player2]
-                    betsize=0
-                    callcount+=1
-                else:
-                    callcount+=1
-            if action == "r":
-                betsize = int(input("Enter the sizing"))
-                self.playerBet(current, betsize)
-                print(f"{current.name} raise: {betsize}")
-            temp=current
-            current=opp
-            opp=temp
+        self.betting(current,opp,betsize)
+        self.display([current,opp])
