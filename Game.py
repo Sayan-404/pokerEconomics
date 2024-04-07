@@ -57,19 +57,17 @@ class Game:
         self.playerBet(bb,2)
 
         action = ""
-        current=dealer
-        opp=bb 
         callcount=0
         players=[dealer,bb]
         #printing the cards:
         print(f"{dealer.name}'s cards")
         for card in dealer.hand:
             print(f"{card.strval()}")
-        print(f"{opp.name}'s cards")
-        for card in opp.hand:
+        print(f"{bb.name}'s cards")
+        for card in bb.hand:
             print(f"{card.strval()}")
 
-        self.betting(current,opp,betsize)
+        self.betting(dealer,bb,betsize)
         self.flop(prev)
 
     def betting(self,current,opp,betsize):
@@ -114,16 +112,13 @@ class Game:
             dealer = self.player1 
             bb = self.player2
 
+        #displaying the flop
         for i in range(3):
             self.communitycards.append(self.deck.deal_card().strval())
         
-        print(self.communitycards)
-        action = ""
-        current=bb
-        opp=dealer 
+        print(self.communitycards) 
         callcount=0
-        players=[dealer,bb]
-        self.betting(current,opp,betsize)
+        self.betting(bb,dealer,betsize)
         self.turn(prev)
 
 
@@ -141,12 +136,8 @@ class Game:
         self.communitycards.append(self.deck.deal_card().strval())
         
         print(self.communitycards)
-        action = ""
-        current=bb
-        opp=dealer 
         callcount=0
-        players=[dealer,bb]
-        self.betting(current,opp,betsize)
+        self.betting(bb,dealer,betsize)
         self.river(prev)
 
     def river(self,prev):
@@ -163,10 +154,6 @@ class Game:
         self.communitycards.append(self.deck.deal_card().strval())
         
         print(self.communitycards)
-        action = ""
-        current=bb
-        opp=dealer 
         callcount=0
-        players=[dealer,bb]
-        self.betting(current,opp,betsize)
-        self.display([current,opp])
+        self.betting(bb,dealer,betsize)
+        self.display([bb,dealer])
