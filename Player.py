@@ -4,6 +4,9 @@ class Player:
         self.hand = []
         self.bankroll = bankroll
 
+    def flush(self):
+        self.hand = []
+
     def receive_card(self, card):
         self.hand.append(str(card))
     

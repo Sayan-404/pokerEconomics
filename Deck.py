@@ -5,6 +5,10 @@ class Deck:
         self.cards = []
         self.create_deck()
 
+    def flush(self):
+        self.create_deck()
+        self.shuffle()
+
     def create_deck(self):
         suits = ['h', 'd', 'c', 's']
         ranks = ['2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K', 'A']
