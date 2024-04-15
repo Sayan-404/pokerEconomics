@@ -115,7 +115,7 @@ class Game:
 
         #displaying the flop
         for i in range(3):
-            self.communitycards.append(self.deck.deal_card().strval())
+            self.communitycards.append(str(self.deck.deal_card()))
         
         print(self.communitycards) 
         callcount=0
@@ -134,7 +134,7 @@ class Game:
             dealer = self.player1 
             bb = self.player2
         
-        self.communitycards.append(self.deck.deal_card().strval())
+        self.communitycards.append(str(self.deck.deal_card()))
         
         print(self.communitycards)
         callcount=0
@@ -152,7 +152,7 @@ class Game:
             dealer = self.player1 
             bb = self.player2
         
-        self.communitycards.append(self.deck.deal_card().strval())
+        self.communitycards.append(str(self.deck.deal_card()))
         
         print(self.communitycards)
         callcount=0
