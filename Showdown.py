@@ -1,7 +1,7 @@
 from Player import Player
 from phevaluator.evaluator import evaluate_cards
 
-class showdown:
+class Showdown:
     def __init__(self, player1, player2, communitycards):
         # self.player1=player1
         # self.player2=player2

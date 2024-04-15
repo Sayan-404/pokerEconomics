@@ -1,6 +1,6 @@
 from Deck import Deck
 from Player import Player
-from Showdown import showdown
+from Showdown import Showdown
 class Game:
     def __init__(self,player1,player2):
         self.deck= Deck()
@@ -35,7 +35,7 @@ class Game:
         # print(communitycards)
         player1 = players[0]
         player2 = players[1]
-        s = showdown(player1, player2,self.communitycards)
+        s = Showdown(player1, player2,self.communitycards)
         winner=players[s.winner()]
         winner.bankroll += self.pot
         print(f"winner: {winner.name}")
