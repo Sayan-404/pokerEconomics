@@ -35,7 +35,7 @@ class Game:
         # print(communitycards)
         player1 = players[0]
         player2 = players[1]
-        s = Showdown(player1, player2,self.communitycards)
+        s = Showdown(self.communitycards,player1, player2)
         winner=players[s.winner()]
         winner.bankroll += self.pot
         print(f"winner: {winner.name}")

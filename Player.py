@@ -5,9 +5,9 @@ class Player:
         self.bankroll = bankroll
 
     def receive_card(self, card):
-        self.hand.append(card)
+        self.hand.append(str(card))
     
-    def bet(self,unit):
+    def bet(self, unit):
         self.bankroll -= unit
         return unit
     
