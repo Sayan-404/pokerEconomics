@@ -1,7 +1,7 @@
 from phevaluator.evaluator import evaluate_cards
 
 class Showdown:
-    def __init__(self, community_cards, *players):
+    def __init__(self, community_cards, players):
         self.player_hands = {
         }
         for i in range(len(players)):
