@@ -13,5 +13,5 @@ if __name__ == "__main__":
     players = [player1, player2]
     
     num = 2
-    game = Game(player1, player2)
+    game = Game(players)
     game.play(num)

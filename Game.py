@@ -1,7 +1,7 @@
 from Deck import Deck
 from Showdown import Showdown
 class Game:
-    def __init__(self, *players):
+    def __init__(self, players):
         self.deck = Deck()
         self.deck.shuffle()
         self.pot = 0
@@ -15,46 +15,60 @@ class Game:
             player.flush()
         self.community_cards = []
 
+
     def play(self, number_of_hands):
         for _ in range(number_of_hands):
+            print("flushing done")
             self.preflop()
             self.flush()
             # rotates the dealer
-            self.players = self.players[1:] + self.players[:1]
+            self.players = self.players[-1:] + self.players[0:-1]
+            self.pot=0
 
-    # increments the pot by the bet amount whenever a player bets
+    # increments the pot by the bet amount whenever a player bets'
     def player_bet(self, player, amt):
-        self.pot += player.bet(amt)
-    
-    def betting(self, current, opp, bet_size):
-        callcount = 0
-        while 1:
-            if callcount == 2:
-                return
-            print(f"pot -> {self.pot}")
-            action = input(f"{current.name}'s -> c / r / f \n")
-            if action == "f":
-                print(action)
-                opp.bankroll += self.pot
-                self.pot = 0
-                print(f"{current.name} folds")
-                self.gameover()
-            if action == "c":
-                if bet_size >= 1:
-                    self.player_bet(current, bet_size)
-                    print(f"{current.name} calls")
-                    bet_size = 0
-                    callcount += 1
-                else:
-                    callcount += 1
-            if action == "r":
-                bet_size = int(input("Enter the sizing"))
-                self.player_bet(current, bet_size)
-                print(f"{current.name} raise: {bet_size}")
-            temp = current
-            current = opp
-            opp = temp
+        self.pot += player.bet(amt - player.betamt)
 
+    def betting(self, players,betsize):
+        while 1:
+            for player in players:
+                action=input(f"{player.name}'s action -> call / check / bet / raise / fold")
+                if action == "c":
+                    self.player_bet(player,betsize)
+                if action == "ch":
+                    continue
+                if action == "b":
+                    betsize = player.betamt + int(input(f"Enter the betsize: "))
+                    self.player_bet(player,betsize)
+                    print(f"betsize -> {betsize}")
+                    print(f"{player.name}'s betamt = {player.betamt}")
+                if action == "r":
+                    betsize = player.betamt + int(input(f"Enter the raise: "))
+                    self.player_bet(player,betsize)
+                if action == "f":
+                    print(type(players))
+                    players.remove(player)
+            if len(players) == 1:
+                players[0].bankroll = self.pot
+                self.gameover()
+                return 0
+           
+            #checks if each of the player has bet the betsize
+            count=0
+            firstplayerBet=players[0].betamt
+            for player in players:
+                print(f"{player.betamt}")
+                if player.betamt == firstplayerBet:
+                    count += 1
+            if count == len(players):
+                return
+                
+                
+            
+
+                    
+                    
+                
     #handles the preflop action
     def preflop(self):
         print("-------PRE-FLOP------")
@@ -62,12 +76,14 @@ class Game:
             self.players[i].receive_card(self.deck.deal_card())
             self.players[i].receive_card(self.deck.deal_card())
 
-        bet_size = 1
+        bet_size = 2
 
         #blinds 
         self.player_bet(self.players[0], 1)
         self.player_bet(self.players[1], 2)
-
+        print("----BLINDS-----")
+        print(f"{self.players[0].name}'s blind -> {self.players[0].betamt}")
+        print(f"{self.players[1].name}'s blind -> {self.players[1].betamt}")
         #printing the cards:
         for i in range(self.number_of_players):
             print(f"{self.players[i].name}'s cards")
@@ -75,8 +91,8 @@ class Game:
                 print(card, end=" ")
             print()
 
-        self.betting(self.players[0], self.players[1], bet_size)
-        self.flop()
+        if self.betting(self.players, bet_size) != 0:
+            self.flop()
 
     def flop(self):
         print("-------FLOP------")
@@ -89,8 +105,9 @@ class Game:
         
         print(self.community_cards) 
 
-        self.betting(self.players[1], self.players[0], bet_size)
-        self.turn()
+        if self.betting(self.players, bet_size) != 0:
+            self.turn()
+        
 
 
     def turn(self):
@@ -101,8 +118,8 @@ class Game:
         
         print(self.community_cards)
 
-        self.betting(self.players[1], self.players[0], bet_size)
-        self.river()
+        if self.betting(self.players, bet_size) != 0:
+            self.river()
 
     def river(self):
         print("-------RIVER------")
@@ -112,8 +129,8 @@ class Game:
         
         print(self.community_cards)
 
-        self.betting(self.players[1], self.players[0], bet_size)
-        self.showdown(self.players)
+        if self.betting(self.players, bet_size) != 0:
+            self.showdown(self.players)
 
      #displays info at the end of a hand
     def gameover(self):
