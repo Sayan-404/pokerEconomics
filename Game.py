@@ -22,13 +22,13 @@ class Game:
             self.flush()
             # rotates the dealer
             self.players = self.players[-1:] + self.players[0:-1]
-            self.pot=0
+            self.pot = 0
 
     # increments the pot by the bet amount whenever a player bets'
     def player_bet(self, player, amt):
         self.pot += player.bet(amt - player.betamt)
                         
-    def betting(self,players,betsize):
+    def betting(self, players, betsize):
         
         # the last player where the action finishes
         end = len(players) - 1
