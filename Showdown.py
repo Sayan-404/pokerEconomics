@@ -6,8 +6,7 @@ class Showdown:
         }
         self.players = players
         for i in range(len(players)):
-            if players[i].ingame == 1:
-                self.player_hands[f'player{i}'] = players[i].hand
+            self.player_hands[f'player{i}'] = players[i].hand
         self.community_cards = community_cards
 
     def rank(self, player_number):

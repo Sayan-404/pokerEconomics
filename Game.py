@@ -8,12 +8,14 @@ class Game:
         self.players = players
         self.number_of_players = len(players)
         self.community_cards=[]
-
+        #counts the number of players currently in a game [later gets flushed]
+        self.playing=len(players)
     def flush(self):
         self.deck.flush()
         for player in self.players:
             player.flush()
         self.community_cards = []
+        self.playing=len(self.players)
 
 
     def play(self, number_of_hands):
@@ -31,9 +33,8 @@ class Game:
     def betting(self, players, betsize):
         
         # the last player where the action finishes
-        end = len(players) - 1
+        end = self.playing - 1
 
-        playing = len(players)
         i = 0
 
         print(f"pot -> {self.pot}")
@@ -57,7 +58,7 @@ class Game:
                     i = (i+len(players)) % len(players)
                     continue
             
-            if action == "ch":
+            elif action == "ch":
                 if callsize == 0:
                     self.player_bet(player,betsize)
                 else:
@@ -65,7 +66,7 @@ class Game:
                     i = (i+len(players)) % len(players)
                     continue
 
-            if action == "b":        
+            elif action == "b":        
                 if betsize == 0:   
                     betsize = player.betamt + int(input(f"Enter the betsize: "))
                     self.player_bet(player,betsize)
@@ -75,7 +76,7 @@ class Game:
                     i = (i+len(players)) % len(players)
                     continue
 
-            if action == "r":
+            elif action == "r":
                 if betsize > 0:
                     betsize = player.betamt + int(input(f"Enter the raise: "))
                     self.player_bet(player,betsize)
@@ -85,13 +86,19 @@ class Game:
                     i = (i+len(players)) % len(players)
                     continue
 
-            if action == "f":
+            elif action == "f":
                 player.ingame = 0
-                playing -= 1
-                
-
+                self.playing -= 1
+                if i == end:
+                    end=(i-1) % len(players)
+                    print(f"end is -> {end}")
+                    break
+            else:
+                print("invalid Input")
+                i = (i+len(players)) % len(players)
+                continue
             # if there is only one person playing then gameover
-            if playing == 1:
+            if self.playing == 1:
                 for player in players:
                     if player.ingame == 1:
                         player.bankroll += self.pot
