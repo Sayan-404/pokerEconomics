@@ -10,8 +10,8 @@ if __name__ == "__main__":
     # Create players
     player1 = Player(players['player1']['name'], players['player1']['bankroll'])
     player2 = Player(players['player2']['name'], players['player2']['bankroll'])
-    player3 = Player("Player3",100)
-    players = [player1, player2,player3]
+    player3 = Player("Player3", 100)
+    players = [player1, player2, player3]
     
     num = 2
     game = Game(players)

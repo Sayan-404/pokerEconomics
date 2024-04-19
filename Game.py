@@ -30,77 +30,77 @@ class Game:
                         
     def betting(self,players,betsize):
         
-        #the last player where the action finishes
-        end=len(players)-1
+        # the last player where the action finishes
+        end = len(players) - 1
 
-        playing=len(players)
-        i=0
+        playing = len(players)
+        i = 0
 
         print(f"pot -> {self.pot}")
         while 1:
-            player=players[i%len(players)]
+            player = players[i % len(players)]
 
             callsize = betsize - player.betamt
 
-            #check if the player is stil in the current game 
+            # check if the player is stil in the current game 
             if player.ingame == 0:
-                i=(i+1)%len(players)
+                i = (i+1) % len(players)
                 continue
 
-            action=input(f"{player.name}'s action -> call / check / bet / raise / fold")
+            action = input(f"{player.name}'s action -> call(c) / check(ch) / bet(b) / raise(r) / fold(f): ")
             
-            if action=="c":
-                if callsize!=0:
-                    self.player_bet(player,betsize)
+            if action == "c":
+                if callsize != 0:
+                    self.player_bet(player, betsize)
                 else:
-                    print("fucked up")
-                    i=(i+len(players))%len(players)
+                    print("Illegal move")
+                    i = (i+len(players)) % len(players)
                     continue
             
-            if action=="ch":
-                if callsize==0:
+            if action == "ch":
+                if callsize == 0:
                     self.player_bet(player,betsize)
                 else:
-                    print("fucked up")
-                    i=(i+len(players))%len(players)
+                    print("Illegal move")
+                    i = (i+len(players)) % len(players)
                     continue
 
-            if action=="b":        
-                if betsize==0:   
+            if action == "b":        
+                if betsize == 0:   
                     betsize = player.betamt + int(input(f"Enter the betsize: "))
                     self.player_bet(player,betsize)
-                    end=(i-1)%len(players)
+                    end = (i-1) % len(players)
                 else:
-                    print("fucked up")
-                    i=(i+len(players))%len(players)
+                    print("Illegal move")
+                    i = (i+len(players)) % len(players)
                     continue
 
-            if action=="r":
-                if betsize>0:
+            if action == "r":
+                if betsize > 0:
                     betsize = player.betamt + int(input(f"Enter the raise: "))
                     self.player_bet(player,betsize)
-                    end=(i-1)%len(players)#Sets the loop to end on player before this
+                    end = (i-1) % len(players) # sets the loop to end on player before this
                 else:
-                    print("fucked up")
-                    i=(i+len(players))%len(players)
+                    print("Illegal move")
+                    i = (i+len(players)) % len(players)
                     continue
 
             if action == "f":
-                player.ingame=0
+                player.ingame = 0
                 playing -= 1
                 
 
-            #if there is only one person playing then gameover
+            # if there is only one person playing then gameover
             if playing == 1:
                 for player in players:
-                    if player.ingame==1:
+                    if player.ingame == 1:
                         player.bankroll += self.pot
                 self.gameover()
                 return 0
-            #exit condtion for the loop when all the players have called
+            # exit condtion for the loop when all the players have called
             if i == end:
                 break
-            i=(i+1)%len(players)
+            i = (i+1) % len(players)
             
 
     #handles the preflop action
