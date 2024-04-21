@@ -23,7 +23,7 @@ class Game:
             self.preflop()
             self.flush()
             # rotates the dealer
-            self.players = self.players[-1:] + self.players[0:-1]
+            self.players = self.players[-1:] + self.players[:-1]
             self.pot = 0
 
     # increments the pot by the bet amount whenever a player bets'
@@ -31,7 +31,6 @@ class Game:
         self.pot += player.bet(amt - player.betamt)
                         
     def betting(self, players, betsize):
-        
         # the last player where the action finishes
         end = self.playing - 1
 
@@ -43,7 +42,7 @@ class Game:
 
             callsize = betsize - player.betamt
 
-            # check if the player is stil in the current game 
+            # check if the player is still in the current game 
             if player.ingame == 0:
                 i = (i+1) % len(players)
                 continue
@@ -60,7 +59,7 @@ class Game:
             
             elif action == "ch":
                 if callsize == 0:
-                    self.player_bet(player,betsize)
+                    self.player_bet(player, betsize)
                 else:
                     print("Illegal move")
                     i = (i+len(players)) % len(players)
@@ -69,7 +68,7 @@ class Game:
             elif action == "b":        
                 if betsize == 0:   
                     betsize = player.betamt + int(input(f"Enter the betsize: "))
-                    self.player_bet(player,betsize)
+                    self.player_bet(player, betsize)
                     end = (i-1) % len(players)
                 else:
                     print("Illegal move")
@@ -79,7 +78,7 @@ class Game:
             elif action == "r":
                 if betsize > 0:
                     betsize = player.betamt + int(input(f"Enter the raise: "))
-                    self.player_bet(player,betsize)
+                    self.player_bet(player, betsize)
                     end = (i-1) % len(players) # sets the loop to end on player before this
                 else:
                     print("Illegal move")
