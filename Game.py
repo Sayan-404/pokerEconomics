@@ -126,8 +126,12 @@ class Game:
         bet_size = 2
 
         #blinds 
-        self.player_bet(self.players[1%len(self.players)], 1)
-        self.player_bet(self.players[2%len(self.players)], 2)
+        if len(self.players) > 2:
+            self.player_bet(self.players[1%len(self.players)], 1)
+            self.player_bet(self.players[2%len(self.players)], 2)
+        else:
+            self.player_bet(self.players[0], 1)
+            self.player_bet(self.players[1], 2)
 
         print("----BLINDS-----")
         for player in self.players:
