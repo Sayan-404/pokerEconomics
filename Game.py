@@ -88,6 +88,12 @@ class Game:
             elif action == "f":
                 player.ingame = 0
                 self.playing -= 1
+                if self.playing == 1:
+                    for player in players:
+                        if player.ingame == 1:
+                            player.bankroll += self.pot
+                    self.gameover()
+                    return 0
                 if i == end:
                     end=(i-1) % len(players)
                     print(f"end is -> {end}")
