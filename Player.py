@@ -1,11 +1,25 @@
 class Player:
-    def __init__(self, name, bankroll):
-        self.name = name
+    def __init__(self, id, bankroll, strategy = None):
+        self.id = id
         self.hand = []
         self.bankroll = bankroll
         self.betamt = 0
         self.ingame = 1
+        self.decide = strategy # this points to the decide function in every strategy file, this function has the signature decide(state)
+        # it takes the state and returns two values: move, bet
+        # moves could be: c, ch, b, r, f
+        # b and r are accompanied with a non-negative bet value
+        # others return -1 as bet
         
+    def package_state(self):
+        return {
+            "id": self.id,
+            "hand": self.hand,
+            "bankroll": self.bankroll,
+            "betamt": self.betamt,
+            "ingame": self.ingame
+        }
+
     def flush(self):
         self.hand = []
         self.ingame = 1

@@ -1,30 +1,67 @@
 from Deck import Deck
 from Showdown import Showdown
+import sys
+import os
+from tqdm import tqdm
+
+# Disable print
+def blockPrint():
+    sys.stdout = open(os.devnull, 'w')
+
+# Restore print
+def enablePrint():
+    sys.stdout = sys.__stdout__
 class Game:
-    def __init__(self, players):
+    def __init__(self, players, simul = False):
         self.deck = Deck()
         self.deck.shuffle()
         self.pot = 0
         self.players = players
         self.number_of_players = len(players)
-        self.community_cards=[]
-        #counts the number of players currently in a game [later gets flushed]
-        self.playing=len(players)
+        self.community_cards = []
+        self.simul = simul
+        self.round = 0
+        # rounds are 0-indexed starting with pre-flop
+        # counts the number of players currently in a game [later gets flushed]
+        self.playing = len(players)
+
+    def package_state(self, player_index, call_value = -1): # -1 call values indicate no bets being placed before this
+        player = self.players[player_index]
+        return {
+            "player": player.package_state(),
+            "call_value": call_value,
+            "players_playing": len(self.players),
+            "community_cards": self.community_cards,
+            "pot": self.pot,
+            "round": self.round
+            # there should be a position variable indicating the position of the player in the table 
+        }
+
     def flush(self):
         self.deck.flush()
         for player in self.players:
             player.flush()
         self.community_cards = []
-        self.playing=len(self.players)
+        self.round = 0
+        self.playing = len(self.players)
 
-
-    def play(self, number_of_hands):
-        for _ in range(number_of_hands):
-            self.preflop()
-            self.flush()
-            # rotates the dealer
-            self.players = self.players[-1:] + self.players[:-1]
-            self.pot = 0
+    def play(self, number_of_hands = 1):
+        if self.simul:
+            blockPrint()
+            for _ in tqdm(range(number_of_hands), desc = "Simulation Progress: "):
+                self.preflop()
+                self.flush()
+                # rotates the dealer
+                self.players = self.players[-1:] + self.players[:-1]
+                self.pot = 0
+            enablePrint()
+        else:
+            for _ in range(number_of_hands):
+                self.preflop()
+                self.flush()
+                # rotates the dealer
+                self.players = self.players[-1:] + self.players[:-1]
+                self.pot = 0
 
     # increments the pot by the bet amount whenever a player bets'
     def player_bet(self, player, amt):
@@ -38,7 +75,8 @@ class Game:
 
         print(f"pot -> {self.pot}")
         while 1:
-            player = players[i % len(players)]
+            player_index = i % len(players)
+            player = players[player_index]
 
             callsize = betsize - player.betamt
 
@@ -46,8 +84,11 @@ class Game:
             if player.ingame == 0:
                 i = (i+1) % len(players)
                 continue
-
-            action = input(f"{player.name}'s action -> call(c) / check(ch) / bet(b) / raise(r) / fold(f): ")
+            
+            if self.simul:
+                action, bet = player.decide(self.package_state(player_index))
+            else:
+                action = input(f"{player.name}'s action -> call(c) / check(ch) / bet(b) / raise(r) / fold(f): ")
             
             if action == "c":
                 if callsize != 0:
@@ -66,8 +107,12 @@ class Game:
                     continue
 
             elif action == "b":        
-                if betsize == 0:   
-                    betsize = player.betamt + int(input(f"Enter the betsize: "))
+                if betsize == 0:
+                    if self.simul:
+                        betsize = bet
+                    else:
+                        betsize = int(input(f"Enter the betsize: "))
+                    betsize += player.betamt
                     self.player_bet(player, betsize)
                     end = (i-1) % len(players)
                 else:
@@ -77,7 +122,11 @@ class Game:
 
             elif action == "r":
                 if betsize > 0:
-                    betsize = player.betamt + int(input(f"Enter the raise: "))
+                    if self.simul:
+                        betsize = bet
+                    else:
+                        betsize = int(input(f"Enter the raise: "))
+                    betsize += player.betamt
                     self.player_bet(player, betsize)
                     end = (i-1) % len(players) # sets the loop to end on player before this
                 else:
@@ -114,14 +163,12 @@ class Game:
                 break
             i = (i+1) % len(players)
             
-
     #handles the preflop action
     def preflop(self):
         print("-------PRE-FLOP------")
         for i in range(self.number_of_players):
             self.players[i].receive_card(self.deck.deal_card())
             self.players[i].receive_card(self.deck.deal_card())
-
 
         bet_size = 2
 
@@ -150,9 +197,8 @@ class Game:
 
     def flop(self):
         print("-------FLOP------")
-
+        self.round = 1
         bet_size = 0
-
         #resetting the betamts
         for player in self.players:
             player.betamt=0
@@ -170,8 +216,8 @@ class Game:
 
     def turn(self):
         print("-------TURN------")
+        self.round = 2
         bet_size = 0
-        
         #resetting the betamts
         for player in self.players:
             player.betamt=0
@@ -185,6 +231,7 @@ class Game:
 
     def river(self):
         print("-------RIVER------")
+        self.round = 3
         bet_size = 0
         
         #resetting the betamts

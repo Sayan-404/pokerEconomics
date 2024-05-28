@@ -1,1 +1,1 @@
-{"player1": {"name": "Sayan", "bankroll": 100}, "player2": {"name": "Player 2", "bankroll": 100}}
+{"player1": {"name": "Sayan", "bankroll": 100, "strategy": "strat1"}, "player2": {"name": "Player 2", "bankroll": 100, "strategy": "strat2"}}
