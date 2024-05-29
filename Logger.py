@@ -17,13 +17,14 @@ import builtins
 import csv
 
 class Logger:
-    def __init__(self):
+    def __init__(self, log_hands = False): # each hand is logged if this is true
         folder = f"{datetime.date.today()}_{str(time.time())}"
         self.path = f"{os.path.abspath(os.getcwd())}/data/{folder}"
         os.makedirs(self.path)
         self.config_file = f"{self.path}/config.txt"
         self.hand_file = f"{self.path}/hand_"
         self.games_file = f"{self.path}/games.csv"
+        self.log_hands = log_hands
         original_print = builtins.print
         def custom_print(*args, **kwargs):
             hand_number = -1
@@ -37,8 +38,8 @@ class Logger:
         with open(self.config_file, "w") as f:
             for player in players:
                 f.write(json.dumps(player.package_state(), indent=4))
-            f.write(f"Number of hands: {num}")
-            f.write(f"Simulation starting time: {datetime.datetime.now()}")
+            f.write(f"\nNumber of hands: {num}\n")
+            f.write(f"Simulation starting time: {datetime.datetime.now()}\n")
         # initiating games csv
         with open(self.games_file, "w", newline='') as f:
             writer = csv.writer(f)
@@ -48,6 +49,8 @@ class Logger:
             writer.writerow(row)
 
     def log_hand(self, data, hand_number):
+        if not self.log_hands:
+            return
         if hand_number == -1:
             return
         with open(f"{self.hand_file}{hand_number}.txt", "a") as f:

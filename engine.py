@@ -16,11 +16,10 @@ if __name__ == "__main__":
     # Create players
     player1 = Player(players['player1']['id'], players['player1']['bankroll'], get_player_decider(players["player1"]))
     player2 = Player(players['player2']['id'], players['player2']['bankroll'], get_player_decider(players["player2"]))
-    player3 = Player("Player3", 100, "strat1")
-    players = [player1, player2, player3]
+    players = [player1, player2]
     
-    num = 100
+    num = 1000
     logger = Logger()
     logger.log_config(players, num)
-    game = Game(players, True)
+    game = Game(players, logger, True)
     game.play(num)

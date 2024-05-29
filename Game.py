@@ -298,7 +298,7 @@ class Game:
 
      #displays info at the end of a hand
     def gameover(self, winner):
-        print(f"winner: {winner.id}", hand_number = self.hand_number)
+        print(f"winner: {winner}", hand_number = self.hand_number)
         print("Hand Ended", hand_number = self.hand_number)
         bankrolls = {players.id: players.bankroll for players in self.players}
         bankrolls = dict(sorted(bankrolls.items()))
