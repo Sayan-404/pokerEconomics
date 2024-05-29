@@ -29,21 +29,22 @@ class Logger:
             hand_number = -1
             if kwargs["hand_number"]:
                 hand_number = kwargs.pop("hand_number", "")
-            original_print(*args, **kwargs)
+            original_print(*args)
             self.log_hand(*args, hand_number = hand_number)
-        builtins.print(custom_print)
+        builtins.print = custom_print
 
     def log_config(self, players, num):
         with open(self.config_file, "w") as f:
-            f.write(json.dumps(players, indent=4))
+            for player in players:
+                f.write(json.dumps(player.package_state(), indent=4))
             f.write(f"Number of hands: {num}")
             f.write(f"Simulation starting time: {datetime.datetime.now()}")
         # initiating games csv
         with open(self.games_file, "w", newline='') as f:
             writer = csv.writer(f)
-            row = ["hand_no"] + [p["id"] for p in players] + ["winner", "ending_round"]
+            row = ["hand_no"] + [p.package_state()["id"] for p in players] + ["winner", "ending_round"]
             writer.writerow(row)
-            row = [0] + [p["bankroll"] for p in players] + ["", -1]
+            row = [0] + [p.package_state()["bankroll"] for p in players] + ["", -1]
             writer.writerow(row)
 
     def log_hand(self, data, hand_number):

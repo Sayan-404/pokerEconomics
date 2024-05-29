@@ -5,7 +5,7 @@ import importlib
 import json
 
 def get_player_decider(player):
-    module = importlib.import_module(f"strats.{player["strategy"]}")
+    module = importlib.import_module("strats.{}".format(player["strategy"]))
     return getattr(module, "decide")
 
 if __name__ == "__main__":

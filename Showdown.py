@@ -5,8 +5,10 @@ class Showdown:
         self.player_hands = {
         }
         self.players = players
+        self.hand_number = 0
         for i in range(len(players)):
             self.player_hands[f'player{i}'] = players[i].hand
+            print(self.player_hands[f'player{i}'], hand_number = self.hand_number)
         self.community_cards = community_cards
 
     def rank(self, player_number):

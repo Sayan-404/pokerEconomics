@@ -19,7 +19,14 @@ class Player:
             "betamt": self.betamt,
             "ingame": self.ingame
         }
-
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "hand": self.hand,
+            "bankroll": self.bankroll,
+            "betamt": self.betamt,
+            "ingame": self.ingame
+        }
     def flush(self):
         self.hand = []
         self.ingame = 1
