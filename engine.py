@@ -1,4 +1,5 @@
 from Player import Player
+from Logger import Logger
 from Game import Game
 import importlib
 import json
@@ -13,11 +14,13 @@ if __name__ == "__main__":
         players = json.load(f)
 
     # Create players
-    player1 = Player(players['player1']['name'], players['player1']['bankroll'], get_player_decider(players["player1"]))
-    player2 = Player(players['player2']['name'], players['player2']['bankroll'], get_player_decider(players["player2"]))
+    player1 = Player(players['player1']['id'], players['player1']['bankroll'], get_player_decider(players["player1"]))
+    player2 = Player(players['player2']['id'], players['player2']['bankroll'], get_player_decider(players["player2"]))
     player3 = Player("Player3", 100, "strat1")
     players = [player1, player2, player3]
     
     num = 100
+    logger = Logger()
+    logger.log_config(players, num)
     game = Game(players, True)
     game.play(num)
