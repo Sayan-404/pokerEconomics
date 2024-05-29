@@ -320,4 +320,4 @@ class Game:
         s = Showdown(self.community_cards, players)
         winner = players[s.winner()]
         winner.bankroll += self.pot
-        self.gameover(winner.name)
+        self.gameover(winner)
