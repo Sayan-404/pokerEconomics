@@ -26,7 +26,9 @@ class Logger:
         self.games_file = f"{self.path}/games.csv"
         original_print = builtins.print
         def custom_print(*args, **kwargs):
-            hand_number = kwargs.pop("hand_number", "")
+            hand_number = -1
+            if kwargs["hand_number"]:
+                hand_number = kwargs.pop("hand_number", "")
             original_print(*args, **kwargs)
             self.log_hand(*args, hand_number = hand_number)
         builtins.print(custom_print)
@@ -45,6 +47,8 @@ class Logger:
             writer.writerow(row)
 
     def log_hand(self, data, hand_number):
+        if hand_number == -1:
+            return
         with open(f"{self.hand_file}{hand_number}.txt", "a") as f:
             f.write(f"{data}\n")
         
