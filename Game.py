@@ -7,13 +7,16 @@ from tqdm import tqdm
 
 # Disable print
 def blockPrint():
-    sys.stdout = open(os.devnull, 'w')
+    sys.stdout = open(os.devnull, "w")
+
 
 # Restore print
 def enablePrint():
     sys.stdout = sys.__stdout__
+
+
 class Game:
-    def __init__(self, players, logger, simul = False):
+    def __init__(self, players, logger, simul=False):
         self.deck = Deck()
         self.deck.shuffle()
         self.pot = 0
@@ -29,7 +32,9 @@ class Game:
         # counts the number of players currently in a game [later gets flushed]
         self.playing = len(players)
 
-    def package_state(self, player_index, call_value = -1): # -1 call values indicate no bets being placed before this
+    def package_state(
+        self, player_index, call_value=-1
+    ):  # -1 call values indicate no bets being placed before this
         player = self.players[player_index]
         return {
             "player": player.package_state(),
@@ -37,8 +42,8 @@ class Game:
             "players_playing": len(self.players),
             "community_cards": self.community_cards,
             "pot": self.pot,
-            "round": self.round
-            # there should be a position variable indicating the position of the player in the table 
+            "round": self.round,
+            # there should be a position variable indicating the position of the player in the table
         }
 
     def flush(self):
@@ -50,13 +55,22 @@ class Game:
         self.playing = len(self.players)
         self.all_in = 0
 
-    def play(self, number_of_hands = 1):
+    def play(self, number_of_hands=1):
         if self.simul:
             blockPrint()
-            for i in tqdm(range(number_of_hands), desc = "Simulation Progress: "):
+            for i in tqdm(range(number_of_hands), desc="Simulation Progress: "):
                 self.hand_number = i
                 self.preflop()
                 self.flush()
+
+                count = len(self.players)
+                for player in self.players:
+                    if player.bankroll == 0:
+                        count -= 1
+                if count == 1:
+                    print("Insufficient players", hand_number=self.hand_number)
+                    break
+
                 # rotates the dealer
                 self.players = self.players[-1:] + self.players[:-1]
                 self.pot = 0
@@ -64,8 +78,18 @@ class Game:
         else:
             for i in range(number_of_hands):
                 self.hand_number = i
+
+                count = len(self.players)
+                for player in self.players:
+                    if player.bankroll == 0:
+                        count -= 1
+                if count == 1:
+                    print("Insufficient players", hand_number=self.hand_number)
+                    break
+
                 self.preflop()
                 self.flush()
+
                 # rotates the dealer
                 self.players = self.players[-1:] + self.players[:-1]
                 self.pot = 0
@@ -73,68 +97,76 @@ class Game:
     # increments the pot by the bet amount whenever a player bets'
     def player_bet(self, player, amt):
         self.pot += player.bet(amt - player.betamt)
-                        
+
     def betting(self, players, betsize):
         # the last player where the action finishes
         end = self.playing - 1
 
         i = 0
 
-        print(f"pot -> {self.pot}", hand_number = self.hand_number)
+        print(f"pot -> {self.pot}", hand_number=self.hand_number)
         while 1:
-            print(f"playing: {self.playing}",hand_number = self.hand_number)
-            print(f"all_in : {self.all_in}",hand_number = self.hand_number)
-            
+            print(f"playing: {self.playing}", hand_number=self.hand_number)
+            print(f"all_in : {self.all_in}", hand_number=self.hand_number)
+
             player_index = i % len(players)
             player = players[player_index]
-            print(f"{player.id}'s bankroll : {player.bankroll}",hand_number = self.hand_number)
+            print(
+                f"{player.id}'s bankroll : {player.bankroll}",
+                hand_number=self.hand_number,
+            )
             callsize = betsize - player.betamt
 
-            # check if the player is still in the current game 
+            # check if the player is still in the current game
             if player.ingame == 0:
-                i = (i+1) % len(players)
+                i = (i + 1) % len(players)
                 continue
             if player.bankroll == 0:
-                i = (i+1) % len(players)
+                i = (i + 1) % len(players)
                 continue
-            
 
-            print(f"{player.id}'s action -> call(c) / check(ch) / bet(b) / raise(r) / fold(f): ", end="", hand_number = self.hand_number)
+            print(
+                f"{player.id}'s action -> call(c) / check(ch) / bet(b) / raise(r) / fold(f): ",
+                end="",
+                hand_number=self.hand_number,
+            )
             if self.simul:
-                action, bet = player.decide(self.package_state(player_index))
-                print(action, hand_number = self.hand_number)
+                action, bet = player.decide(
+                    self.package_state(player_index, call_value=callsize)
+                )
+                print(action, hand_number=self.hand_number)
             else:
                 action = input()
                 # log input
-            
+
             if action == "c":
                 if callsize != 0:
                     if player.bankroll <= callsize:
-                        self.player_bet(player,player.bankroll)
+                        self.player_bet(player, player.bankroll)
                         self.all_in += 1
                     self.player_bet(player, betsize)
                 else:
-                    print("Illegal move", hand_number = self.hand_number)
-                    i = (i+len(players)) % len(players)
+                    print("Illegal move", hand_number=self.hand_number)
+                    i = (i + len(players)) % len(players)
                     continue
-            
+
             elif action == "ch":
                 if callsize == 0:
                     self.player_bet(player, betsize)
                 else:
-                    print("Illegal move", hand_number = self.hand_number)
-                    i = (i+len(players)) % len(players)
+                    print("Illegal move", hand_number=self.hand_number)
+                    i = (i + len(players)) % len(players)
                     continue
 
-            elif action == "b":        
+            elif action == "b":
                 if betsize == 0:
-                    print(f"Enter the betsize: ", end="", hand_number = self.hand_number)
+                    print(f"Enter the betsize: ", end="", hand_number=self.hand_number)
                     if self.simul:
                         betsize = bet
                         if player.bankroll < betsize:
                             betsize = player.bankroll
                             self.all_in += 1
-                        print(betsize, hand_number = self.hand_number)
+                        print(betsize, hand_number=self.hand_number)
                     else:
                         betsize = int(input())
                         if player.bankroll < betsize:
@@ -143,21 +175,21 @@ class Game:
                         # log input
                     betsize += player.betamt
                     self.player_bet(player, betsize)
-                    end = (i-1) % len(players)
+                    end = (i - 1) % len(players)
                 else:
-                    print("Illegal move", hand_number = self.hand_number)
-                    i = (i+len(players)) % len(players)
+                    print("Illegal move", hand_number=self.hand_number)
+                    i = (i + len(players)) % len(players)
                     continue
 
             elif action == "r":
                 if betsize > 0:
-                    print(f"Enter the raise: ", end="", hand_number = self.hand_number)
+                    print(f"Enter the raise: ", end="", hand_number=self.hand_number)
                     if self.simul:
                         betsize = bet
                         if player.bankroll < betsize:
                             betsize = player.bankroll
                             self.all_in += 1
-                        print(betsize, hand_number = self.hand_number)
+                        print(betsize, hand_number=self.hand_number)
                     else:
                         betsize = int(input())
                         if player.bankroll <= betsize:
@@ -166,10 +198,12 @@ class Game:
                         # log input
                     betsize += player.betamt
                     self.player_bet(player, betsize)
-                    end = (i-1) % len(players) # sets the loop to end on player before this
+                    end = (i - 1) % len(
+                        players
+                    )  # sets the loop to end on player before this
                 else:
-                    print("Illegal move", hand_number = self.hand_number)
-                    i = (i+len(players)) % len(players)
+                    print("Illegal move", hand_number=self.hand_number)
+                    i = (i + len(players)) % len(players)
                     continue
 
             elif action == "f":
@@ -184,12 +218,12 @@ class Game:
                     self.gameover(winner)
                     return 0
                 if i == end:
-                    end=(i-1) % len(players)
-                    print(f"end is -> {end}", hand_number = self.hand_number)
+                    end = (i - 1) % len(players)
+                    print(f"end is -> {end}", hand_number=self.hand_number)
                     break
             else:
-                print("invalid Input", hand_number = self.hand_number)
-                i = (i+len(players)) % len(players)
+                print("invalid Input", hand_number=self.hand_number)
+                i = (i + len(players)) % len(players)
                 continue
             # if there is only one person playing then gameover
             if self.playing == 1:
@@ -203,56 +237,58 @@ class Game:
             # exit condtion for the loop when all the players have called
             if i == end:
                 break
-            i = (i+1) % len(players)
-            
-    #handles the preflop action
+            i = (i + 1) % len(players)
+
+    # handles the preflop action
     def preflop(self):
         for player in self.players:
             if player.bankroll == 0:
                 player.ingame = 0
 
-        print("-------PRE-FLOP------", hand_number = self.hand_number)
+        print("-------PRE-FLOP------", hand_number=self.hand_number)
         for i in range(self.number_of_players):
             self.players[i].receive_card(self.deck.deal_card())
             self.players[i].receive_card(self.deck.deal_card())
 
         bet_size = 2
 
-        #blinds 
+        # blinds
         if len(self.players) > 2:
-            self.player_bet(self.players[1%len(self.players)], 1)
-            self.player_bet(self.players[2%len(self.players)], 2)
+            self.player_bet(self.players[1 % len(self.players)], 1)
+            self.player_bet(self.players[2 % len(self.players)], 2)
         else:
             self.player_bet(self.players[0], 1)
             self.player_bet(self.players[1], 2)
 
-        print("----BLINDS-----", hand_number = self.hand_number)
+        print("----BLINDS-----", hand_number=self.hand_number)
         for player in self.players:
-            print(f"{player.id}'s blind -> {player.betamt}", hand_number = self.hand_number)
+            print(
+                f"{player.id}'s blind -> {player.betamt}", hand_number=self.hand_number
+            )
 
-        #printing the cards:
+        # printing the cards:
         for i in range(self.number_of_players):
-            print(f"{self.players[i].id}'s cards", hand_number = self.hand_number)
+            print(f"{self.players[i].id}'s cards", hand_number=self.hand_number)
             for card in self.players[i].hand:
-                print(card, end=" ", hand_number = self.hand_number)
-            print("", hand_number = self.hand_number)
-            
+                print(card, end=" ", hand_number=self.hand_number)
+            print("", hand_number=self.hand_number)
+
         if self.betting(self.players, bet_size) != 0:
             self.flop()
 
     def flop(self):
-        print("-------FLOP------", hand_number = self.hand_number)
+        print("-------FLOP------", hand_number=self.hand_number)
         self.round = 1
         bet_size = 0
-        #resetting the betamts
+        # resetting the betamts
         for player in self.players:
-            player.betamt=0
+            player.betamt = 0
 
-        #displaying the flop
+        # displaying the flop
         for _ in range(3):
             self.community_cards.append(str(self.deck.deal_card()))
-        
-        print(self.community_cards, hand_number = self.hand_number) 
+
+        print(self.community_cards, hand_number=self.hand_number)
 
         if self.all_in >= self.playing - 1:
             self.turn()
@@ -261,16 +297,16 @@ class Game:
                 self.turn()
 
     def turn(self):
-        print("-------TURN------", hand_number = self.hand_number)
+        print("-------TURN------", hand_number=self.hand_number)
         self.round = 2
         bet_size = 0
-        #resetting the betamts
+        # resetting the betamts
         for player in self.players:
-            player.betamt=0
+            player.betamt = 0
 
         self.community_cards.append(str(self.deck.deal_card()))
-        
-        print(self.community_cards, hand_number = self.hand_number)
+
+        print(self.community_cards, hand_number=self.hand_number)
 
         if self.all_in >= self.playing - 1:
             self.river()
@@ -279,43 +315,43 @@ class Game:
                 self.river()
 
     def river(self):
-        print("-------RIVER------", hand_number = self.hand_number)
+        print("-------RIVER------", hand_number=self.hand_number)
         self.round = 3
         bet_size = 0
-        
-        #resetting the betamts
+
+        # resetting the betamts
         for player in self.players:
-            player.betamt=0
+            player.betamt = 0
 
         self.community_cards.append(str(self.deck.deal_card()))
-        
-        print(self.community_cards, hand_number = self.hand_number)
+
+        print(self.community_cards, hand_number=self.hand_number)
         if self.all_in >= self.playing - 1:
             self.showdown(self.players)
         else:
             if self.betting(self.players, bet_size) != 0:
                 self.showdown(self.players)
 
-     #displays info at the end of a hand
+    # displays info at the end of a hand
     def gameover(self, winner):
-        print(f"winner: {winner}", hand_number = self.hand_number)
-        print("Hand Ended", hand_number = self.hand_number)
+        print(f"winner: {winner}", hand_number=self.hand_number)
+        print("Hand Ended", hand_number=self.hand_number)
         bankrolls = {players.id: players.bankroll for players in self.players}
         bankrolls = dict(sorted(bankrolls.items()))
         # sorting is important since order changes after every round but logger should have consistently ordered columns in the csv
         for id in bankrolls:
-            print(f'{id} stack: {bankrolls[id]}', hand_number = self.hand_number)
+            print(f"{id} stack: {bankrolls[id]}", hand_number=self.hand_number)
         log_data = {
             "hand_no": self.hand_number,
             "winner": winner,
             "round": self.round,
-            "bankrolls": []
+            "bankrolls": [],
         }
         for id in bankrolls:
             log_data["bankrolls"].append(bankrolls[id])
         self.logger.log_result(log_data)
-    
-    #showdown
+
+    # showdown
     def showdown(self, players):
         s = Showdown(self.community_cards, players)
         winner = players[s.winner()]
