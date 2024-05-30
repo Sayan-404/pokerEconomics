@@ -1,0 +1,15 @@
+{
+    "id": "Sayan",
+    "hand": [],
+    "bankroll": 100,
+    "betamt": 0,
+    "ingame": 1
+}{
+    "id": "Sourjya",
+    "hand": [],
+    "bankroll": 100,
+    "betamt": 0,
+    "ingame": 1
+}
+Number of hands: 10000
+Simulation starting time: 2024-05-30 07:12:26.214516

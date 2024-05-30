@@ -1,0 +1,22 @@
+-------PRE-FLOP------
+----BLINDS-----
+Sourjya's blind -> 1
+Sayan's blind -> 2
+Sourjya's cards
+3d
+Kc
+
+Sayan's cards
+4c
+4h
+
+pot -> 3
+playing: 2
+all_in : 0
+Sourjya's bankroll : 100
+Sourjya's action -> call(c) / check(ch) / bet(b) / raise(r) / fold(f): 
+f
+winner: Sayan
+Hand Ended
+Sayan stack: 100
+Sourjya stack: 100
