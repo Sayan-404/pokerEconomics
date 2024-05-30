@@ -1,4 +1,5 @@
 {
+    "log_hands": false,
     "runs": 1000,
     "simulation": true,
 	"player1": { "id": "Sayan", "bankroll": 100, "strategy": "strat1" },

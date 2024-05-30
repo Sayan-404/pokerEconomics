@@ -55,6 +55,9 @@ class Game:
             blockPrint()
             for i in tqdm(range(number_of_hands), desc = "Simulation Progress: "):
                 self.hand_number = i
+                bankrolls = {player.id: player.bankroll for player in self.players}
+                for id in bankrolls:
+                    print(f"{id}: {bankrolls[id]}", hand_number = self.hand_number)
                 self.preflop()
                 self.flush()
                 # rotates the dealer
@@ -64,6 +67,9 @@ class Game:
         else:
             for i in range(number_of_hands):
                 self.hand_number = i
+                bankrolls = {player.id: player.bankroll for player in self.players}
+                for id in bankrolls:
+                    print(f"{id}: {bankrolls[id]}", hand_number = self.hand_number)
                 self.preflop()
                 self.flush()
                 # rotates the dealer
@@ -300,7 +306,7 @@ class Game:
     def gameover(self, winner):
         print(f"winner: {winner}", hand_number = self.hand_number)
         print("Hand Ended", hand_number = self.hand_number)
-        bankrolls = {players.id: players.bankroll for players in self.players}
+        bankrolls = {player.id: player.bankroll for player in self.players}
         bankrolls = dict(sorted(bankrolls.items()))
         # sorting is important since order changes after every round but logger should have consistently ordered columns in the csv
         for id in bankrolls:

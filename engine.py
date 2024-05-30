@@ -19,7 +19,7 @@ if __name__ == "__main__":
     players = [player1, player2]
     
     num = data["runs"]
-    logger = Logger()
+    logger = Logger(log_hands=data["log_hands"])
     logger.log_config(players, num)
     game = Game(players, logger, data["simulation"])
     game.play(num)
