@@ -94,6 +94,9 @@ class Game:
                 if count == 1:
                     print("Insufficient players", hand_number = self.hand_number)
                     break
+                bankrolls = {player.id: player.bankroll for player in self.players}
+                for id in bankrolls:
+                    print(f"{id}: {bankrolls[id]}", hand_number = self.hand_number)
                 self.preflop()
                 bankrolls = {player.id: player.bankroll for player in self.players}
                 for id in bankrolls:
