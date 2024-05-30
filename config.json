@@ -1,0 +1,6 @@
+{
+    "runs": 1000,
+    "simulation": true,
+	"player1": { "id": "Sayan", "bankroll": 100, "strategy": "strat1" },
+	"player2": { "id": "Sourjya", "bankroll": 100, "strategy": "strat2" }
+}
