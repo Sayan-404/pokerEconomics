@@ -71,10 +71,13 @@ class Game:
                 count = len(self.players)
                 for player in self.players:
                     if player.bankroll == 0:
-                        count-= 1
+                        count -= 1
                 if count == 1:
-                    print("Insufficient players",hand_number = self.hand_number)
+                    print("Insufficient players", hand_number = self.hand_number)
                     break
+                bankrolls = {player.id: player.bankroll for player in self.players}
+                for id in bankrolls:
+                    print(f"{id}: {bankrolls[id]}", hand_number = self.hand_number)
                 self.preflop()
                 self.flush()
                 # rotates the dealer
@@ -92,6 +95,9 @@ class Game:
                     print("Insufficient players", hand_number = self.hand_number)
                     break
                 self.preflop()
+                bankrolls = {player.id: player.bankroll for player in self.players}
+                for id in bankrolls:
+                    print(f"{id}: {bankrolls[id]}", hand_number = self.hand_number)
                 self.flush()
                 # rotates the dealer
                 self.players = self.players[-1:] + self.players[:-1]
@@ -168,6 +174,7 @@ class Game:
                 if betsize == 0:
                     print(f"Enter the betsize: ", end="", hand_number = self.hand_number)
                     if self.simul:
+                        print(betsize, hand_number = self.hand_number)
                         betsize = bet
                         if player.bankroll < betsize:
                             betsize = player.bankroll
@@ -175,7 +182,6 @@ class Game:
                         if self.check_stack(betsize - player.betamt) == 0:
                             i = (i+len(players)) % len(players)
                             continue
-                        print(betsize, hand_number = self.hand_number)
                     else:
                         betsize = int(input())
                         if player.bankroll < betsize:
@@ -197,6 +203,7 @@ class Game:
                 if betsize > 0:
                     print(f"Enter the raise: ", end="", hand_number = self.hand_number)
                     if self.simul:
+                        print(betsize, hand_number = self.hand_number)
                         betsize = bet
                         if player.bankroll < betsize:
                             betsize = player.bankroll
@@ -204,7 +211,6 @@ class Game:
                         if self.check_stack(betsize - player.betamt) == 0:
                             i = (i+len(players)) % len(players)
                             continue
-                        print(betsize, hand_number = self.hand_number)
                     else:
                         betsize = int(input())
                         if player.bankroll <= betsize:
@@ -369,11 +375,9 @@ class Game:
     def gameover(self, winner):
         print(f"winner: {winner}", hand_number = self.hand_number)
         print("Hand Ended", hand_number = self.hand_number)
-        bankrolls = {players.id: players.bankroll for players in self.players}
+        bankrolls = {player.id: player.bankroll for player in self.players}
         bankrolls = dict(sorted(bankrolls.items()))
         # sorting is important since order changes after every round but logger should have consistently ordered columns in the csv
-        for id in bankrolls:
-            print(f'{id} stack: {bankrolls[id]}', hand_number = self.hand_number)
         log_data = {
             "hand_no": self.hand_number,
             "winner": winner,
@@ -381,6 +385,7 @@ class Game:
             "bankrolls": []
         }
         for id in bankrolls:
+            print(f'{id} stack: {bankrolls[id]}', hand_number = self.hand_number)
             log_data["bankrolls"].append(bankrolls[id])
         self.logger.log_result(log_data)
     

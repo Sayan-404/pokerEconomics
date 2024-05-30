@@ -28,7 +28,7 @@ class Logger:
         original_print = builtins.print
         def custom_print(*args, **kwargs):
             hand_number = -1
-            if kwargs["hand_number"]:
+            if "hand_number" in kwargs:
                 hand_number = kwargs.pop("hand_number", "")
             original_print(*args)
             self.log_hand(*args, hand_number = hand_number)
