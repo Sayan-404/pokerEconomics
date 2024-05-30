@@ -304,8 +304,8 @@ class Game:
             self.player_bet(self.players[1%len(self.players)], min(1,self.players[1%len(self.players)]))
             self.player_bet(self.players[2%len(self.players)], min(2,self.players[1%len(self.players)]))
         else:
-            self.player_bet(self.players[0], 1)
-            self.player_bet(self.players[1], 2)
+            self.player_bet(self.players[0], min(1,self.players[0].bankroll))
+            self.player_bet(self.players[1], min(2,self.players[1].bankrol))
 
         print("----BLINDS-----", hand_number = self.hand_number)
         for player in self.players:
