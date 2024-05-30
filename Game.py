@@ -12,6 +12,7 @@ def blockPrint():
 # Restore print
 def enablePrint():
     sys.stdout = sys.__stdout__
+
 class Game:
     def __init__(self, players, logger, simul = False):
         self.deck = Deck()
@@ -29,6 +30,17 @@ class Game:
         # counts the number of players currently in a game [later gets flushed]
         self.playing = len(players)
 
+    def get_max_bet(self, player_index):
+        current_player = self.players[player_index]
+        for i in range(len(self.players)):
+            player = self.players[i]
+            max_bet = 0
+            if player.ingame and i != player_index:
+                max_bet = max(max_bet, player.bankroll)
+        max_bet = min(max_bet, current_player.bankroll)
+        return max_bet
+        
+
     def package_state(self, player_index, call_value = -1): # -1 call values indicate no bets being placed before this
         player = self.players[player_index]
         return {
@@ -37,7 +49,8 @@ class Game:
             "players_playing": len(self.players),
             "community_cards": self.community_cards,
             "pot": self.pot,
-            "round": self.round
+            "round": self.round,
+            "max_bet": self.get_max_bet(player_index)
             # there should be a position variable indicating the position of the player in the table 
         }
 
@@ -76,7 +89,7 @@ class Game:
                     if player.bankroll == 0:
                         count-= 1
                 if count == 1:
-                    print("Insufficient players",hand_number = self.hand_number)
+                    print("Insufficient players", hand_number = self.hand_number)
                     break
                 self.preflop()
                 self.flush()
@@ -87,14 +100,16 @@ class Game:
     # increments the pot by the bet amount whenever a player bets'
     def player_bet(self, player, amt):
         self.pot += player.bet(amt - player.betamt)
-    def checkStack(self,betsize):
+
+    def check_stack(self, betsize):
         for j in range(len(self.players)):
-                            if self.players[j].ingame == 1:
-                                if betsize > self.players[j].bankroll:
-                                    print("Effective Stack size exceeded", hand_number = self.hand_number)
-                                    return 0
-        return 1                   
-    def betting(self, players, betsize):
+            if self.players[j].ingame == 1:
+                if betsize > self.players[j].bankroll:
+                    print("Effective Stack size exceeded", hand_number = self.hand_number)
+                    return 0
+        return 1                
+       
+    def betting(self, players, betsize=0):
         # the last player where the action finishes
         end = self.playing - 1
 
@@ -124,9 +139,7 @@ class Game:
 
             print(f"{player.id}'s action -> call(c) / check(ch) / bet(b) / raise(r) / fold(f) / all in(a): ", end="", hand_number = self.hand_number)
             if self.simul:
-                state = self.package_state(player_index)
-                state["call_value"] = callsize
-                action, bet = player.decide(self.package_state(player_index))
+                action, bet = player.decide(self.package_state(player_index, call_value=callsize))
                 print(action, hand_number = self.hand_number)
             else:
                 action = input()
@@ -159,7 +172,7 @@ class Game:
                         if player.bankroll < betsize:
                             betsize = player.bankroll
                             self.all_in += 1
-                        if self.checkStack(betsize - player.betamt) == 0:
+                        if self.check_stack(betsize - player.betamt) == 0:
                             i = (i+len(players)) % len(players)
                             continue
                         print(betsize, hand_number = self.hand_number)
@@ -168,7 +181,7 @@ class Game:
                         if player.bankroll < betsize:
                             betsize = player.bankroll
                             self.all_in += 1
-                        if self.checkStack(betsize - player.betamt) == 0:
+                        if self.check_stack(betsize - player.betamt) == 0:
                             i = (i+len(players)) % len(players)
                             continue
                         # log input
@@ -188,7 +201,7 @@ class Game:
                         if player.bankroll < betsize:
                             betsize = player.bankroll
                             self.all_in += 1
-                        if self.checkStack(betsize - player.betamt) == 0:
+                        if self.check_stack(betsize - player.betamt) == 0:
                             i = (i+len(players)) % len(players)
                             continue
                         print(betsize, hand_number = self.hand_number)
@@ -197,7 +210,7 @@ class Game:
                         if player.bankroll <= betsize:
                             betsize = player.bankroll
                             self.all_in += 1
-                        if self.checkStack(betsize - player.betamt) == 0:
+                        if self.check_stack(betsize - player.betamt) == 0:
                             i = (i+len(players)) % len(players)
                             continue
                         # log input
@@ -302,7 +315,6 @@ class Game:
     def flop(self):
         print("-------FLOP------", hand_number = self.hand_number)
         self.round = 1
-        bet_size = 0
         #resetting the betamts
         for player in self.players:
             player.betamt=0
@@ -316,13 +328,12 @@ class Game:
         if self.all_in >= self.playing - 1:
             self.turn()
         else:
-            if self.betting(self.players, bet_size) != 0:
+            if self.betting(self.players) != 0:
                 self.turn()
 
     def turn(self):
         print("-------TURN------", hand_number = self.hand_number)
         self.round = 2
-        bet_size = 0
         #resetting the betamts
         for player in self.players:
             player.betamt=0
@@ -334,13 +345,12 @@ class Game:
         if self.all_in >= self.playing - 1:
             self.river()
         else:
-            if self.betting(self.players, bet_size) != 0:
+            if self.betting(self.players) != 0:
                 self.river()
 
     def river(self):
         print("-------RIVER------", hand_number = self.hand_number)
         self.round = 3
-        bet_size = 0
         
         #resetting the betamts
         for player in self.players:
@@ -352,7 +362,7 @@ class Game:
         if self.all_in >= self.playing - 1:
             self.showdown(self.players)
         else:
-            if self.betting(self.players, bet_size) != 0:
+            if self.betting(self.players) != 0:
                 self.showdown(self.players)
 
      #displays info at the end of a hand

@@ -1,5 +1,6 @@
 def decide(state):
+    max_bet = state["max_bet"]
     if state["call_value"] != -1:
-        return "r", state["call_value"] + 10
+        return "r", min(state["call_value"] + 10, max_bet)
     else:
-        return "b", 10
+        return "b", min(10, max_bet)

@@ -31,5 +31,5 @@ if __name__ == "__main__":
     num = 1000
     logger = Logger(log_hands=True)
     logger.log_config(players, num)
-    game = Game(players, logger, False)
+    game = Game(players, logger, True)
     game.play(num)
