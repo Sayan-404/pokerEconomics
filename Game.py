@@ -41,7 +41,7 @@ class Game:
         return max_bet
         
 
-    def package_state(self, player_index, call_value = -1): # -1 call values indicate no bets being placed before this
+    def package_state(self, player_index, call_value = 0): # 0 call values indicate no bets being placed before this
         player = self.players[player_index]
         return {
             "player": player.package_state(),
@@ -305,7 +305,7 @@ class Game:
             self.player_bet(self.players[2%len(self.players)], min(2,self.players[1%len(self.players)]))
         else:
             self.player_bet(self.players[0], min(1,self.players[0].bankroll))
-            self.player_bet(self.players[1], min(2,self.players[1].bankrol))
+            self.player_bet(self.players[1], min(2,self.players[1].bankroll))
 
         print("----BLINDS-----", hand_number = self.hand_number)
         for player in self.players:
