@@ -4,7 +4,7 @@ import numpy as np
 from scipy.interpolate import make_interp_spline
 
 # Load the CSV data
-file_path = "games.csv"  # Replace with the actual path to your CSV file
+file_path = "data/2024-05-31_1717142890.607885/games.csv"  # Replace with the actual path to your CSV file
 df = pd.read_csv(file_path)
 
 # Interpolate data to create smooth curves
