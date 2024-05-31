@@ -108,7 +108,7 @@ class Game:
 
     # increments the pot by the bet amount whenever a player bets'
     def player_bet(self, player, amt):
-        self.pot += player.bet(amt - player.betamt)
+        self.pot += player.bet(amt)
 
     def check_stack(self, betsize):
         for j in range(len(self.players)):
@@ -134,7 +134,7 @@ class Game:
             player = players[player_index]
             print(f"{player.id}'s bankroll : {player.bankroll}",hand_number = self.hand_number)
             callsize = betsize - player.betamt
-
+            print(f"call size : {callsize}",hand_number = self.hand_number)
             # check if the player is still in the current game 
             if player.ingame == 0:
                 i = (i+1) % len(players)
@@ -159,7 +159,7 @@ class Game:
                     if player.bankroll <= callsize:
                         self.player_bet(player,player.bankroll)
                         self.all_in += 1
-                    self.player_bet(player, betsize)
+                    self.player_bet(player, callsize)
                 else:
                     print("Illegal move", hand_number = self.hand_number)
                     i = (i+len(players)) % len(players)
@@ -194,8 +194,8 @@ class Game:
                             i = (i+len(players)) % len(players)
                             continue
                         # log input
-                    betsize += player.betamt
                     self.player_bet(player, betsize)
+                    betsize = player.betamt
                     end = (i-1) % len(players)
                 else:
                     print("Illegal move", hand_number = self.hand_number)
@@ -223,9 +223,9 @@ class Game:
                             i = (i+len(players)) % len(players)
                             continue
                         # log input
-                    betsize += player.betamt
-                    print(f"betsize -> {betsize}", hand_number = self.hand_number)
                     self.player_bet(player, betsize)
+                    betsize = player.betamt
+                    print(f"betsize -> {betsize}", hand_number = self.hand_number)
                     end = (i-1) % len(players) # sets the loop to end on player before this
                 else:
                     print("Illegal move", hand_number = self.hand_number)
