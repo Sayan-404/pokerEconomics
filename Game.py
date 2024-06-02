@@ -67,48 +67,36 @@ class Game:
         self.playing = len(self.players)
         self.all_in = 0
 
+    def sub_play(self, i):
+            self.hand_number = i
+            active_players = [player.ingame for player in self.players].count(1)
+            if active_players == 1:
+                print("Insufficient players", hand_number=self.hand_number)
+                return 0
+            bankrolls = {player.id: player.bankroll for player in self.players}
+            for id in bankrolls:
+                print(f"{id}: {bankrolls[id]}", hand_number=self.hand_number)
+            self.preflop()
+            self.flush()
+            # rotates the dealer
+            self.players = self.players[-1:] + self.players[:-1]
+            self.pot = 0
+            return 1
+
+
     def play(self, number_of_hands=1):
         if self.simul:
             blockPrint()
             for i in tqdm(range(number_of_hands), desc="Simulation Progress: "):
-                self.hand_number = i
-                count = len(self.players)
-                for player in self.players:
-                    if player.bankroll == 0:
-                        count -= 1
-                if count == 1:
-                    print("Insufficient players", hand_number=self.hand_number)
+                r = self.sub_play(i)
+                if not r:
                     break
-                bankrolls = {player.id: player.bankroll for player in self.players}
-                for id in bankrolls:
-                    print(f"{id}: {bankrolls[id]}", hand_number=self.hand_number)
-                self.preflop()
-                self.flush()
-                # rotates the dealer
-                self.players = self.players[-1:] + self.players[:-1]
-                self.pot = 0
             enablePrint()
         else:
             for i in range(number_of_hands):
-                self.hand_number = i
-                count = len(self.players)
-                for player in self.players:
-                    if player.bankroll == 0:
-                        count -= 1
-                if count == 1:
-                    print("Insufficient players", hand_number=self.hand_number)
+                r = self.sub_play(i)
+                if not r:
                     break
-                bankrolls = {player.id: player.bankroll for player in self.players}
-                for id in bankrolls:
-                    print(f"{id}: {bankrolls[id]}", hand_number=self.hand_number)
-                self.preflop()
-                bankrolls = {player.id: player.bankroll for player in self.players}
-                for id in bankrolls:
-                    print(f"{id}: {bankrolls[id]}", hand_number=self.hand_number)
-                self.flush()
-                # rotates the dealer
-                self.players = self.players[-1:] + self.players[:-1]
-                self.pot = 0
 
     # increments the pot by the bet amount whenever a player bets'
     def player_bet(self, player, amt):
