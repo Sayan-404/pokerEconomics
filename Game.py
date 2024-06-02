@@ -110,7 +110,7 @@ class Game:
                     return 0
         return 1
     
-    def check_betsize(self,betsize,callsize):
+    def check_betsize(self, betsize, callsize):
         while 1:
             if betsize <= callsize:
                 betsize = int(input("betsize cannot be more than or equal to callsize try again:"))
@@ -184,24 +184,17 @@ class Game:
                 if betsize == 0:
                     print(f"Enter the betsize: ", end="", hand_number=self.hand_number)
                     if self.simul:
-                        print(betsize, hand_number=self.hand_number)
                         betsize = bet
-                        self.check_betsize(betsize,callsize)
-                        if player.bankroll < betsize:
-                            betsize = player.bankroll
-                            self.all_in += 1
-                        if self.check_stack(betsize - player.betamt) == 0:
-                            i = (i + len(players)) % len(players)
-                            continue
+                        print(betsize, hand_number=self.hand_number)
                     else:
                         betsize = int(input())
-                        self.check_betsize(betsize,callsize)
-                        if player.bankroll < betsize:
-                            betsize = player.bankroll
-                            self.all_in += 1
-                        if self.check_stack(betsize - player.betamt) == 0:
-                            i = (i + len(players)) % len(players)
-                            continue
+                    self.check_betsize(betsize, callsize)
+                    if player.bankroll <= betsize:
+                        betsize = player.bankroll
+                        self.all_in += 1
+                    if not self.check_stack(betsize - player.betamt):
+                        i = (i + len(players)) % len(players)
+                        continue
                         # log input
                     self.player_bet(player, betsize)
                     betsize = player.betamt
@@ -215,21 +208,17 @@ class Game:
                 if betsize > 0:
                     print(f"Enter the raise: ", end="", hand_number=self.hand_number)
                     if self.simul:
-                        print(betsize, hand_number=self.hand_number)
                         betsize = bet
-                        self.check_betsize(betsize,callsize)
-                        if player.bankroll < betsize:
-                            betsize = player.bankroll
-                            self.all_in += 1
-                        if self.check_stack(betsize - player.betamt) == 0:
-                            i = (i + len(players)) % len(players)
-                            continue
+                        print(betsize, hand_number=self.hand_number)
                     else:
                         betsize = int(input())
-                        self.check_betsize(betsize,callsize)
-                        if player.bankroll <= betsize:
-                            betsize = player.bankroll
-                            self.all_in += 1
+                    self.check_betsize(betsize, callsize)
+                    if player.bankroll <= betsize:
+                        betsize = player.bankroll
+                        self.all_in += 1
+                    if not self.check_stack(betsize - player.betamt):
+                        i = (i + len(players)) % len(players)
+                        continue
                         # log input
                     self.player_bet(player, betsize)
                     betsize = player.betamt
@@ -290,7 +279,7 @@ class Game:
                         player.bankroll += self.pot
                 self.gameover(winner)
                 return 0
-            # exit condtion for the loop when all the players have called
+            # exit condition for the loop when all the players have called
             if i == end:
                 break
             i = (i + 1) % len(players)
@@ -308,19 +297,22 @@ class Game:
 
         bet_size = 2
 
+        bb = 2
+        sb = bb//2
+
         # blinds
         if len(self.players) > 2:
             self.player_bet(
                 self.players[1 % len(self.players)],
-                min(1, self.players[1 % len(self.players)]),
+                min(sb, self.players[1 % len(self.players)]),
             )
             self.player_bet(
                 self.players[2 % len(self.players)],
-                min(2, self.players[1 % len(self.players)]),
+                min(bb, self.players[1 % len(self.players)]),
             )
         else:
-            self.player_bet(self.players[0], min(1, self.players[0].bankroll))
-            self.player_bet(self.players[1], min(2, self.players[1].bankroll))
+            self.player_bet(self.players[0], min(sb, self.players[0].bankroll))
+            self.player_bet(self.players[1], min(bb, self.players[1].bankroll))
 
         print("----BLINDS-----", hand_number=self.hand_number)
         for player in self.players:
@@ -335,7 +327,7 @@ class Game:
                 print(card, end=" ", hand_number=self.hand_number)
             print("", hand_number=self.hand_number)
 
-        if self.betting(self.players, bet_size) != 0:
+        if self.betting(self.players, bet_size):
             self.flop()
 
     def flop(self):
@@ -354,7 +346,7 @@ class Game:
         if self.all_in >= self.playing - 1:
             self.turn()
         else:
-            if self.betting(self.players) != 0:
+            if self.betting(self.players):
                 self.turn()
 
     def turn(self):
