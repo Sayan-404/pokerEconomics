@@ -50,6 +50,7 @@ class Game:
             "player": player.package_state(),
             "call_value": call_value,
             "players_playing": len(self.players),
+            "players": self.players,
             "community_cards": self.community_cards,
             "pot": self.pot,
             "round": self.round,
@@ -235,7 +236,10 @@ class Game:
                             continue
                         # log input
                     if betsize <= callsize:
-                        print("raise amount cannot be less than or equal to call amount",hand_number = self.hand_number)
+                        print(
+                            "raise amount cannot be less than or equal to call amount",
+                            hand_number=self.hand_number,
+                        )
                         i = (i + len(players)) % len(players)
                         continue
                     self.player_bet(player, betsize)
