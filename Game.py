@@ -121,6 +121,12 @@ class Game:
                     print("Effective Stack size exceeded", hand_number=self.hand_number)
                     return 0
         return 1
+    def check_betsize(self,betsize,callsize):
+        while 1:
+            if betsize <= callsize:
+                betsize = int(input("betsize cannot be more than or equal to callsize try again:"))
+            else:
+                return betsize
 
     def betting(self, players, betsize=0):
         # the last player where the action finishes
@@ -191,6 +197,7 @@ class Game:
                     if self.simul:
                         print(betsize, hand_number=self.hand_number)
                         betsize = bet
+                        self.check_betsize(betsize,callsize)
                         if player.bankroll < betsize:
                             betsize = player.bankroll
                             self.all_in += 1
@@ -199,6 +206,7 @@ class Game:
                             continue
                     else:
                         betsize = int(input())
+                        self.check_betsize(betsize,callsize)
                         if player.bankroll < betsize:
                             betsize = player.bankroll
                             self.all_in += 1
@@ -220,6 +228,7 @@ class Game:
                     if self.simul:
                         print(betsize, hand_number=self.hand_number)
                         betsize = bet
+                        self.check_betsize(betsize,callsize)
                         if player.bankroll < betsize:
                             betsize = player.bankroll
                             self.all_in += 1
@@ -228,20 +237,11 @@ class Game:
                             continue
                     else:
                         betsize = int(input())
+                        self.check_betsize(betsize,callsize)
                         if player.bankroll <= betsize:
                             betsize = player.bankroll
                             self.all_in += 1
-                        if self.check_stack(betsize - player.betamt) == 0:
-                            i = (i + len(players)) % len(players)
-                            continue
                         # log input
-                    if betsize <= callsize:
-                        print(
-                            "raise amount cannot be less than or equal to call amount",
-                            hand_number=self.hand_number,
-                        )
-                        i = (i + len(players)) % len(players)
-                        continue
                     self.player_bet(player, betsize)
                     betsize = player.betamt
                     print(f"betsize -> {betsize}", hand_number=self.hand_number)
