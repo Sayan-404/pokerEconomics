@@ -17,7 +17,7 @@ class Showdown:
     def winner(self): # returns index of winning player, 0-indexed
         max_rank = 999999
         max_index = 0
-        for i in range(len(self.player_hands) - 1):
+        for i in range(len(self.player_hands)):
             if self.rank(self.player_hands[i]) < max_rank:
                 max_rank = self.rank(self.player_hands[i])
                 max_index = i
