@@ -2,6 +2,6 @@
     "log_hands": true,
     "runs": 1000,
     "simulation": true,
-	"player1": { "id": "Sayan", "bankroll": 100, "strategy": "aggressor" },
-	"player2": { "id": "Sourjya", "bankroll": 100, "strategy": "ev" }
+	"player1": { "id": "Sayan", "bankroll": 100, "strategy": "defective" },
+	"player2": { "id": "Sourjya", "bankroll": 100, "strategy": "random" }
 }

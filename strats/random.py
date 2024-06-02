@@ -16,4 +16,4 @@ def decide(state):
     else:
         valid_moves = [("ch", -1), ("b", min(call_value + 10, max_bet))]
 
-    return valid_moves[random.randrange(0, len(valid_moves) + 1)]
+    return valid_moves[random.randrange(0, len(valid_moves))]
