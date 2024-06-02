@@ -38,6 +38,7 @@ class Logger:
         with open(self.config_file, "w") as f:
             for player in players:
                 f.write(json.dumps(player.package_state(), indent=4))
+                f.write(f"\nStrategy name: {player.strategy_name}\n")
             f.write(f"\nNumber of hands: {num}\n")
             f.write(f"Simulation starting time: {datetime.datetime.now()}\n")
         # initiating games csv

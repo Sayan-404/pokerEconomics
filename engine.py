@@ -16,8 +16,8 @@ if __name__ == "__main__":
         data = json.load(f)
 
     # Create players
-    player1 = Player(data['player1']['id'], data['player1']['bankroll'], get_player_decider(data["player1"]))
-    player2 = Player(data['player2']['id'], data['player2']['bankroll'], get_player_decider(data["player2"]))
+    player1 = Player(data['player1']['id'], data['player1']['bankroll'], data["player1"]["strategy"], get_player_decider(data["player1"]))
+    player2 = Player(data['player2']['id'], data['player2']['bankroll'], data["player2"]["strategy"], get_player_decider(data["player2"]))
     players = [player1, player2]
     
     num = data["runs"]

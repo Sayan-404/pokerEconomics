@@ -121,6 +121,7 @@ class Game:
                     print("Effective Stack size exceeded", hand_number=self.hand_number)
                     return 0
         return 1
+    
     def check_betsize(self,betsize,callsize):
         while 1:
             if betsize <= callsize:

@@ -1,11 +1,12 @@
 class Player:
-    def __init__(self, id, bankroll, strategy=None):
+    def __init__(self, id, bankroll, strategy_name="", strategy=None):
         self.id = id
         self.hand = []
         self.bankroll = bankroll
         self.betamt = 0
         self.ingame = 1
-        self.decide = strategy  # this points to the decide function in every strategy file, this function has the signature decide(state)
+        self.decide = strategy
+        self.strategy_name = strategy_name  # this points to the decide function in every strategy file, this function has the signature decide(state)
         # it takes the state and returns two values: move, bet
         # moves could be: c, ch, b, r, f
         # b and r are accompanied with a non-negative bet value
