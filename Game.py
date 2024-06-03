@@ -194,28 +194,28 @@ class Game:
 
             elif action == "b":
                 if betsize == 0:
-                    print(f"Enter the betsize: ", end="", hand_number=self.hand_number)
+                    print(f"Enter the raise: ", end="", hand_number=self.hand_number)
                     if self.simul:
                         print(betsize, hand_number=self.hand_number)
-                        betsize = bet
-                        if player.bankroll <= betsize:
-                            betsize = player.bankroll
+                        if player.bankroll <= bet:
+                            bet = player.bankroll
                             self.all_in += 1
                         if self.check_stack(bet - callsize) == 0:
                             i = (i + len(players)) % len(players)
                             continue
                     else:
                         betsize = int(input())
-                        if player.bankroll < betsize:
+                        if player.bankroll <= betsize:
                             betsize = player.bankroll
                             self.all_in += 1
-                        if self.check_stack(bet - callsize) == 0:
-                            i = (i + len(players)) % len(players)
-                            continue
                         # log input
                     betsize = bet + player.betamt
-                    self.player_bet(player, betsize)
-                    end = (i - 1) % len(players)
+                    self.player_bet(player, bet)
+                    
+                    print(f"betsize -> {betsize}", hand_number=self.hand_number)
+                    end = (i - 1) % len(
+                        players
+                    )  # sets the loop to end on player before this
                 else:
                     print("Illegal move", hand_number=self.hand_number)
                     i = (i + len(players)) % len(players)
