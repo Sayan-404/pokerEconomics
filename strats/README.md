@@ -22,3 +22,4 @@ In the initial round (pre-flop), even if the call value is 0, by the rules of po
             "max_bet": self.get_max_bet(player_index),
 }
 ```
+if max_bet <= bankroll go all in
