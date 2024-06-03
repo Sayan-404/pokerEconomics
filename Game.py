@@ -193,7 +193,7 @@ class Game:
                     continue
 
             elif action == "b":
-                if betsize == 0:
+                if player.betamt == 0:
                     print(f"Enter the bet: ", end="", hand_number=self.hand_number)
                     
                     if self.simul:
