@@ -226,11 +226,10 @@ class Game:
                     print(f"Enter the raise: ", end="", hand_number=self.hand_number)
                     if self.simul:
                         print(betsize, hand_number=self.hand_number)
-                        betsize = bet
-                        if player.bankroll <= betsize:
-                            betsize = player.bankroll
+                        if player.bankroll <= bet:
+                            bet = player.bankroll
                             self.all_in += 1
-                        if self.check_stack(betsize - player.betamt) == 0:
+                        if self.check_stack(bet - player.betamt) == 0:
                             i = (i + len(players)) % len(players)
                             continue
                     else:

@@ -13,4 +13,4 @@ def decide(state):
     if call_value != 0:
         return "r", min(call_value * 2, max_bet)
     else:
-        return "c", -1
+        return "ch", -1
