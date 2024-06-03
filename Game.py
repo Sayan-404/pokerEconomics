@@ -201,7 +201,7 @@ class Game:
                         if player.bankroll <= betsize:
                             betsize = player.bankroll
                             self.all_in += 1
-                        if self.check_stack(betsize - player.betamt) == 0:
+                        if self.check_stack(bet - callsize) == 0:
                             i = (i + len(players)) % len(players)
                             continue
                     else:
@@ -209,7 +209,7 @@ class Game:
                         if player.bankroll < betsize:
                             betsize = player.bankroll
                             self.all_in += 1
-                        if self.check_stack(betsize - player.betamt) == 0:
+                        if self.check_stack(bet - callsize) == 0:
                             i = (i + len(players)) % len(players)
                             continue
                         # log input
@@ -229,7 +229,7 @@ class Game:
                         if player.bankroll <= bet:
                             bet = player.bankroll
                             self.all_in += 1
-                        if self.check_stack(bet - player.betamt) == 0:
+                        if self.check_stack(bet - callsize) == 0:
                             i = (i + len(players)) % len(players)
                             continue
                     else:
