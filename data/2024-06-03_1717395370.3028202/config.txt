@@ -1,0 +1,19 @@
+{
+    "id": "Sayan",
+    "hand": [],
+    "bankroll": 100,
+    "betamt": 0,
+    "ingame": 1
+}
+Strategy name: defective
+{
+    "id": "Sourjya",
+    "hand": [],
+    "bankroll": 100,
+    "betamt": 0,
+    "ingame": 1
+}
+Strategy name: random
+
+Number of hands: 1000
+Simulation starting time: 2024-06-03 11:46:10.303134
