@@ -194,9 +194,15 @@ class Game:
 
             elif action == "b":
                 if betsize == 0:
-                    print(f"Enter the raise: ", end="", hand_number=self.hand_number)
+                    print(f"Enter the bet: ", end="", hand_number=self.hand_number)
+                    
                     if self.simul:
-                        print(betsize, hand_number=self.hand_number)
+                        if bet <= 0:
+                            print("Bet size cannot be less than or equal to zero")
+                            i = (i + len(players)) % len(players)
+                            continue
+
+                        print(bet, hand_number=self.hand_number)
                         if player.bankroll <= bet:
                             bet = player.bankroll
                             self.all_in += 1
@@ -225,7 +231,11 @@ class Game:
                 if betsize > 0:
                     print(f"Enter the raise: ", end="", hand_number=self.hand_number)
                     if self.simul:
-                        print(betsize, hand_number=self.hand_number)
+                        if bet <= 0:
+                            print("Raise size cannot be less than or equal to zero")
+                            i = (i + len(players)) % len(players)
+                            continue
+                        print(bet, hand_number=self.hand_number)
                         if player.bankroll <= bet:
                             bet = player.bankroll
                             self.all_in += 1
