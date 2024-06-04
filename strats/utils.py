@@ -20,27 +20,38 @@ def defectiveMove(
     Returns the suitable defective move based on the current state of the game.
     """
 
-    callValue = state["call_value"]
-    bankroll = state["player"]["bankroll"]
-    maxBet = state["max_bet"]
+    # Returns suitable defective move from the available moves
 
-    move = []
+    moves = availableMoves(state)
 
-    if callValue != 0:
-        if maxBet == 0:
-            move = ["c", -1]
-        else:
-            move = ["r", min(callValue + betAmt, maxBet)]
-    elif callValue == 0:
-        if state["round"] == 0:
-            move = ["r", min(callValue + betAmt, maxBet)]
-        else:
-            move = ["b", min(callValue + betAmt, maxBet)]
+    for move in moves:
+        if move[0] in ["r", "b"]:
+            return move
+        elif move[0] == "a":
+            return move
 
-    if bankroll <= move[1]:
-        move = ["a", -1]
+    # Previous Implementation
+    # callValue = state["call_value"]
+    # bankroll = state["player"]["bankroll"]
+    # maxBet = state["max_bet"]
 
-    return move
+    # move = []
+
+    # if callValue != 0:
+    #     if maxBet == 0:
+    #         move = ["c", -1]
+    #     else:
+    #         move = ["r", min(callValue + betAmt, maxBet)]
+    # elif callValue == 0:
+    #     if state["round"] == 0:
+    #         move = ["r", min(callValue + betAmt, maxBet)]
+    #     else:
+    #         move = ["b", min(callValue + betAmt, maxBet)]
+
+    # if bankroll <= move[1]:
+    #     move = ["a", -1]
+
+    # return move
 
 
 def cooperativeMove(state):
@@ -48,16 +59,29 @@ def cooperativeMove(state):
     Returns the suitable cooperative move based on the current state of the game.
     """
 
-    callValue = state["call_value"]
-    bankroll = state["player"]["bankroll"]
+    # Returns suitable cooperative move from available moves
 
-    if callValue != 0:
-        return "c", -1
+    moves = availableMoves(state)
 
-    return "ch", -1
+    for move in moves:
+        if move[0] in ["c", "ch"]:
+            return move
+        elif move[0] == "a":
+            return move
+
+    # Previous Implementation
+    # if state["call_value"] != 0:
+    #     move = ("c", -1)
+    # else:
+    #     move = ("ch", -1)
+
+    # if state["call_value"] >= state["player"]["bankroll"]:
+    #     move = ("a", -1)
+
+    # return move
 
 
-def availableMoves(state):
+def availableMoves(state, betamt=10):
     """
     Returns a list of available moves based on the current state of the game.
     """
@@ -67,10 +91,40 @@ def availableMoves(state):
     valid_moves = []
 
     if call_value == 0 and state["round"] == 0:
-        valid_moves = [("r", min(call_value + 10, max_bet)), ("ch", -1), ("f", -1)]
+        # In the initial round, if call_value is 0 and regardless of the blinds, one can raise, check or fold
+        valid_moves = [("r", min(call_value + betamt, max_bet)), ("ch", -1), ("f", -1)]
+
+        # (fixDefection) Still accounting for a corner case of bankroll being lesser than or equal to call_value
+
     elif call_value != 0:
-        valid_moves = [("c", -1), ("r", min(call_value + 10, max_bet)), ("f", -1)]
-    else:
-        valid_moves = [("ch", -1), ("b", min(call_value + 10, max_bet)), ("f", -1)]
+        # If call_value is not equal to 0, one can call, raise or fold
+        valid_moves = [("c", -1), ("r", min(call_value + betamt, max_bet)), ("f", -1)]
+
+        # If call_value is greater than bankroll, to be in the game, one has to go all in either cooperative/defective ways
+        if call_value >= state["player"]["bankroll"]:
+            valid_moves = [("a", -1), ("f", -1)]
+
+        # (fixDefection) If raise amount is greater than bankroll, one has to go all in
+
+    elif call_value == 0:
+        valid_moves = [("ch", -1), ("b", min(call_value + betamt, max_bet)), ("f", -1)]
+
+        # (fixDefection) If bet amount is greater than bankroll, one has to go all in
+
+    valid_moves = fixDefection(valid_moves, state)
 
     return valid_moves
+
+
+def fixDefection(moves, state):
+    # Finds a defective move and fix it if required
+    return_moves = []
+    for i in range(len(moves)):
+        move = moves[i]
+
+        if move[1] >= state["player"]["bankroll"]:
+            move = ("a", -1)
+
+        return_moves.append(move)
+
+    return return_moves
