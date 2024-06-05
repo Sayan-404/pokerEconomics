@@ -38,13 +38,12 @@ class Logger:
         with open(self.config_file, "w") as f:
             for player in players:
                 f.write(json.dumps(player.package_state(), indent=4))
-                f.write(f"\nStrategy name: {player.strategy_name}\n")
             f.write(f"\nNumber of hands: {num}\n")
             f.write(f"Simulation starting time: {datetime.datetime.now()}\n")
         # initiating games csv
         with open(self.games_file, "w", newline='') as f:
             writer = csv.writer(f)
-            row = ["hand_no"] + [p.package_state()["id"] for p in players] + ["winner", "ending_round"]
+            row = ["hand_no"] + [p.package_state()["id"]+"("+p.package_state()["strategy"]+")" for p in players] + ["winner", "ending_round"]
             writer.writerow(row)
             row = [0] + [p.package_state()["bankroll"] for p in players] + ["", -1]
             writer.writerow(row)
