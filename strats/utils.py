@@ -22,6 +22,9 @@ def defectiveMove(
 
     # Returns suitable defective move from the available moves
 
+    if not canDefect(state):
+        return cooperativeMove(state)
+
     moves = availableMoves(state)
 
     for move in moves:
@@ -81,7 +84,7 @@ def cooperativeMove(state):
     # return move
 
 
-def availableMoves(state, betamt = 10):
+def availableMoves(state, betamt=10):
     """
     Returns a list of available moves based on the current state of the game.
     """
@@ -128,3 +131,16 @@ def fixDefection(moves, state):
         return_moves.append(move)
 
     return return_moves
+
+
+def canDefect(state):
+    return_value = False
+
+    for player in state["players"]:
+        if player.id != state["player"]["id"]:
+            if player.ingame == 1:
+                if player.bankroll > 0:
+                    return_value = True
+                    break
+
+    return return_value
