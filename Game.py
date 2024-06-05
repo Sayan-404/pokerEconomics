@@ -67,48 +67,36 @@ class Game:
         self.playing = len(self.players)
         self.all_in = 0
 
+    def sub_play(self, i):
+        self.hand_number = i
+        count = len(self.players)
+        for player in self.players:
+            if player.bankroll == 0:
+                count -= 1
+        if count == 1:
+            print("Insufficient players", hand_number=self.hand_number)
+            return 0
+        bankrolls = {player.id: player.bankroll for player in self.players}
+        for id in bankrolls:
+            print(f"{id}: {bankrolls[id]}", hand_number=self.hand_number)
+        self.preflop()
+        self.flush()
+        # rotates the dealer
+        self.players = self.players[-1:] + self.players[:-1]
+        self.pot = 0
+        return 1
+
     def play(self, number_of_hands=1):
         if self.simul:
             blockPrint()
             for i in tqdm(range(number_of_hands), desc="Simulation Progress: "):
-                self.hand_number = i
-                count = len(self.players)
-                for player in self.players:
-                    if player.bankroll == 0:
-                        count -= 1
-                if count == 1:
-                    print("Insufficient players", hand_number=self.hand_number)
+                if not self.sub_play(i):
                     break
-                bankrolls = {player.id: player.bankroll for player in self.players}
-                for id in bankrolls:
-                    print(f"{id}: {bankrolls[id]}", hand_number=self.hand_number)
-                self.preflop()
-                self.flush()
-                # rotates the dealer
-                self.players = self.players[-1:] + self.players[:-1]
-                self.pot = 0
             enablePrint()
         else:
             for i in range(number_of_hands):
-                self.hand_number = i
-                count = len(self.players)
-                for player in self.players:
-                    if player.bankroll == 0:
-                        count -= 1
-                if count == 1:
-                    print("Insufficient players", hand_number=self.hand_number)
+                if not self.sub_play(i):
                     break
-                bankrolls = {player.id: player.bankroll for player in self.players}
-                for id in bankrolls:
-                    print(f"{id}: {bankrolls[id]}", hand_number=self.hand_number)
-                self.preflop()
-                bankrolls = {player.id: player.bankroll for player in self.players}
-                for id in bankrolls:
-                    print(f"{id}: {bankrolls[id]}", hand_number=self.hand_number)
-                self.flush()
-                # rotates the dealer
-                self.players = self.players[-1:] + self.players[:-1]
-                self.pot = 0
 
     # increments the pot by the bet amount whenever a player bets'
     def player_bet(self, player, amt):
@@ -196,24 +184,22 @@ class Game:
                 if player.betamt == 0:
                     print(f"Enter the bet: ", end="", hand_number=self.hand_number)
                     
-                    if self.simul:
-                        if bet <= 0:
-                            print("Bet size cannot be less than or equal to zero")
-                            i = (i + len(players)) % len(players)
-                            continue
+                    if not self.simul:
+                        bet = int(input())
 
-                        print(bet, hand_number=self.hand_number)
-                        if player.bankroll <= bet:
-                            bet = player.bankroll
-                            self.all_in += 1
-                        if self.check_stack(bet - callsize) == 0:
-                            i = (i + len(players)) % len(players)
-                            continue
-                    else:
-                        betsize = int(input())
-                        if player.bankroll <= betsize:
-                            betsize = player.bankroll
-                            self.all_in += 1
+                    if bet <= 0:
+                        print("Bet size cannot be less than or equal to zero")
+                        i = (i + len(players)) % len(players)
+                        continue
+
+                    print(bet, hand_number=self.hand_number)
+                    if player.bankroll <= bet:
+                        bet = player.bankroll
+                        self.all_in += 1
+                    if self.check_stack(bet - callsize) == 0:
+                        i = (i + len(players)) % len(players)
+                        continue
+
                         # log input
                     betsize = bet + player.betamt
                     self.player_bet(player, bet)
@@ -230,23 +216,21 @@ class Game:
             elif action == "r":
                 if betsize > 0:
                     print(f"Enter the raise: ", end="", hand_number=self.hand_number)
-                    if self.simul:
-                        if bet <= 0:
-                            print("Raise size cannot be less than or equal to zero")
-                            i = (i + len(players)) % len(players)
-                            continue
-                        print(bet, hand_number=self.hand_number)
-                        if player.bankroll <= bet:
-                            bet = player.bankroll
-                            self.all_in += 1
-                        if self.check_stack(bet - callsize) == 0:
-                            i = (i + len(players)) % len(players)
-                            continue
-                    else:
-                        betsize = int(input())
-                        if player.bankroll <= betsize:
-                            betsize = player.bankroll
-                            self.all_in += 1
+                    
+                    if not self.simul:
+                        bet = int(input())
+
+                    if bet <= 0:
+                        print("Raise size cannot be less than or equal to zero")
+                        i = (i + len(players)) % len(players)
+                        continue
+                    print(bet, hand_number=self.hand_number)
+                    if player.bankroll <= bet:
+                        bet = player.bankroll
+                        self.all_in += 1
+                    if self.check_stack(bet - callsize) == 0:
+                        i = (i + len(players)) % len(players)
+                        continue
                         # log input
                     betsize = bet + player.betamt
                     self.player_bet(player, bet)
