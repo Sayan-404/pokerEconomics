@@ -81,26 +81,24 @@ def cooperativeMove(state):
     # return move
 
 
-def availableMoves(state, betamt=10):
+def availableMoves(state, betamt = 10):
     """
     Returns a list of available moves based on the current state of the game.
     """
-    max_bet = state["max_bet"]
+    effective_max_bet = min(betamt, state["max_bet"])
     call_value = state["call_value"]
 
     valid_moves = []
 
     if call_value == 0 and state["round"] == 0:
         # In the initial round, if call_value is 0 and regardless of the blinds, one can raise, check or fold
-        valid_moves = [("r", min(call_value + betamt, call_value + max_bet)), ("ch", -1), ("f", -1)]
+        valid_moves = [("r", call_value + effective_max_bet), ("ch", -1), ("f", -1)]
 
         # (fixDefection) Still accounting for a corner case of bankroll being lesser than or equal to call_value
 
     elif call_value != 0:
-        if max_bet == 0:
-            valid_moves = [("c", -1)]
         # If call_value is not equal to 0, one can call, raise or fold
-        valid_moves = [("c", -1), ("r", min(call_value + betamt, call_value + max_bet)), ("f", -1)]
+        valid_moves = [("c", -1), ("r", call_value + effective_max_bet), ("f", -1)]
 
         # If call_value is greater than bankroll, to be in the game, one has to go all in either cooperative/defective ways
         if call_value >= state["player"]["bankroll"]:
@@ -109,7 +107,7 @@ def availableMoves(state, betamt=10):
         # (fixDefection) If raise amount is greater than bankroll, one has to go all in
 
     elif call_value == 0:
-        valid_moves = [("ch", -1), ("b", min(call_value + betamt, call_value + max_bet)), ("f", -1)]
+        valid_moves = [("ch", -1), ("b", call_value + effective_max_bet), ("f", -1)]
 
         # (fixDefection) If bet amount is greater than bankroll, one has to go all in
 
