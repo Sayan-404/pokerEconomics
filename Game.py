@@ -135,6 +135,7 @@ class Game:
                 hand_number=self.hand_number,
             )
             callsize = betsize - player.betamt
+            print(f"player bet amount: {player.betamt}", hand_number=self.hand_number)
             print(f"call size : {callsize}", hand_number=self.hand_number)
             # check if the player is still in the current game
             if player.ingame == 0:
@@ -225,6 +226,7 @@ class Game:
                         i = (i + len(players)) % len(players)
                         continue
                     print(bet, hand_number=self.hand_number)
+                    
                     if player.bankroll <= bet:
                         bet = player.bankroll
                         self.all_in += 1
@@ -259,24 +261,13 @@ class Game:
                     end = (i - 1) % len(players)
                     print(f"end is -> {end}", hand_number=self.hand_number)
                     break
-            elif action == "a":
-                effective = 0
 
-                for _player in self.players:
-                    if _player == player:
-                        continue
-                    if _player.ingame == 1:
-                        if _player.bankroll > effective:
-                            effective = _player.bankroll
-                if effective > player.bankroll:
-                    effective = player.bankroll
-                betsize = callsize + effective
-                betsize += player.betamt
-                print(f"effective -> {effective}", hand_number=self.hand_number)
-                print(f"callsize -> {callsize}", hand_number=self.hand_number)
-                print(f"betamt -> {betsize}", hand_number=self.hand_number)
+            elif action == "a":
+                bet = player.bankroll
+                betsize = bet + player.betamt
+                print(f"betamt -> {bet}", hand_number=self.hand_number)
                 self.all_in += 1
-                self.player_bet(player, betsize)
+                self.player_bet(player, bet)
                 end = (i - 1) % len(players)
 
             else:
