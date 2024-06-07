@@ -109,11 +109,15 @@ class Game:
                     print("Effective Stack size exceeded", hand_number=self.hand_number)
                     return 0
         return 1
-    
-    def check_betsize(self,betsize,callsize):
+
+    def check_betsize(self, betsize, callsize):
         while 1:
             if betsize <= callsize:
-                betsize = int(input("betsize cannot be more than or equal to callsize try again:"))
+                betsize = int(
+                    input(
+                        "Bet-size cannot be more than or equal to call-size try again:"
+                    )
+                )
             else:
                 return betsize
 
@@ -184,7 +188,7 @@ class Game:
             elif action == "b":
                 if player.betamt == 0:
                     print(f"Enter the bet: ", end="", hand_number=self.hand_number)
-                    
+
                     if not self.simul:
                         bet = int(input())
 
@@ -204,7 +208,7 @@ class Game:
                         # log input
                     betsize = bet + player.betamt
                     self.player_bet(player, bet)
-                    
+
                     print(f"betsize -> {betsize}", hand_number=self.hand_number)
                     end = (i - 1) % len(
                         players
@@ -217,7 +221,7 @@ class Game:
             elif action == "r":
                 if betsize > 0:
                     print(f"Enter the raise: ", end="", hand_number=self.hand_number)
-                    
+
                     if not self.simul:
                         bet = int(input())
 
@@ -226,7 +230,7 @@ class Game:
                         i = (i + len(players)) % len(players)
                         continue
                     print(bet, hand_number=self.hand_number)
-                    
+
                     if player.bankroll <= bet:
                         bet = player.bankroll
                         self.all_in += 1
@@ -236,7 +240,7 @@ class Game:
                         # log input
                     betsize = bet + player.betamt
                     self.player_bet(player, bet)
-                    
+
                     print(f"betsize -> {betsize}", hand_number=self.hand_number)
                     end = (i - 1) % len(
                         players
