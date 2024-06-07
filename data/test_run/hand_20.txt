@@ -1,0 +1,132 @@
+Sayan: 100168
+Sourjya: 99832
+-------PRE-FLOP------
+----BLINDS-----
+Sayan's blind -> 1
+Sourjya's blind -> 2
+Sayan's cards
+Jd
+8c
+
+Sourjya's cards
+Kh
+Ad
+
+pot -> 3
+playing: 2
+all_in : 0
+Sayan's bankroll : 100167
+player bet amount: 1
+call size : 1
+Sayan's action -> call(c) / check(ch) / bet(b) / raise(r) / fold(f) / all in(a): 
+c
+pot -> 4
+playing: 2
+all_in : 0
+Sourjya's bankroll : 99830
+player bet amount: 2
+call size : 0
+Sourjya's action -> call(c) / check(ch) / bet(b) / raise(r) / fold(f) / all in(a): 
+r
+Enter the raise: 
+10
+betsize -> 12
+pot -> 14
+playing: 2
+all_in : 0
+Sayan's bankroll : 100166
+player bet amount: 2
+call size : 10
+Sayan's action -> call(c) / check(ch) / bet(b) / raise(r) / fold(f) / all in(a): 
+c
+-------FLOP------
+['Kc', 'Ts', '7h']
+pot -> 24
+playing: 2
+all_in : 0
+Sayan's bankroll : 100156
+player bet amount: 0
+call size : 0
+Sayan's action -> call(c) / check(ch) / bet(b) / raise(r) / fold(f) / all in(a): 
+ch
+pot -> 24
+playing: 2
+all_in : 0
+Sourjya's bankroll : 99820
+player bet amount: 0
+call size : 0
+Sourjya's action -> call(c) / check(ch) / bet(b) / raise(r) / fold(f) / all in(a): 
+b
+Enter the bet: 
+10
+betsize -> 10
+pot -> 34
+playing: 2
+all_in : 0
+Sayan's bankroll : 100156
+player bet amount: 0
+call size : 10
+Sayan's action -> call(c) / check(ch) / bet(b) / raise(r) / fold(f) / all in(a): 
+c
+-------TURN------
+['Kc', 'Ts', '7h', '9d']
+pot -> 44
+playing: 2
+all_in : 0
+Sayan's bankroll : 100146
+player bet amount: 0
+call size : 0
+Sayan's action -> call(c) / check(ch) / bet(b) / raise(r) / fold(f) / all in(a): 
+ch
+pot -> 44
+playing: 2
+all_in : 0
+Sourjya's bankroll : 99810
+player bet amount: 0
+call size : 0
+Sourjya's action -> call(c) / check(ch) / bet(b) / raise(r) / fold(f) / all in(a): 
+b
+Enter the bet: 
+10
+betsize -> 10
+pot -> 54
+playing: 2
+all_in : 0
+Sayan's bankroll : 100146
+player bet amount: 0
+call size : 10
+Sayan's action -> call(c) / check(ch) / bet(b) / raise(r) / fold(f) / all in(a): 
+c
+-------RIVER------
+['Kc', 'Ts', '7h', '9d', '3s']
+pot -> 64
+playing: 2
+all_in : 0
+Sayan's bankroll : 100136
+player bet amount: 0
+call size : 0
+Sayan's action -> call(c) / check(ch) / bet(b) / raise(r) / fold(f) / all in(a): 
+ch
+pot -> 64
+playing: 2
+all_in : 0
+Sourjya's bankroll : 99800
+player bet amount: 0
+call size : 0
+Sourjya's action -> call(c) / check(ch) / bet(b) / raise(r) / fold(f) / all in(a): 
+b
+Enter the bet: 
+10
+betsize -> 10
+pot -> 74
+playing: 2
+all_in : 0
+Sayan's bankroll : 100136
+player bet amount: 0
+call size : 10
+Sayan's action -> call(c) / check(ch) / bet(b) / raise(r) / fold(f) / all in(a): 
+c
+winner: Sayan
+Hand Ended
+Sayan stack: 100210
+Sourjya stack: 99790

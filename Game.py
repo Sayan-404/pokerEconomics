@@ -44,9 +44,7 @@ class Game:
         max_bet = min(max_bet, current_player.bankroll)
         return max_bet
 
-    def package_state(
-        self, player_index, call_value=0
-    ):  # 0 call values indicate no bets being placed before this
+    def package_state(self, player_index, call_value=0):  # 0 call values indicate no bets being placed before this
         player = self.players[player_index]
         return {
             "player": player.package_state(),
@@ -115,11 +113,7 @@ class Game:
     def check_betsize(self, betsize, callsize):
         while 1:
             if betsize <= callsize:
-                betsize = int(
-                    input(
-                        "Bet-size cannot be more than or equal to call-size try again:"
-                    )
-                )
+                betsize = int(input("Bet-size cannot be more than or equal to call-size try again:"))
             else:
                 return betsize
 
@@ -136,10 +130,7 @@ class Game:
 
             player_index = i % len(players)
             player = players[player_index]
-            print(
-                f"{player.id}'s bankroll : {player.bankroll}",
-                hand_number=self.hand_number,
-            )
+            print(f"{player.id}'s bankroll : {player.bankroll}", hand_number=self.hand_number)
             callsize = betsize - player.betamt
             print(f"player bet amount: {player.betamt}", hand_number=self.hand_number)
             print(f"call size : {callsize}", hand_number=self.hand_number)
@@ -153,15 +144,9 @@ class Game:
                 i = (i + 1) % len(players)
                 continue
 
-            print(
-                f"{player.id}'s action -> call(c) / check(ch) / bet(b) / raise(r) / fold(f) / all in(a): ",
-                end="",
-                hand_number=self.hand_number,
-            )
+            print(f"{player.id}'s action -> call(c) / check(ch) / bet(b) / raise(r) / fold(f) / all in(a): ", end="", hand_number=self.hand_number)
             if self.simul:
-                action, bet = player.decide(
-                    self.package_state(player_index, call_value=callsize)
-                )
+                action, bet = player.decide(self.package_state(player_index, call_value=callsize))
                 print(action, hand_number=self.hand_number)
             else:
                 action = input()
@@ -212,9 +197,7 @@ class Game:
                     self.player_bet(player, bet)
 
                     print(f"betsize -> {betsize}", hand_number=self.hand_number)
-                    end = (i - 1) % len(
-                        players
-                    )  # sets the loop to end on player before this
+                    end = (i - 1) % len(players)  # sets the loop to end on player before this
                 else:
                     print("Illegal move", hand_number=self.hand_number)
                     i = (i + len(players)) % len(players)
@@ -323,9 +306,7 @@ class Game:
 
         print("----BLINDS-----", hand_number=self.hand_number)
         for player in self.players:
-            print(
-                f"{player.id}'s blind -> {player.betamt}", hand_number=self.hand_number
-            )
+            print(f"{player.id}'s blind -> {player.betamt}", hand_number=self.hand_number)
 
         # printing the cards:
         for i in range(self.number_of_players):
