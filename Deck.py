@@ -1,9 +1,14 @@
 import random 
 from Card import Card
+import time
 class Deck:
-    def __init__(self):
+    def __init__(self, seed=None):
         self.cards = []
         self.create_deck()
+        self.seed = seed
+        if not seed:
+            self.seed = time.time()
+        random.seed(self.seed)
 
     def flush(self):
         self.create_deck()

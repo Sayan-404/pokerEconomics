@@ -20,8 +20,10 @@ if __name__ == "__main__":
     player2 = Player(data['player2']['id'], data['player2']['bankroll'], data["player2"]["strategy"], get_player_decider(data["player2"]))
     players = [player1, player2]
     
+    seed = None
+    if "seed" in data:
+        seed = data["seed"]
+
     num = data["runs"]
     logger = Logger(log_hands=data["log_hands"])
-    logger.log_config(players, num)
-    game = Game(players, logger, data["simulation"])
-    game.play(num)
+    game = Game(players, logger, number_of_hands=num, simul=data["simulation"], seed=seed)

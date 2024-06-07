@@ -16,8 +16,8 @@ def enablePrint():
 
 
 class Game:
-    def __init__(self, players, logger, simul=False):
-        self.deck = Deck()
+    def __init__(self, players, logger, number_of_hands=1, simul=False, seed=None):
+        self.deck = Deck(seed)
         self.deck.shuffle()
         self.pot = 0
         self.players = players
@@ -31,6 +31,8 @@ class Game:
         # rounds are 0-indexed starting with pre-flop
         # counts the number of players currently in a game [later gets flushed]
         self.playing = len(players)
+        logger.log_config(players, number_of_hands, self.deck.seed)
+        self.play(number_of_hands=number_of_hands)
 
     def get_max_bet(self, player_index):
         current_player = self.players[player_index]

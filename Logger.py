@@ -34,12 +34,13 @@ class Logger:
             self.log_hand(*args, hand_number = hand_number)
         builtins.print = custom_print
 
-    def log_config(self, players, num):
+    def log_config(self, players, num, seed):
         with open(self.config_file, "w") as f:
             for player in players:
                 f.write(json.dumps(player.package_state(), indent=4))
             f.write(f"\nNumber of hands: {num}\n")
             f.write(f"Simulation starting time: {datetime.datetime.now()}\n")
+            f.write(f"Seed: {seed}")
         # initiating games csv
         with open(self.games_file, "w", newline='') as f:
             writer = csv.writer(f)
