@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.interpolate import make_interp_spline
 import argparse
+import os
 
 def plot(file_path):
 
@@ -33,21 +34,40 @@ def plot(file_path):
     plt.ylabel("Scores")
     plt.legend()
     plt.grid(True)
-    plt.savefig("analysis.png")
+    plt.savefig(f"{file_path}/analysis.png")
 
     # Optionally, show the plot
     plt.show()
 
+def show_hand(file_path):
+    if not os.path.isfile(f"{file_path}/hand_0.txt"):
+        print("hands are not logged (hand_0 not found)")
+        return
+    while(1):
+        hand = input("enter hand number (-1 to exit): ")
+        if hand == "-1":
+            break
+        hand = f"{file_path}/hand_{hand}.txt"
+        if not os.path.isfile(hand):
+            print("hand not logged")
+            continue
+        with open(hand) as f:
+            print(f.read())
 
 # Set up command line argument parsing
 parser = argparse.ArgumentParser(description="Analyser")
 parser.add_argument(
-    "file_path", type=str, help="Path to the CSV file containing the game data"
+    "file_path", type=str, help="path to the CSV file containing the game data"
 )
 parser.add_argument(
-    "--plot", help="Plot bankrolls", action=argparse.BooleanOptionalAction
+    "--plot", help="plot bankrolls", action=argparse.BooleanOptionalAction
+)
+parser.add_argument(
+    "--show_hand", help="prints individual hand details if present", action=argparse.BooleanOptionalAction
 )
 args = parser.parse_args()
 
 if args.plot:
     plot(args.file_path)
+if args.show_hand:
+    show_hand(args.file_path)
