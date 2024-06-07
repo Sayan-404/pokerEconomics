@@ -31,7 +31,7 @@ class Game:
         # rounds are 0-indexed starting with pre-flop
         # counts the number of players currently in a game [later gets flushed]
         self.playing = len(players)
-        logger.log_config(players, number_of_hands, self.deck.seed)
+        logger.log_config(players, number_of_hands, self.deck.seed) # CRITICAL SECTION
         self.play(number_of_hands=number_of_hands)
 
     def get_max_bet(self, player_index):
@@ -383,6 +383,7 @@ class Game:
             "winner": winner,
             "round": self.round,
             "bankrolls": [],
+            "seed": self.deck.seed
         }
         for id in bankrolls:
             print(f"{id} stack: {bankrolls[id]}", hand_number=self.hand_number)

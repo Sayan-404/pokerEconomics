@@ -35,18 +35,22 @@ class Logger:
         builtins.print = custom_print
 
     def log_config(self, players, num, seed):
-        with open(self.config_file, "w") as f:
-            for player in players:
-                f.write(json.dumps(player.package_state(), indent=4))
-            f.write(f"\nNumber of hands: {num}\n")
-            f.write(f"Simulation starting time: {datetime.datetime.now()}\n")
-            f.write(f"Seed: {seed}")
+        if not os.path.exists(self.config_file):
+            with open(self.config_file, "w") as f:
+                for player in players:
+                    f.write(json.dumps(player.package_state(), indent=4))
+                f.write(f"\nNumber of hands: {num}\n")
+                f.write(f"Simulation starting time: {datetime.datetime.now()}\n")
+                f.write(f"Seeds:\n{seed}\n")
+        else:
+            with open(self.config_file, "a") as f:
+                f.write(f"{seed}\n")
         # initiating games csv
         with open(self.games_file, "w", newline='') as f:
             writer = csv.writer(f)
-            row = ["hand_no"] + [p.package_state()["id"]+"("+p.package_state()["strategy"]+")" for p in players] + ["winner", "ending_round"]
+            row = ["hand_no"] + [p.package_state()["id"]+"("+p.package_state()["strategy"]+")" for p in players] + ["winner", "ending_round", "seed"]
             writer.writerow(row)
-            row = [0] + [p.package_state()["bankroll"] for p in players] + ["", -1]
+            row = [0] + [p.package_state()["bankroll"] for p in players] + ["", -1, seed]
             writer.writerow(row)
 
     def log_hand(self, data, hand_number):
@@ -60,5 +64,5 @@ class Logger:
     def log_result(self, data):
         with open(self.games_file, "a", newline="") as f:
             writer = csv.writer(f)
-            row = [data["hand_no"] + 1]  + [p for p in data["bankrolls"]] + [data["winner"], data["round"]]
+            row = [data["hand_no"] + 1]  + [p for p in data["bankrolls"]] + [data["winner"], data["round"], data["seed"]]
             writer.writerow(row)

@@ -4,5 +4,7 @@
     "simulation": true,
 	"player1": { "id": "Sayan", "bankroll": 100000, "strategy": "cooperative" },
 	"player2": { "id": "Sourjya", "bankroll": 100000, "strategy": "defective" },
-    "seed": 1717777180.9289348
+    "seed": [
+        1717777180.9289348
+    ]
 }
