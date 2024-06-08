@@ -21,7 +21,9 @@ def compare_test(file):
         
         if not comparison.empty:
             print_coloured("Test data not equivalent", "31")
-            print(comparison)
+            ch = int(input("enter -1 to see diff: "))
+            if ch == -1:
+                print(comparison)
         else:
             print_coloured("Test data equivalent", "32")
 
