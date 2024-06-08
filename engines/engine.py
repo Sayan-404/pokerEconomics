@@ -1,9 +1,13 @@
+import os, sys
+
+sys.path.append(os.getcwd())
+
+from testing.compare_test import compare_test
 from Player import Player
 from Logger import Logger
 from Game import Game
 import importlib
 import json
-
 
 def get_player_decider(player):
     module = importlib.import_module("strats.{}".format(player["strategy"]))
@@ -12,7 +16,7 @@ def get_player_decider(player):
 
 if __name__ == "__main__":
     data = {}
-    with open('config.json','r') as f:
+    with open('configs/config.json','r') as f:
         data = json.load(f)
 
     # Create players
@@ -27,3 +31,4 @@ if __name__ == "__main__":
     num = data["runs"]
     logger = Logger(log_hands=data["log_hands"])
     game = Game(players, logger, number_of_hands=num, simul=data["simulation"], seed=seed)
+    compare_test(logger.games_file)

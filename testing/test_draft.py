@@ -3,7 +3,7 @@ from unittest.mock import MagicMock, patch
 from Game import Game
 from Player import Player
 
-import engine
+import engines.engine as engine
 
 
 class TestPlayer(unittest.TestCase):
