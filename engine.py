@@ -26,6 +26,4 @@ if __name__ == "__main__":
 
     num = data["runs"]
     logger = Logger(log_hands=data["log_hands"])
-    game = Game(players, logger, number_of_hands=num, simul=data["simulation"], seed=seed[0])
-
-    # create multiple game objects in an ordered manner according to seeds if present, then start simulation
+    game = Game(players, logger, number_of_hands=num, simul=data["simulation"], seed=seed)

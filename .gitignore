@@ -6,4 +6,4 @@ env/
 __pycache__
 
 .env
-/data/2024*/
+/data
