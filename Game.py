@@ -16,7 +16,10 @@ def enablePrint():
 
 
 class Game:
-    def __init__(self, players, logger, number_of_hands=1, simul=False, seed=None):
+    def __init__(
+        self, players, logger, number_of_hands=1, simul=False, seed=None, id=0
+    ):
+        self.id = id
         self.deck = Deck(seed)
         self.deck.shuffle()
         self.pot = 0
@@ -28,11 +31,11 @@ class Game:
         self.logger = logger
         self.hand_number = 0
         self.all_in = 0
+        self.number_of_hands = number_of_hands
         # rounds are 0-indexed starting with pre-flop
         # counts the number of players currently in a game [later gets flushed]
         self.playing = len(players)
         logger.log_config(players, number_of_hands, self.deck.seed)
-        self.play(number_of_hands=number_of_hands)
 
     def get_max_bet(self, player_index):
         current_player = self.players[player_index]
@@ -100,28 +103,25 @@ class Game:
         self.pot = 0
         return 1
 
-    def play(self, number_of_hands=1):
-        """
-        Repeats sub_play method until game ends.\n
-        If simul  == True then it will show a progress bar.
-        """
-
-        if self.simul:
-            # Blocks print or command line
+    def play(self, benchmark=False):
+        if benchmark and self.simul:
             blockPrint()
-
-            # Iterates over number of hands until a winner emerges or number of hands are completed
-            for i in tqdm(range(number_of_hands), desc="Simulation Progress: "):
-                # Game ends when the sub_play method returns 0
+            for i in range(self.number_of_hands):
                 if not self.sub_play(i):
                     break
-
-            # Enables print or command line
+            enablePrint()
+        elif self.simul:
+            blockPrint()
+            for i in tqdm(
+                range(self.number_of_hands),
+                desc=f"Simulation ##{self.id}: ",
+                position=self.id,
+            ):
+                if not self.sub_play(i):
+                    break
             enablePrint()
         else:
-            # Iterate over number of hands and take input from cli
-            for i in range(number_of_hands):
-                # Game ends when the sub_play method returns 0
+            for i in range(self.number_of_hands):
                 if not self.sub_play(i):
                     break
 

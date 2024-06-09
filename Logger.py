@@ -15,10 +15,12 @@ import time
 import json
 import builtins
 import csv
+import uuid
+import hashlib
 
 class Logger:
     def __init__(self, log_hands = False): # each hand is logged if this is true
-        folder = f"{datetime.date.today()}_{str(time.time())}"
+        folder = f"{datetime.date.today()}_{self.create_hash()}"
         self.path = f"{os.path.abspath(os.getcwd())}/data/{folder}"
         os.makedirs(self.path)
         self.config_file = f"{self.path}/config.txt"
@@ -33,6 +35,14 @@ class Logger:
             original_print(*args)
             self.log_hand(*args, hand_number = hand_number)
         builtins.print = custom_print
+
+    def create_hash(self):
+        current_time = time.time()
+        uid = uuid.uuid4()
+        identifier_string = f"{current_time}_{uid}"
+        digest = hashlib.md5(identifier_string.encode()).hexdigest()
+        return digest
+
 
     def log_config(self, players, num, seed):
         with open(self.config_file, "w") as f:
