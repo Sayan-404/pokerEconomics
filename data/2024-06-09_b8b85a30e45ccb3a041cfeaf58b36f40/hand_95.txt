@@ -1,0 +1,80 @@
+Sourjya: 1
+Sayan: 199
+-------PRE-FLOP------
+----BLINDS-----
+Sourjya's blind -> 1
+Sayan's blind -> 2
+Sourjya's cards
+Qs
+9s
+
+Sayan's cards
+Qd
+9h
+
+pot -> 3
+playing: 2
+all_in : 0
+Sourjya's bankroll : 0
+player bet amount: 1
+call size : 1
+pot -> 3
+playing: 2
+all_in : 0
+Sayan's bankroll : 197
+player bet amount: 2
+call size : 0
+Sayan's action -> call(c) / check(ch) / bet(b) / raise(r) / fold(f) / all in(a): 
+ch
+-------FLOP------
+['3d', '2s', '5s']
+pot -> 5
+playing: 2
+all_in : 0
+Sourjya's bankroll : 0
+player bet amount: 0
+call size : 0
+pot -> 5
+playing: 2
+all_in : 0
+Sayan's bankroll : 195
+player bet amount: 0
+call size : 0
+Sayan's action -> call(c) / check(ch) / bet(b) / raise(r) / fold(f) / all in(a): 
+ch
+-------TURN------
+['3d', '2s', '5s', '2h']
+pot -> 5
+playing: 2
+all_in : 0
+Sourjya's bankroll : 0
+player bet amount: 0
+call size : 0
+pot -> 5
+playing: 2
+all_in : 0
+Sayan's bankroll : 195
+player bet amount: 0
+call size : 0
+Sayan's action -> call(c) / check(ch) / bet(b) / raise(r) / fold(f) / all in(a): 
+ch
+-------RIVER------
+['3d', '2s', '5s', '2h', '7h']
+pot -> 5
+playing: 2
+all_in : 0
+Sourjya's bankroll : 0
+player bet amount: 0
+call size : 0
+pot -> 5
+playing: 2
+all_in : 0
+Sayan's bankroll : 195
+player bet amount: 0
+call size : 0
+Sayan's action -> call(c) / check(ch) / bet(b) / raise(r) / fold(f) / all in(a): 
+ch
+winner: Sourjya
+Hand Ended
+Sayan stack: 195
+Sourjya stack: 5

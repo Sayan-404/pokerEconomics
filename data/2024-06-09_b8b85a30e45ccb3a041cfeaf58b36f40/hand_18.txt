@@ -1,0 +1,37 @@
+Sayan: 127
+Sourjya: 73
+-------PRE-FLOP------
+----BLINDS-----
+Sayan's blind -> 1
+Sourjya's blind -> 2
+Sayan's cards
+7s
+2h
+
+Sourjya's cards
+2c
+7d
+
+pot -> 3
+playing: 2
+all_in : 0
+Sayan's bankroll : 126
+player bet amount: 1
+call size : 1
+Sayan's action -> call(c) / check(ch) / bet(b) / raise(r) / fold(f) / all in(a): 
+r
+Enter the raise: 
+11
+betsize -> 12
+pot -> 14
+playing: 2
+all_in : 0
+Sourjya's bankroll : 71
+player bet amount: 2
+call size : 10
+Sourjya's action -> call(c) / check(ch) / bet(b) / raise(r) / fold(f) / all in(a): 
+f
+winner: Sayan
+Hand Ended
+Sayan stack: 129
+Sourjya stack: 71

@@ -1,4 +1,4 @@
-from .utils import defectiveMove
+from ..utils import defectiveMove
 
 
 def decide(state):

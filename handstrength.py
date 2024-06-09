@@ -38,11 +38,17 @@ def chen_formula(hand):
     if is_suited:
         score += 2
 
+    # Standardize score between 0 - 10
+    # Scaling Factor K = (new_range)/(original_range) = 10/24 = 0.4167
+    # Shift Factor d = new_min - (og_min * K) = 0 - (4 * (10/24))
+    # Standard Score = Score * k + d
+    score = score * 0.4167 - 1.67
+
     return score
 
 
 if __name__ == "__main__":
     # Test the chen_formula function with a sample hand
-    hand = ["2h", "2s"]  # Example hand: Ace of hearts, King of spades
+    hand = ["As", "Ad"]  # Example hand: Ace of hearts, King of spades
     strength = chen_formula(hand)
     print("Hand strength score:", strength)

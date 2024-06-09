@@ -1,0 +1,18 @@
+{
+    "id": "Sayan",
+    "hand": [],
+    "bankroll": 100,
+    "betamt": 0,
+    "ingame": 1,
+    "strategy": "simple.defective"
+}{
+    "id": "Sourjya",
+    "hand": [],
+    "bankroll": 100,
+    "betamt": 0,
+    "ingame": 1,
+    "strategy": "private.conservative"
+}
+Number of hands: 100
+Simulation starting time: 2024-06-09 21:44:34.595852
+Seed: 1717768889
