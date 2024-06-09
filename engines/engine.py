@@ -14,7 +14,7 @@ def get_player_decider(player):
     return getattr(module, "decide")
 
 
-if __name__ == "__main__":
+def initialise_run(id=0):
     data = {}
     with open('configs/config.json','r') as f:
         data = json.load(f)
@@ -30,5 +30,10 @@ if __name__ == "__main__":
 
     num = data["runs"]
     logger = Logger(log_hands=data["log_hands"])
-    game = Game(players, logger, number_of_hands=num, simul=data["simulation"], seed=seed)
-    compare_test(logger.games_file)
+    game = Game(players, logger, number_of_hands=num, simul=data["simulation"], seed=seed, id=0)
+    return game
+
+if __name__ == "__main__":
+    game = initialise_run()
+    game.play()
+    compare_test(game.logger.games_file)
