@@ -14,9 +14,9 @@ def get_player_decider(player):
     return getattr(module, "decide")
 
 
-def initialise_run(id=0):
+def initialise_run(config, id=0):
     data = {}
-    with open('configs/config.json','r') as f:
+    with open(f'configs/{config}.json','r') as f:
         data = json.load(f)
 
     # Create players
@@ -34,6 +34,6 @@ def initialise_run(id=0):
     return game
 
 if __name__ == "__main__":
-    game = initialise_run()
+    game = initialise_run("config")
     game.play()
     compare_test(game.logger.games_file)

@@ -45,9 +45,7 @@ class Game:
         max_bet = min(max_bet, current_player.bankroll)
         return max_bet
 
-    def package_state(
-        self, player_index, call_value=0
-    ):  # 0 call values indicate no bets being placed before this
+    def package_state(self, player_index, call_value=0):  # 0 call values indicate no bets being placed before this
         player = self.players[player_index]
         return {
             "player": player.package_state(),
@@ -89,8 +87,14 @@ class Game:
         self.pot = 0
         return 1
 
-    def play(self):
-        if self.simul:
+    def play(self, benchmark=False):
+        if benchmark and self.simul:
+            blockPrint()
+            for i in range(self.number_of_hands):
+                if not self.sub_play(i):
+                    break
+            enablePrint()
+        elif self.simul:
             blockPrint()
             for i in tqdm(range(self.number_of_hands), desc=f"Simulation {self.id} Progress: "):
                 if not self.sub_play(i):
