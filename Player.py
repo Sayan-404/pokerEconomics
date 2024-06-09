@@ -40,7 +40,7 @@ class Player:
         Appends a single card to the player's hand. Raises an exception if duplicates are present.
         """
         if card in self.hand:
-            raise Exception("Hand contains duplicate cards.")
+            raise ValueError("Hand contains duplicate cards.")
 
         self.hand.append(str(card))
 

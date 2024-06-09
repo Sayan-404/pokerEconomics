@@ -70,39 +70,74 @@ class Game:
         self.all_in = 0
 
     def sub_play(self, i):
+        """
+        Takes hand_number as input and determines whether game ended or not.\n
+        Returns 0 if game ended else returns 1.
+        """
+
         self.hand_number = i
+
+        # Determining the number of players available to play
         count = len(self.players)
         for player in self.players:
             if player.bankroll == 0:
                 count -= 1
+
+        # Exit the game and return 0 if a winner emerges
         if count == 1:
             print("Insufficient players", hand_number=self.hand_number)
             return 0
+
+        # Keep a track of all the players' bankroll and proceed to preflop
         bankrolls = {player.id: player.bankroll for player in self.players}
         for id in bankrolls:
             print(f"{id}: {bankrolls[id]}", hand_number=self.hand_number)
         self.preflop()
+
+        # Flush and rotate dealer after preflop
         self.flush()
-        # rotates the dealer
         self.players = self.players[-1:] + self.players[:-1]
         self.pot = 0
         return 1
 
     def play(self, number_of_hands=1):
+        """
+        Repeats sub_play method until game ends.\n
+        If simul  == True then it will show a progress bar.
+        """
+
         if self.simul:
+            # Blocks print or command line
             blockPrint()
+
+            # Iterates over number of hands until a winner emerges or number of hands are completed
             for i in tqdm(range(number_of_hands), desc="Simulation Progress: "):
-                if not self.sub_play(i):
-                    break
-            enablePrint()
-        else:
-            for i in range(number_of_hands):
+                # Game ends when the sub_play method returns 0
                 if not self.sub_play(i):
                     break
 
-    # increments the pot by the bet amount whenever a player bets'
+            # Enables print or command line
+            enablePrint()
+        else:
+            # Iterate over number of hands and take input from cli
+            for i in range(number_of_hands):
+                # Game ends when the sub_play method returns 0
+                if not self.sub_play(i):
+                    break
+
     def player_bet(self, player, amt):
-        self.pot += player.bet(amt)
+        """
+        Increments the pot by the bet amount whenever a player bets.\n
+        Takes the player object and bet amount as input.
+        """
+
+        if player in self.players:
+            returnValue = player.bet(amt)
+
+            if returnValue == False:
+                return False
+
+            self.pot += returnValue
 
     def check_stack(self, betsize):
         for j in range(len(self.players)):
