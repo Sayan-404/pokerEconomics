@@ -7,7 +7,7 @@ def systemResponse(state):
 
     Returns 0 for cooperative and 1 for defective.
     """
-    if state["call_value"] != 0:
+    if state["call_value"] != 0 and state["round"] != 0:
         return 1
 
     return 0
