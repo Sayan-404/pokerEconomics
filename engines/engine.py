@@ -30,10 +30,11 @@ def initialise_run(config, id=0):
 
     num = data["runs"]
     logger = Logger(log_hands=data["log_hands"])
-    game = Game(players, logger, number_of_hands=num, simul=data["simulation"], seed=seed, id=0)
+    game = Game(players, logger, number_of_hands=num, simul=data["simulation"], seed=seed, id=id)
     return game
 
 if __name__ == "__main__":
-    game = initialise_run("config")
+    config = input("Enter name of config: ")
+    game = initialise_run(config)
     game.play()
     compare_test(game.logger.games_file)

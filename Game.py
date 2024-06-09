@@ -17,7 +17,7 @@ def enablePrint():
 
 class Game:
     def __init__(self, players, logger, number_of_hands=1, simul=False, seed=None, id=0):
-        self.id = 0
+        self.id = id
         self.deck = Deck(seed)
         self.deck.shuffle()
         self.pot = 0
@@ -96,7 +96,7 @@ class Game:
             enablePrint()
         elif self.simul:
             blockPrint()
-            for i in tqdm(range(self.number_of_hands), desc=f"Simulation {self.id} Progress: "):
+            for i in tqdm(range(self.number_of_hands), desc=f"Simulation ##{self.id}: ", position=self.id):
                 if not self.sub_play(i):
                     break
             enablePrint()

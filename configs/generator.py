@@ -49,7 +49,7 @@ def generate_round_robin_strategy_configs():
 
 
 def create_config_file(filename, log_hands, runs, strat1, strat2, seed=None):
-    with open(filename, "w") as f:
+    with open(f"{filename}.json", "w") as f:
         json.dump({
             "log_hands": log_hands,
             "runs": runs,
