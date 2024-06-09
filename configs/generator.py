@@ -17,9 +17,6 @@ def create_single_config():
     create_config_file(filename, log_hands, runs, strat1, strat2, seed)
 
 def generate_round_robin_strategy_configs():
-    log_hands = True if input("Enter y to log individual hands: ") == "y" else False
-    runs = int(input("Enter number of runs: "))
-    seed = input("Enter seed if present: ")
     strats = []
     files = os.listdir("strats/")
     for strat in files:
@@ -28,6 +25,22 @@ def generate_round_robin_strategy_configs():
             y = x.string.split(".")[0]
             if y != "utils" and y != "test_utils":
                 strats.append(x.string.split(".")[0])
+    enum_strats = {i:strats[i] for i in range(len(strats))}
+    print("Enter the numbers (separated by spaces) corresponding to the strategies according to the list below: ")
+    for key in enum_strats:
+        print(f"{key}: {enum_strats[key]}")
+    keys = input().split()
+    strats = []
+    for key in keys:
+        key = int(key)
+        if key not in enum_strats:
+            print(f"Key: {key} not found, skipping.")
+        else:
+            strats.append(enum_strats[key])
+
+    log_hands = True if input("Enter y to log individual hands: ") == "y" else False
+    runs = int(input("Enter number of runs: "))
+    seed = input("Enter seed if present: ")
     for i in range(len(strats)):
         for j in range(i+1, len(strats)):
             s1 = strats[i]
@@ -47,7 +60,7 @@ def create_config_file(filename, log_hands, runs, strat1, strat2, seed=None):
         }, f, indent=4)
 
 if __name__ == "__main__":
-    ch = input("Enter 1 to generate single config and 2 to generate configs for all strategy pairs: ")
+    ch = input("Enter 1 to generate single config and 2 to generate configs for multiple strategy pairs: ")
     if ch == "1":
         create_single_config()
     elif ch == "2":
