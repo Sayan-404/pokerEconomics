@@ -32,4 +32,5 @@ def average_best_num_processes(multiplier=10, period=3):
     return round(sum([adaptive_benchmark(multiplier) for _ in range(period)])/period)
 
 if __name__ == "__main__":
-    print(average_best_num_processes(15))
+    multiplier = int(input("Enter multiplier: "))
+    print(average_best_num_processes(multiplier))

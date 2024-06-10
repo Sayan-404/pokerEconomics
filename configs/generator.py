@@ -11,20 +11,21 @@ def create_single_config():
     filename = f"configs/{filename}.json"
     runs = int(input("Enter number of runs: "))
     log_hands = True if input("Enter y to log individual hand data: ") == "y" else False
-    strat1 = input("Enter strategy for player 1: ")
-    strat2 = input("Enter strategy for player 2: ")
+    strat1 = input("Enter strategy(type.name) for player 1: ")
+    strat2 = input("Enter strategy(type.name) for player 2: ")
     seed = input("Enter seed if present: ")
     create_config_file(filename, log_hands, runs, strat1, strat2, seed)
 
 def generate_round_robin_strategy_configs():
     strats = []
-    files = os.listdir("strats/")
-    for strat in files:
-        x = re.search(".py$", strat)
-        if x:
-            y = x.string.split(".")[0]
-            if y != "utils" and y != "test_utils":
-                strats.append(x.string.split(".")[0])
+    types = ["action", "value"]
+    for ty in types:
+        files = os.listdir(f"strats/{ty}/")
+        for strat in files:
+            x = re.search(".py$", strat)
+            if x:
+                y = f"{ty}.{x.string.split('.')[0]}"
+                strats.append(y)
     enum_strats = {i:strats[i] for i in range(len(strats))}
     print("Enter the numbers (separated by spaces) corresponding to the strategies according to the list below: ")
     for key in enum_strats:
