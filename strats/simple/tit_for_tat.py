@@ -1,6 +1,6 @@
 # Motive: Replicate the opponent/system's last move (cooperate/defect)
 
-from .utils import *
+from ..utils import *
 
 
 def decide(state):

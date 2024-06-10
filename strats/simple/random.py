@@ -1,6 +1,6 @@
 # Motive: Random Moves
 
-from .utils import availableMoves
+from ..utils import availableMoves
 import random
 
 

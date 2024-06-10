@@ -1,4 +1,4 @@
-hand_no,Sayan(cooperative),Sourjya(defective),winner,ending_round
+hand_no,Sayan(simple.cooperative),Sourjya(simple.defective),winner,ending_round
 0,100000,100000,,-1
 1,99958,100042,Sourjya,3
 2,99916,100084,Sourjya,3

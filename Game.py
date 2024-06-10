@@ -318,18 +318,17 @@ class Game:
         bet_size = 2
 
         # blinds
-        if len(self.players) > 2:
-            self.player_bet(
-                self.players[1 % len(self.players)],
-                min(1, self.players[1 % len(self.players)]),
-            )
-            self.player_bet(
-                self.players[2 % len(self.players)],
-                min(2, self.players[1 % len(self.players)]),
-            )
-        else:
-            self.player_bet(self.players[0], min(1, self.players[0].bankroll))
-            self.player_bet(self.players[1], min(2, self.players[1].bankroll))
+        bb_player = self.players[1]
+        sb_player = self.players[0]
+        sb_amt = min(1, sb_player.bankroll)
+        bb_amt = min(2*sb_amt, bb_player.bankroll)
+        if sb_player.bankroll == sb_amt:
+            self.all_in += 1
+        if bb_player.bankroll == bb_amt:
+            self.all_in += 1
+        self.player_bet(bb_player, bb_amt)
+        self.player_bet(sb_player, sb_amt)
+
 
         print("----BLINDS-----", hand_number=self.hand_number)
         for player in self.players:

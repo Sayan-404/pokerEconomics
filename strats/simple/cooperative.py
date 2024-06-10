@@ -1,4 +1,4 @@
-from .utils import cooperativeMove
+from ..utils import cooperativeMove
 
 
 def decide(state):
