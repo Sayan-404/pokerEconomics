@@ -30,8 +30,8 @@ def adaptive_benchmark(multiplier=10):
     print(f"Optimal number of processes: {best_num_processes}")
     return best_num_processes
 
-def average_best_num_processes(multiplier=2, period=3):
+def average_best_num_processes(multiplier=10, period=3):
     return round(sum([adaptive_benchmark(multiplier) for _ in range(period)])/period)
 
 if __name__ == "__main__":
-    print(average_best_num_processes(2))
+    print(average_best_num_processes(15))
