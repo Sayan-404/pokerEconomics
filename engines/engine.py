@@ -51,4 +51,6 @@ if __name__ == "__main__":
     config = input("Enter name of config: ")
     game = initialise_run(config)
     game.play()
-    compare_test(game.logger.games_file)
+    ch = input("Run compare test? (y/n): ")
+    if ch == "y" or ch == "yes":
+        compare_test(game.logger.games_file)

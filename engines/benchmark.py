@@ -3,11 +3,9 @@ import time
 import os
 from engine import initialise_run
 
-def worker(n):
+def worker(_):
     game = initialise_run("benchmark_config")
     game.play(True)
-    time.sleep(0.01)
-    return n * n
 
 def adaptive_benchmark(multiplier=10):
     num_cores = os.cpu_count()
@@ -17,7 +15,7 @@ def adaptive_benchmark(multiplier=10):
     for num_processes in range(1, num_cores * multiplier):
         start_time = time.time()
         with multiprocessing.Pool(num_processes) as pool:
-            _ = pool.map(worker, range(100))
+            _ = pool.map(worker, range(num_processes))
         end_time = time.time()
         duration = end_time - start_time
 
