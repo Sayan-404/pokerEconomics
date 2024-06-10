@@ -19,8 +19,11 @@ import uuid
 import hashlib
 
 class Logger:
-    def __init__(self, log_hands = False): # each hand is logged if this is true
-        folder = f"{datetime.date.today()}_{self.create_hash()}"
+    def __init__(self, log_hands = False, benchmark = False): # each hand is logged if this is true
+        if benchmark:
+            folder = f"b_{datetime.date.today()}_{self.create_hash()}"
+        else:
+            folder = f"{datetime.date.today()}_{self.create_hash()}"
         self.path = f"{os.path.abspath(os.getcwd())}/data/{folder}"
         os.makedirs(self.path)
         self.config_file = f"{self.path}/config.txt"
