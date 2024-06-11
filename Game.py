@@ -44,6 +44,30 @@ class Game:
         self.playing = len(players)
         logger.log_config(players, number_of_hands, self.deck.seed)
 
+    def internal_data(self):
+        """
+        Gives out internal self variables.\n
+        Made for testing purposes.
+        """
+
+        data = {
+            "id": self.id,
+            "deck": self.deck,
+            "pot": self.pot,
+            "players": self.players,
+            "number_of_players": self.number_of_players,
+            "community_cards": self.community_cards,
+            "round": self.round,
+            "simul": self.simul,
+            "logger": self.logger,
+            "hand_number": self.hand_number,
+            "all_in": self.all_in,
+            "number_of_hands": self.number_of_hands,
+            "playing": self.playing,
+        }
+
+        return data
+
     def get_max_bet(self, player_index):
         """
         Finds the maximum amount a player can bet.
