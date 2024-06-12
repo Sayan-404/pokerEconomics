@@ -9,9 +9,9 @@ def decide(state):
         return cooperativeMove(state)
 
     # Bluff
-    if (publicValue - privateValue) >= 3:
+    if (public - private) >= 3:
         return defectiveMove(state)
-    elif privateValue > 8:  # Appropriately play a strong card
+    elif private > 8:  # Appropriately play a strong card
         return defectiveMove(state)
 
     return cooperativeMove(state)
