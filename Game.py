@@ -3,6 +3,7 @@ from Showdown import Showdown
 import sys
 import os
 from tqdm import tqdm
+from testing.system_checks import chainValidate
 
 
 # Disable print
@@ -25,6 +26,8 @@ class Game:
         simul=False,
         seed=None,
         id=0,
+        debug=False,
+        errChk=True,
     ):
         self.id = id
         self.deck = deck(seed)
@@ -39,34 +42,14 @@ class Game:
         self.hand_number = 0
         self.all_in = 0
         self.number_of_hands = number_of_hands
+        self.debug = debug
+        self.errChk = errChk
+        self.debug_data = []
+        self.actionChain = []
         # rounds are 0-indexed starting with pre-flop
         # counts the number of players currently in a game [later gets flushed]
         self.playing = len(players)
         logger.log_config(players, number_of_hands, self.deck.seed)
-
-    def internal_data(self):
-        """
-        Gives out internal self variables.\n
-        Made for testing purposes.
-        """
-
-        data = {
-            "id": self.id,
-            "deck": self.deck,
-            "pot": self.pot,
-            "players": self.players,
-            "number_of_players": self.number_of_players,
-            "community_cards": self.community_cards,
-            "round": self.round,
-            "simul": self.simul,
-            "logger": self.logger,
-            "hand_number": self.hand_number,
-            "all_in": self.all_in,
-            "number_of_hands": self.number_of_hands,
-            "playing": self.playing,
-        }
-
-        return data
 
     def get_max_bet(self, player_index):
         """
@@ -162,6 +145,7 @@ class Game:
                 desc=f"Simulation ##{self.id}: ",
                 position=self.id,
             ):
+                chainValidate(self.actionChain, self.hand_number)
                 if not self.sub_play(i):
                     break
             enablePrint()
@@ -215,6 +199,24 @@ class Game:
                 )
             else:
                 return betsize
+
+    def actionStash(self, pot_before, action, call_value, player, betAmt=-1):
+        """
+        To be called after all the betting functions are done.
+        """
+        actionData = {
+            "hand_number": self.hand_number,
+            "round": self.round,
+            "pot_before": pot_before,
+            "action": action,
+            "call_size": call_value,
+            "bet": betAmt,
+            "pot_after": self.pot,
+            "player": player,
+            "players": self.players,
+        }
+
+        self.actionChain.append(actionData)
 
     def betting(self, players, betsize=0):
         """
@@ -289,6 +291,8 @@ class Game:
 
             # If action is call
             if action == "c":
+                pot_before = self.pot
+
                 # Action only valid if call size is not 0 (check is then appropriate)
                 if callsize != 0:
                     # If bankroll less than call size then player goes all in
@@ -299,6 +303,8 @@ class Game:
                         self.player_bet(
                             player, callsize
                         )  # Else allow to "bet" (call the full amount)
+
+                    self.actionStash(pot_before, action, callsize, player, bet)
                 else:
                     print("Illegal move", hand_number=self.hand_number)
                     i = (i + len(players)) % len(players)
@@ -307,7 +313,11 @@ class Game:
             # If action is check
             elif action == "ch":
                 if callsize == 0:
+                    pot_before = self.pot
+
                     self.player_bet(player, betsize)
+
+                    self.actionStash(pot_before, action, callsize, player, bet)
                 else:
                     print("Illegal move", hand_number=self.hand_number)
                     i = (i + len(players)) % len(players)
@@ -315,6 +325,8 @@ class Game:
 
             # If action is bet
             elif action == "b":
+                pot_before = self.pot
+
                 # Confirms if player's total bet amount is 0
                 if player.betamt == 0:
                     # Takes the bet amount
@@ -353,6 +365,8 @@ class Game:
                         hand_number=self.hand_number,
                     )
                     end = (i - 1) % len(players)
+
+                    self.actionStash(pot_before, action, callsize, player, bet)
                 else:
                     print("Illegal move", hand_number=self.hand_number)
                     i = (i + len(players)) % len(players)
@@ -360,6 +374,8 @@ class Game:
 
             # If action is raise
             elif action == "r":
+                pot_before = self.pot
+
                 # If betsize greater than 0 only then raise is allowed (else bet is appropriate)
                 if betsize > 0:
                     # Inputs the raise
@@ -397,6 +413,8 @@ class Game:
                         hand_number=self.hand_number,
                     )
                     end = (i - 1) % len(players)
+
+                    self.actionStash(pot_before, action, callsize, player, bet)
                 else:
                     print("Illegal move", hand_number=self.hand_number)
                     i = (i + len(players)) % len(players)
@@ -404,9 +422,13 @@ class Game:
 
             # If action is fold
             elif action == "f":
+                pot_before = self.pot
+
                 # Resets player's position in the game
                 player.ingame = 0
                 self.playing -= 1
+
+                self.actionStash(pot_before, action, callsize, player, bet)
 
                 # If only one person is playing then determines the winner (the sole person)
                 if self.playing == 1:
@@ -433,6 +455,7 @@ class Game:
 
             # If action is all-in
             elif action == "a":
+                pot_before = self.pot
 
                 # Player bets their bankroll
                 bet = player.bankroll
@@ -448,6 +471,8 @@ class Game:
                 self.player_bet(player, bet)
 
                 end = (i - 1) % len(players)
+
+                self.actionStash(pot_before, action, callsize, player, bet)
 
             else:
                 print("invalid Input", hand_number=self.hand_number)
