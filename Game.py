@@ -212,8 +212,8 @@ class Game:
             "call_size": call_value,
             "bet": betAmt,
             "pot_after": self.pot,
-            "player": player,
-            "players": self.players,
+            "player": player.to_dict(),
+            "players": [player.to_dict() for player in self.players],
         }
 
         self.actionChain.append(actionData)

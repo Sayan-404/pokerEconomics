@@ -61,3 +61,6 @@ class Player:
 
     def __str__(self):
         return f"{self.id}: {self.hand} {self.bankroll}"
+
+    def to_dict(self):
+        return self.__dict__
