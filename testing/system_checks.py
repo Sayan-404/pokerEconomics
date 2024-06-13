@@ -4,11 +4,14 @@
 - make a list of all possible legal transitions, and see if they are maintained
 """
 
+import json as js
+
 
 def chainValidate(rawActionChain, handNumber):
     actionChain = extractChain(rawActionChain, handNumber)
-    debugPrint(rawActionChain, handNumber)
+    debugPrint(actionChain, handNumber)
     actionsValidator(actionChain, handNumber)
+    validator(actionChain, handNumber)
 
 
 def extractChain(rawActionChain, handNumber):
@@ -57,9 +60,14 @@ def actionsValidator(actionChain, handNumber):
                     )
 
                 elif action == "ch":
-                    legalPriorActions = ["ch", "a"]
-                    actionAssert(
-                        action, priorAction, legalPriorActions, presentPlayer["id"]
+                    condition = (
+                        priorAction in ["c", "ch", "a", "f"]
+                        and presentActionData["call_size"] == 0
+                    )
+                    assert (
+                        condition
+                    ), "Player is not checking appropriately in {}".format(
+                        presentActionData
                     )
 
                 elif action == "r":
@@ -85,6 +93,31 @@ def actionsValidator(actionChain, handNumber):
     print("Actions have been validated successfully.", hand_number=handNumber)
 
 
+def roundZeroSumValidator(actionChain, handNumber):
+    pass
+
+
+def validator(actionChain, handNumber):
+    """
+    Validates each specific items of each hands.
+    """
+
+    for i in range(len(actionChain)):
+        # Pass if it is the first action of a game or the last winning action
+
+        actionData = actionChain[i]
+
+        # Pot validation
+
+        condition = actionData["pot_after"] == (
+            actionData["pot_before"]
+            + (actionData["bet"] if (actionData["bet"] != -1) else 0)
+            + (actionData["call_size"] if (actionData["action"] in ["c", "ch"]) else 0)
+        )
+
+        assert condition, "Pot value not appropriate in action: \n{}".format(actionData)
+
+
 def actionAssert(presentAction, priorAction, legalPriorActions, playerId):
 
     condition = priorAction in legalPriorActions
@@ -94,6 +127,18 @@ def actionAssert(presentAction, priorAction, legalPriorActions, playerId):
     )
 
 
+def extractRoundChain(actionChain):
+    rounds = []
+    currentRound = -1
+    for action in actionChain:
+        roundNumber = action["round"]
+        if roundNumber != currentRound:
+            rounds.append([])
+            currentRound = roundNumber
+        rounds[-1].append(action)
+    return rounds
+
+
 def debugPrint(rawActionChain, handNumber):
     if rawActionChain:
         print(
@@ -101,5 +146,9 @@ def debugPrint(rawActionChain, handNumber):
             hand_number=handNumber,
         )
 
-        print(rawActionChain, hand_number=handNumber)
+        prettyPrint(rawActionChain, handNumber)
         print("", hand_number=handNumber)
+
+
+def prettyPrint(chain, handNumber):
+    print(js.dumps(chain, indent=4), hand_number=handNumber)

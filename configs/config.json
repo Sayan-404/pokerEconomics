@@ -3,5 +3,5 @@
     "runs": 30,
     "simulation": true,
 	"player1": { "id": "Sayan", "bankroll": 100, "strategy": "action.cooperative" },
-	"player2": { "id": "Sourjya", "bankroll": 100, "strategy": "action.defective" }
+	"player2": { "id": "Sourjya", "bankroll": 100, "strategy": "action.cooperative" }
 }
