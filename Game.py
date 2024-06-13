@@ -4,6 +4,7 @@ import sys
 import os
 from tqdm import tqdm
 from testing.system_checks import chainValidate
+from testing.system_checks import extractChain
 
 
 # Disable print
@@ -216,6 +217,7 @@ class Game:
             "call_size": call_value,
             "bet": betAmt,
             "pot_after": self.pot,
+            "blind": self.blind,
             "player": player.to_dict(),
             "players": [player.to_dict() for player in self.players],
         }
@@ -297,16 +299,19 @@ class Game:
             if action == "c":
                 player_prev_bankroll = player.bankroll
 
-                if (
-                    player.id == self.blind["bb"]["player"]
-                    or player.id == self.blind["sb"]["player"]
-                ):
-                    if callsize == 0:
-                        player_prev_bankroll += self.blind["bb"]["amt"]
-                    elif callsize == (
-                        self.blind["bb"]["amt"] - self.blind["sb"]["amt"]
+                handChain = extractChain(self.actionChain, handNumber=self.hand_number)
+
+                if len(handChain) == 0 or len(handChain) == 1:
+                    if (
+                        player.id == self.blind["bb"]["player"]
+                        or player.id == self.blind["sb"]["player"]
                     ):
-                        player_prev_bankroll += self.blind["sb"]["amt"]
+                        if callsize == 0 or callsize > self.blind["sb"]["amt"]:
+                            player_prev_bankroll += self.blind["bb"]["amt"]
+                        elif callsize == (
+                            self.blind["bb"]["amt"] - self.blind["sb"]["amt"]
+                        ):
+                            player_prev_bankroll += self.blind["sb"]["amt"]
 
                 pot_before = self.pot
 
@@ -349,16 +354,19 @@ class Game:
             elif action == "b":
                 player_prev_bankroll = player.bankroll
 
-                if (
-                    player.id == self.blind["bb"]["player"]
-                    or player.id == self.blind["sb"]["player"]
-                ):
-                    if callsize == 0:
-                        player_prev_bankroll += self.blind["bb"]["amt"]
-                    elif callsize == (
-                        self.blind["bb"]["amt"] - self.blind["sb"]["amt"]
+                handChain = extractChain(self.actionChain, handNumber=self.hand_number)
+
+                if len(handChain) == 0 or len(handChain) == 1:
+                    if (
+                        player.id == self.blind["bb"]["player"]
+                        or player.id == self.blind["sb"]["player"]
                     ):
-                        player_prev_bankroll += self.blind["sb"]["amt"]
+                        if callsize == 0 or callsize > self.blind["sb"]["amt"]:
+                            player_prev_bankroll += self.blind["bb"]["amt"]
+                        elif callsize == (
+                            self.blind["bb"]["amt"] - self.blind["sb"]["amt"]
+                        ):
+                            player_prev_bankroll += self.blind["sb"]["amt"]
 
                 pot_before = self.pot
 

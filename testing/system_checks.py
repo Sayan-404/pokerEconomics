@@ -12,6 +12,7 @@ def chainValidate(rawActionChain, handNumber):
     debugPrint(actionChain, handNumber)
     actionsValidator(actionChain, handNumber)
     validator(actionChain, handNumber)
+    roundZeroSumValidator(rawActionChain, actionChain, handNumber)
 
 
 def extractChain(rawActionChain, handNumber):
@@ -71,7 +72,7 @@ def actionsValidator(actionChain, handNumber):
                     )
 
                 elif action == "r":
-                    legalPriorActions = ["b", "c"]
+                    legalPriorActions = ["b", "c", "r"]
                     actionAssert(
                         action, priorAction, legalPriorActions, presentPlayer["id"]
                     )
@@ -93,13 +94,31 @@ def actionsValidator(actionChain, handNumber):
     print("Actions have been validated successfully.", hand_number=handNumber)
 
 
-def roundZeroSumValidator(actionChain, handNumber):
-    pass
+def roundZeroSumValidator(rawActionChain, actionChain, handNumber):
+
+    # Assumes both player have same bankroll
+    if rawActionChain:
+        player_1_bankroll = rawActionChain[0]["player_prev_bankroll"]
+        player_2_bankroll = player_1_bankroll
+
+        condition = (
+            player_1_bankroll
+            + player_2_bankroll
+            - actionChain[-1]["pot_after"]
+            - actionChain[-1]["player"]["bankroll"]
+            - actionChain[-2]["player"]["bankroll"]
+        )
+
+        assert condition == 0, "Round zero sum validator (return {}) failed.".format(
+            condition
+        )
+
+        print("Round is validated.", hand_number=handNumber)
 
 
 def validator(actionChain, handNumber):
     """
-    Validates each specific items of each hands.
+    Validates each specific metrics of each hands.
     """
 
     for i in range(len(actionChain)):
@@ -119,7 +138,68 @@ def validator(actionChain, handNumber):
         ), "Pot zero sum condition (returned {}) failed in action: \n{}".format(
             pot0SumCondition, actionData
         )
-        print("Pot validated successfully.", hand_number=handNumber)
+
+        # Bankroll Validation
+        bankroll0SumCondition = (
+            actionData["player_prev_bankroll"]
+            - actionData["player"]["bankroll"]
+            - (
+                actionData["bet"]
+                if actionData["bet"] != -1
+                else (actionData["call_size"] + blind(actionChain, actionData))
+            )
+        )
+
+        assert (
+            bankroll0SumCondition == 0
+        ), "Bankroll zero sum condition (returned {}) failed in action: \n {}".format(
+            bankroll0SumCondition, actionData
+        )
+
+        # Unstable and prolly not required
+        # # Call size validation
+        # if i - 1 >= 0:
+        #     priorActionData = actionChain[i - 1]
+        #     call0SumCondition = (
+        #         (
+        #             actionData["call_size"]
+        #             + (
+        #                 actionData["player"]["betamt"]
+        #                 - (
+        #                     priorActionData["bet"]
+        #                     if priorActionData["bet"] != -1
+        #                     else 0
+        #                 )
+        #             )
+        #         )
+        #         - (priorActionData["bet"] if priorActionData["bet"] != -1 else 0)
+        #         - priorActionData["call_size"]
+        #         - priorActionData["player"]["betamt"]
+        #     )
+
+        #     assert (
+        #         call0SumCondition == 0
+        #     ), "Call zero sum condition (returned {}) failed in action: \n {}".format(
+        #         call0SumCondition, actionData
+        #     )
+
+    print("Pot and bankrolls validated successfully.", hand_number=handNumber)
+
+
+def blind(actionChain, actionInObs):
+    playerID = actionInObs["player"]["id"]
+    for i in range(2):
+        if actionChain[i] == actionInObs:
+            if (
+                actionChain[i]["round"] == 0
+                and actionChain[i]["player"]["id"] == playerID
+            ):
+                if actionChain[i]["blind"]["bb"]["player"] == playerID:
+                    return actionChain[i]["blind"]["bb"]["amt"]
+                elif actionChain[i]["blind"]["sb"]["player"] == playerID:
+                    return actionChain[i]["blind"]["sb"]["amt"]
+
+    return 0
 
 
 def actionAssert(presentAction, priorAction, legalPriorActions, playerId):
