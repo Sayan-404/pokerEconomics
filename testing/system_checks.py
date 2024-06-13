@@ -108,14 +108,18 @@ def validator(actionChain, handNumber):
         actionData = actionChain[i]
 
         # Pot validation
-
-        condition = actionData["pot_after"] == (
+        pot0SumCondition = actionData["pot_after"] - (
             actionData["pot_before"]
             + (actionData["bet"] if (actionData["bet"] != -1) else 0)
             + (actionData["call_size"] if (actionData["action"] in ["c", "ch"]) else 0)
         )
 
-        assert condition, "Pot value not appropriate in action: \n{}".format(actionData)
+        assert (
+            pot0SumCondition == 0
+        ), "Pot zero sum condition (returned {}) failed in action: \n{}".format(
+            pot0SumCondition, actionData
+        )
+        print("Pot validated successfully.", hand_number=handNumber)
 
 
 def actionAssert(presentAction, priorAction, legalPriorActions, playerId):
