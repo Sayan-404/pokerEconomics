@@ -340,8 +340,6 @@ class Game:
                     player_prev_bankroll = player.bankroll
                     pot_before = self.pot
 
-                    self.player_bet(player, betsize)
-
                     self.actionStash(
                         pot_before, player_prev_bankroll, action, callsize, player, bet
                     )
