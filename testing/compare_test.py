@@ -13,8 +13,8 @@ def compare_test(file):
     def compare_csv(df1, df2):
         if not df1.columns.equals(df2.columns):
             print("The columns are different:")
-            print("Columns in first file: ", df1.columns)
-            print("Columns in second file: ", df2.columns)
+            print(f"Columns in first file: {df1.columns}")
+            print(f"Columns in second file: {df2.columns}")
             return
 
         comparison = df1.compare(df2)
