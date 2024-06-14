@@ -96,17 +96,27 @@ def actionsValidator(actionChain, handNumber):
 
 def roundZeroSumValidator(rawActionChain, actionChain, handNumber):
 
-    # Assumes both player have same bankroll
     if rawActionChain:
         player_1_bankroll = rawActionChain[0]["player_prev_bankroll"]
-        player_2_bankroll = player_1_bankroll
+        player_2_bankroll = rawActionChain[1]["player_prev_bankroll"]
+
+        p2bankroll = 0
+
+        # If someone folds in the first action
+        plist = actionChain[-1]["players"]
+
+        for player in plist:
+            if actionChain[-1]["player"]["id"] != player["id"]:
+                p2bankroll = player["bankroll"]
+
+        print(p2bankroll, hand_number=handNumber)
 
         condition = (
             player_1_bankroll
             + player_2_bankroll
             - actionChain[-1]["pot_after"]
             - actionChain[-1]["player"]["bankroll"]
-            - actionChain[-2]["player"]["bankroll"]
+            - p2bankroll
         )
 
         assert condition == 0, "Round zero sum validator (return {}) failed.".format(
@@ -150,7 +160,11 @@ def validator(actionChain, handNumber):
             - (
                 actionData["bet"]
                 if actionData["bet"] != -1
-                else actionData["call_size"]
+                else (
+                    actionData["call_size"]
+                    if (actionData["action"] in ["c", "ch"])
+                    else 0
+                )
             )
             - bld
         )
