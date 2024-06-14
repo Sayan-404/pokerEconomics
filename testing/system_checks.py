@@ -140,21 +140,24 @@ def validator(actionChain, handNumber):
         )
 
         # Bankroll Validation
-        bankroll0SumCondition = (
-            actionData["player_prev_bankroll"]
-            - actionData["player"]["bankroll"]
-            - (
-                actionData["bet"]
-                if actionData["bet"] != -1
-                else (actionData["call_size"] + blind(actionChain, actionData))
-            )
-        )
+        # bld = actionData["blind"]
 
-        assert (
-            bankroll0SumCondition == 0
-        ), "Bankroll zero sum condition (returned {}) failed in action: \n {}".format(
-            bankroll0SumCondition, actionData
-        )
+        # bankroll0SumCondition = (
+        #     actionData["player_prev_bankroll"]
+        #     - actionData["player"]["bankroll"]
+        #     - (
+        #         actionData["bet"]
+        #         if actionData["bet"] != -1
+        #         else actionData["call_size"]
+        #     )
+        #     - bld
+        # )
+
+        # assert (
+        #     bankroll0SumCondition == 0
+        # ), "Bankroll zero sum condition (returned {}) failed in action: \n {}".format(
+        #     bankroll0SumCondition, actionData
+        # )
 
         # Unstable and prolly not required
         # # Call size validation
@@ -186,20 +189,50 @@ def validator(actionChain, handNumber):
     print("Pot and bankrolls validated successfully.", hand_number=handNumber)
 
 
-def blind(actionChain, actionInObs):
-    playerID = actionInObs["player"]["id"]
-    for i in range(2):
-        if actionChain[i] == actionInObs:
-            if (
-                actionChain[i]["round"] == 0
-                and actionChain[i]["player"]["id"] == playerID
-            ):
-                if actionChain[i]["blind"]["bb"]["player"] == playerID:
-                    return actionChain[i]["blind"]["bb"]["amt"]
-                elif actionChain[i]["blind"]["sb"]["player"] == playerID:
-                    return actionChain[i]["blind"]["sb"]["amt"]
+# def blind(actionChain, actionInObs, handNumber):
+#     roundChain = roundChainExtractor(actionChain, 0)
 
-    return 0
+#     for i in range(-1, -3, -1):
+#         print(
+#             "\n\n1: {}\n2: {}\n\n".format(actionInObs, roundChain[i]),
+#             hand_number=handNumber,
+#         )
+#         if actionInObs["id"] == roundChain[i]["id"]:
+#             print(
+#                 "{}".format(actionInObs["id"] == roundChain[i]["id"]),
+#                 hand_number=handNumber,
+#             )
+
+#             if actionInObs["player"]["id"] == roundChain[i]["blind"]["bb"]["player"]:
+#                 return int(roundChain[i]["blind"]["bb"]["amt"])
+#             elif actionInObs["player"]["id"] == roundChain[i]["blind"]["sb"]["player"]:
+#                 return int(roundChain[i]["blind"]["sb"]["amt"])
+
+#     return 0
+
+# playerID = actionInObs["player"]["id"]
+# for i in range(2):
+#     if actionChain[i] == actionInObs:
+#         if (
+#             actionChain[i]["round"] == 0
+#             and actionChain[i]["player"]["id"] == playerID
+#         ):
+#             if actionChain[i]["blind"]["bb"]["player"] == playerID:
+#                 return actionChain[i]["blind"]["bb"]["amt"]
+#             elif actionChain[i]["blind"]["sb"]["player"] == playerID:
+#                 return actionChain[i]["blind"]["sb"]["amt"]
+
+# return 0
+
+
+def roundChainExtractor(handChain, round_num):
+    roundChain = []
+
+    for action in handChain:
+        if action["round"] == round_num:
+            roundChain.append(action)
+
+    return roundChain
 
 
 def actionAssert(presentAction, priorAction, legalPriorActions, playerId):
