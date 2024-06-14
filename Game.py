@@ -28,6 +28,7 @@ class Game:
         seed=None,
         id=0,
         config={},
+        test=False,
     ):
         self.id = id
         self.config = config
@@ -43,6 +44,7 @@ class Game:
         self.hand_number = 0
         self.all_in = 0
         self.number_of_hands = number_of_hands
+        self.test = test
         self.debug_data = []
         self.actionChain = list()
         # rounds are 0-indexed starting with pre-flop
@@ -145,11 +147,13 @@ class Game:
                 desc=f"Simulation ##{self.id}: ",
                 position=self.id,
             ):
-                self.debug_data = {
-                    "config": self.config,
-                    "rawActionChain": self.actionChain,
-                }
-                chainValidate(self.debug_data, self.hand_number)
+                if self.test:
+                    self.debug_data = {
+                        "config": self.config,
+                        "rawActionChain": self.actionChain,
+                    }
+                    chainValidate(self.debug_data, self.hand_number)
+
                 if not self.sub_play(i):
                     break
             enablePrint()
@@ -215,23 +219,24 @@ class Game:
         blind=0,
     ):
         """
-        To be called after all the betting functions are done.
+        To be called after an action takes place.
         """
-        actionData = {
-            "hand_number": self.hand_number,
-            "round": self.round,
-            "pot_before": pot_before,
-            "player_prev_bankroll": player_prev_bankroll,
-            "action": action,
-            "call_size": call_value,
-            "bet": betAmt,
-            "pot_after": self.pot,
-            "blind": blind,
-            "player": player.to_dict(),
-            "players": [player.to_dict() for player in self.players],
-        }
+        if self.test:
+            actionData = {
+                "hand_number": self.hand_number,
+                "round": self.round,
+                "pot_before": pot_before,
+                "player_prev_bankroll": player_prev_bankroll,
+                "action": action,
+                "call_size": call_value,
+                "bet": betAmt,
+                "pot_after": self.pot,
+                "blind": blind,
+                "player": player.to_dict(),
+                "players": [player.to_dict() for player in self.players],
+            }
 
-        self.actionChain.append(actionData)
+            self.actionChain.append(actionData)
 
     def betting(self, players, betsize=0):
         """
@@ -306,56 +311,7 @@ class Game:
 
             # If action is call
             if action == "c":
-                player_prev_bankroll = player.bankroll
-
-                blind = 0
-
-                handChain = extractChain(self.actionChain, handNumber=self.hand_number)
-
-                if len(handChain) == 0 or len(handChain) == 1:
-                    if (
-                        player.id == self.blind["bb"]["player"]
-                        or player.id == self.blind["sb"]["player"]
-                    ):
-                        if callsize == 0 or callsize > self.blind["sb"]["amt"]:
-                            blind = self.blind["bb"]["amt"]
-                            player_prev_bankroll += blind
-                        elif callsize == (
-                            self.blind["bb"]["amt"] - self.blind["sb"]["amt"]
-                        ):
-                            blind = self.blind["sb"]["amt"]
-                            player_prev_bankroll += blind
-
-                pot_before = self.pot
-
-                # Action only valid if call size is not 0 (check is then appropriate)
-                if callsize != 0:
-                    # If bankroll less than call size then player goes all in
-                    if player.bankroll <= callsize:
-                        self.player_bet(player, player.bankroll)
-                        self.all_in += 1
-                    else:
-                        self.player_bet(
-                            player, callsize
-                        )  # Else allow to "bet" (call the full amount)
-
-                    self.actionStash(
-                        pot_before,
-                        player_prev_bankroll,
-                        action,
-                        callsize,
-                        player,
-                        bet,
-                        blind=blind,
-                    )
-                else:
-                    print("Illegal move", hand_number=self.hand_number)
-                    i = (i + len(players)) % len(players)
-                    continue
-
-            # If action is check
-            elif action == "ch":
-                if callsize == 0:
+                if self.test:
                     player_prev_bankroll = player.bankroll
 
                     blind = 0
@@ -380,15 +336,69 @@ class Game:
 
                     pot_before = self.pot
 
-                    self.actionStash(
-                        pot_before,
-                        player_prev_bankroll,
-                        action,
-                        callsize,
-                        player,
-                        bet,
-                        blind=blind,
-                    )
+                # Action only valid if call size is not 0 (check is then appropriate)
+                if callsize != 0:
+                    # If bankroll less than call size then player goes all in
+                    if player.bankroll <= callsize:
+                        self.player_bet(player, player.bankroll)
+                        self.all_in += 1
+                    else:
+                        self.player_bet(
+                            player, callsize
+                        )  # Else allow to "bet" (call the full amount)
+
+                    if self.test:
+                        self.actionStash(
+                            pot_before,
+                            player_prev_bankroll,
+                            action,
+                            callsize,
+                            player,
+                            bet,
+                            blind=blind,
+                        )
+                else:
+                    print("Illegal move", hand_number=self.hand_number)
+                    i = (i + len(players)) % len(players)
+                    continue
+
+            # If action is check
+            elif action == "ch":
+                if callsize == 0:
+                    if self.test:
+                        player_prev_bankroll = player.bankroll
+
+                        blind = 0
+
+                        handChain = extractChain(
+                            self.actionChain, handNumber=self.hand_number
+                        )
+
+                        if len(handChain) == 0 or len(handChain) == 1:
+                            if (
+                                player.id == self.blind["bb"]["player"]
+                                or player.id == self.blind["sb"]["player"]
+                            ):
+                                if callsize == 0 or callsize > self.blind["sb"]["amt"]:
+                                    blind = self.blind["bb"]["amt"]
+                                    player_prev_bankroll += blind
+                                elif callsize == (
+                                    self.blind["bb"]["amt"] - self.blind["sb"]["amt"]
+                                ):
+                                    blind = self.blind["sb"]["amt"]
+                                    player_prev_bankroll += blind
+
+                        pot_before = self.pot
+
+                        self.actionStash(
+                            pot_before,
+                            player_prev_bankroll,
+                            action,
+                            callsize,
+                            player,
+                            bet,
+                            blind=blind,
+                        )
                 else:
                     print("Illegal move", hand_number=self.hand_number)
                     i = (i + len(players)) % len(players)
@@ -396,27 +406,30 @@ class Game:
 
             # If action is bet
             elif action == "b":
-                player_prev_bankroll = player.bankroll
+                if self.test:
+                    player_prev_bankroll = player.bankroll
 
-                blind = 0
+                    blind = 0
 
-                handChain = extractChain(self.actionChain, handNumber=self.hand_number)
+                    handChain = extractChain(
+                        self.actionChain, handNumber=self.hand_number
+                    )
 
-                if len(handChain) == 0 or len(handChain) == 1:
-                    if (
-                        player.id == self.blind["bb"]["player"]
-                        or player.id == self.blind["sb"]["player"]
-                    ):
-                        if callsize == 0 or callsize > self.blind["sb"]["amt"]:
-                            blind = self.blind["bb"]["amt"]
-                            player_prev_bankroll += blind
-                        elif callsize == (
-                            self.blind["bb"]["amt"] - self.blind["sb"]["amt"]
+                    if len(handChain) == 0 or len(handChain) == 1:
+                        if (
+                            player.id == self.blind["bb"]["player"]
+                            or player.id == self.blind["sb"]["player"]
                         ):
-                            blind = self.blind["sb"]["amt"]
-                            player_prev_bankroll += blind
+                            if callsize == 0 or callsize > self.blind["sb"]["amt"]:
+                                blind = self.blind["bb"]["amt"]
+                                player_prev_bankroll += blind
+                            elif callsize == (
+                                self.blind["bb"]["amt"] - self.blind["sb"]["amt"]
+                            ):
+                                blind = self.blind["sb"]["amt"]
+                                player_prev_bankroll += blind
 
-                pot_before = self.pot
+                    pot_before = self.pot
 
                 # Confirms if player's total bet amount is 0
                 if player.betamt == 0:
@@ -457,15 +470,16 @@ class Game:
                     )
                     end = (i - 1) % len(players)
 
-                    self.actionStash(
-                        pot_before,
-                        player_prev_bankroll,
-                        action,
-                        callsize,
-                        player,
-                        bet,
-                        blind=blind,
-                    )
+                    if self.test:
+                        self.actionStash(
+                            pot_before,
+                            player_prev_bankroll,
+                            action,
+                            callsize,
+                            player,
+                            bet,
+                            blind=blind,
+                        )
                 else:
                     print("Illegal move", hand_number=self.hand_number)
                     i = (i + len(players)) % len(players)
@@ -473,27 +487,30 @@ class Game:
 
             # If action is raise
             elif action == "r":
-                player_prev_bankroll = player.bankroll
+                if self.test:
+                    player_prev_bankroll = player.bankroll
 
-                blind = 0
+                    blind = 0
 
-                handChain = extractChain(self.actionChain, handNumber=self.hand_number)
+                    handChain = extractChain(
+                        self.actionChain, handNumber=self.hand_number
+                    )
 
-                if len(handChain) == 0 or len(handChain) == 1:
-                    if (
-                        player.id == self.blind["bb"]["player"]
-                        or player.id == self.blind["sb"]["player"]
-                    ):
-                        if callsize == 0 or callsize > self.blind["sb"]["amt"]:
-                            blind = self.blind["bb"]["amt"]
-                            player_prev_bankroll += blind
-                        elif callsize == (
-                            self.blind["bb"]["amt"] - self.blind["sb"]["amt"]
+                    if len(handChain) == 0 or len(handChain) == 1:
+                        if (
+                            player.id == self.blind["bb"]["player"]
+                            or player.id == self.blind["sb"]["player"]
                         ):
-                            blind = self.blind["sb"]["amt"]
-                            player_prev_bankroll += blind
+                            if callsize == 0 or callsize > self.blind["sb"]["amt"]:
+                                blind = self.blind["bb"]["amt"]
+                                player_prev_bankroll += blind
+                            elif callsize == (
+                                self.blind["bb"]["amt"] - self.blind["sb"]["amt"]
+                            ):
+                                blind = self.blind["sb"]["amt"]
+                                player_prev_bankroll += blind
 
-                pot_before = self.pot
+                    pot_before = self.pot
 
                 # If betsize greater than 0 only then raise is allowed (else bet is appropriate)
                 if betsize > 0:
@@ -533,6 +550,53 @@ class Game:
                     )
                     end = (i - 1) % len(players)
 
+                    if self.test:
+                        self.actionStash(
+                            pot_before,
+                            player_prev_bankroll,
+                            action,
+                            callsize,
+                            player,
+                            bet,
+                            blind=blind,
+                        )
+                else:
+                    print("Illegal move", hand_number=self.hand_number)
+                    i = (i + len(players)) % len(players)
+                    continue
+
+            # If action is fold
+            elif action == "f":
+                if self.test:
+                    player_prev_bankroll = player.bankroll
+
+                    blind = 0
+
+                    handChain = extractChain(
+                        self.actionChain, handNumber=self.hand_number
+                    )
+
+                    if len(handChain) == 0 or len(handChain) == 1:
+                        if (
+                            player.id == self.blind["bb"]["player"]
+                            or player.id == self.blind["sb"]["player"]
+                        ):
+                            if callsize == 0 or callsize > self.blind["sb"]["amt"]:
+                                blind = self.blind["bb"]["amt"]
+                                player_prev_bankroll += blind
+                            elif callsize == (
+                                self.blind["bb"]["amt"] - self.blind["sb"]["amt"]
+                            ):
+                                blind = self.blind["sb"]["amt"]
+                                player_prev_bankroll += blind
+
+                    pot_before = self.pot
+
+                # Resets player's position in the game
+                player.ingame = 0
+                self.playing -= 1
+
+                if self.test:
                     self.actionStash(
                         pot_before,
                         player_prev_bankroll,
@@ -542,48 +606,6 @@ class Game:
                         bet,
                         blind=blind,
                     )
-                else:
-                    print("Illegal move", hand_number=self.hand_number)
-                    i = (i + len(players)) % len(players)
-                    continue
-
-            # If action is fold
-            elif action == "f":
-                player_prev_bankroll = player.bankroll
-
-                blind = 0
-
-                handChain = extractChain(self.actionChain, handNumber=self.hand_number)
-
-                if len(handChain) == 0 or len(handChain) == 1:
-                    if (
-                        player.id == self.blind["bb"]["player"]
-                        or player.id == self.blind["sb"]["player"]
-                    ):
-                        if callsize == 0 or callsize > self.blind["sb"]["amt"]:
-                            blind = self.blind["bb"]["amt"]
-                            player_prev_bankroll += blind
-                        elif callsize == (
-                            self.blind["bb"]["amt"] - self.blind["sb"]["amt"]
-                        ):
-                            blind = self.blind["sb"]["amt"]
-                            player_prev_bankroll += blind
-
-                pot_before = self.pot
-
-                # Resets player's position in the game
-                player.ingame = 0
-                self.playing -= 1
-
-                self.actionStash(
-                    pot_before,
-                    player_prev_bankroll,
-                    action,
-                    callsize,
-                    player,
-                    bet,
-                    blind=blind,
-                )
 
                 # If only one person is playing then determines the winner (the sole person)
                 if self.playing == 1:
@@ -610,27 +632,30 @@ class Game:
 
             # If action is all-in
             elif action == "a":
-                player_prev_bankroll = player.bankroll
+                if self.test:
+                    player_prev_bankroll = player.bankroll
 
-                blind = 0
+                    blind = 0
 
-                handChain = extractChain(self.actionChain, handNumber=self.hand_number)
+                    handChain = extractChain(
+                        self.actionChain, handNumber=self.hand_number
+                    )
 
-                if len(handChain) == 0 or len(handChain) == 1:
-                    if (
-                        player.id == self.blind["bb"]["player"]
-                        or player.id == self.blind["sb"]["player"]
-                    ):
-                        if callsize == 0 or callsize > self.blind["sb"]["amt"]:
-                            blind = self.blind["bb"]["amt"]
-                            player_prev_bankroll += blind
-                        elif callsize == (
-                            self.blind["bb"]["amt"] - self.blind["sb"]["amt"]
+                    if len(handChain) == 0 or len(handChain) == 1:
+                        if (
+                            player.id == self.blind["bb"]["player"]
+                            or player.id == self.blind["sb"]["player"]
                         ):
-                            blind = self.blind["sb"]["amt"]
-                            player_prev_bankroll += blind
+                            if callsize == 0 or callsize > self.blind["sb"]["amt"]:
+                                blind = self.blind["bb"]["amt"]
+                                player_prev_bankroll += blind
+                            elif callsize == (
+                                self.blind["bb"]["amt"] - self.blind["sb"]["amt"]
+                            ):
+                                blind = self.blind["sb"]["amt"]
+                                player_prev_bankroll += blind
 
-                pot_before = self.pot
+                    pot_before = self.pot
 
                 # Player bets their bankroll
                 bet = player.bankroll
@@ -647,15 +672,16 @@ class Game:
 
                 end = (i - 1) % len(players)
 
-                self.actionStash(
-                    pot_before,
-                    player_prev_bankroll,
-                    action,
-                    callsize,
-                    player,
-                    bet,
-                    blind=blind,
-                )
+                if self.test:
+                    self.actionStash(
+                        pot_before,
+                        player_prev_bankroll,
+                        action,
+                        callsize,
+                        player,
+                        bet,
+                        blind=blind,
+                    )
 
             else:
                 print("invalid Input", hand_number=self.hand_number)

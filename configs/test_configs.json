@@ -1,0 +1,23 @@
+[
+    {
+        "log_hands": false,
+        "runs": 10000,
+        "simulation": true,
+        "player1": { "id": "Sayan", "bankroll": 1000000, "strategy": "action.random" },
+        "player2": { "id": "Sourjya", "bankroll": 1000000, "strategy": "action.random" }
+    },
+    {
+        "log_hands": false,
+        "runs": 10000,
+        "simulation": true,
+        "player1": { "id": "Sayan", "bankroll": 1000000, "strategy": "action.random" },
+        "player2": { "id": "Sourjya", "bankroll": 1000000, "strategy": "action.random" }
+    },
+    {
+        "log_hands": false,
+        "runs": 10000,
+        "simulation": true,
+        "player1": { "id": "Sayan", "bankroll": 1000000, "strategy": "action.random" },
+        "player2": { "id": "Sourjya", "bankroll": 1000000, "strategy": "action.random" }
+    }      
+]

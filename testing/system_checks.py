@@ -170,32 +170,8 @@ def validator(handChain, handNumber):
             bankroll0SumCondition, actionData
         )
 
-        # Call size validation
-        # Based on the idea a player need to match the bet of previous player at any point of the game
-        # Formula: (CallSize + TotalBetAmountOfPlayer) - (OpponentTotalBetAmount) = (CallSize + (Pot/0{conditionally} - OpponentTotalBet)) - OpponentTotalBet
-        # Simplified Formula: CallSize + Pot/0{conditionally} - 2*OpponentTotalBetAmount
-
         roundChain = roundChainExtractor(handChain, actionData["round"])
-
         callValidator(roundChain)
-
-        # if i >= 1:
-        #     priorActionData = handChain[i - 1]
-
-        #     callSize = actionData["call_size"]
-        #     pot = actionData["pot_before"]
-        #     oppTotalBetAmt = priorActionData["player"]["betamt"]
-
-        #     if callSize == oppTotalBetAmt == 0:
-        #         pot = 0
-
-        #     call0SumCondition = callSize + pot - 2 * oppTotalBetAmt
-
-        #     assert (
-        #         call0SumCondition == 0
-        #     ), "Call zero sum condition (returned {}) failed in action: \n{}".format(
-        #         call0SumCondition, actionData
-        #     )
 
     print(
         "Pot, bankrolls and call sizes are validated successfully.",
@@ -206,11 +182,11 @@ def validator(handChain, handNumber):
 def callValidator(roundChain):
     """
 
-    #### Call size validation
+    ### Call size validator
 
     Based on the idea a player need to match the bet of previous player at any point of the game.\n
-    Formula: (CallSize + TotalBetAmountOfPlayer) - (OpponentTotalBetAmount) = (CallSize + (Pot/0{conditionally} - OpponentTotalBet)) - OpponentTotalBet\n
-    Simplified Formula: CallSize + Pot/0{conditionally} - 2*OpponentTotalBetAmount\n
+    `Formula:` (CallSize + TotalBetAmountOfPlayer) - (OpponentTotalBetAmount) = (CallSize + (Pot/0{conditionally} - OpponentTotalBet)) - OpponentTotalBet\n
+    `Simplified Formula:` CallSize + Pot/0{conditionally} - 2*OpponentTotalBetAmount\n
 
     """
     potEqualiser = 0
