@@ -7,35 +7,37 @@
 import json as js
 
 
-def chainValidate(rawActionChain, handNumber):
-    actionChain = extractChain(rawActionChain, handNumber)
-    debugPrint(actionChain, handNumber)
-    actionsValidator(actionChain, handNumber)
-    validator(actionChain, handNumber)
-    roundZeroSumValidator(rawActionChain, actionChain, handNumber)
+def chainValidate(debugData, handNumber):
+    rawActionChain = debugData["rawActionChain"]
+    config = debugData["config"]
+    handChain = extractChain(rawActionChain, handNumber)
+    debugPrint(handChain, handNumber)
+    actionsValidator(handChain, handNumber)
+    validator(handChain, handNumber)
+    roundZeroSumValidator(rawActionChain, handChain, config, handNumber)
 
 
 def extractChain(rawActionChain, handNumber):
-    actionChain = []
+    roundChain = []
 
     for actionData in rawActionChain:
         if actionData["hand_number"] == handNumber:
-            actionChain.append(actionData)
+            roundChain.append(actionData)
 
-    return actionChain
+    return roundChain
 
 
-def actionsValidator(actionChain, handNumber):
+def actionsValidator(roundChain, handNumber):
     """
     Validates all the actions taken in a hand.
     """
 
-    for i in range(len(actionChain)):
+    for i in range(len(roundChain)):
 
         # Validate the first action (Can only call, raise, all-in, or fold)
         if i == 0:
-            action = actionChain[i]["action"]
-            playerId = actionChain[i]["player"]["id"]
+            action = roundChain[i]["action"]
+            playerId = roundChain[i]["player"]["id"]
             condition = (
                 (action == "c") or (action == "r") or (action == "a") or (action == "f")
             )
@@ -44,8 +46,8 @@ def actionsValidator(actionChain, handNumber):
                 condition
             ), f"Player {playerId} made an invalid move {action} on first move."
         else:
-            priorActionData = actionChain[i - 1]
-            presentActionData = actionChain[i]
+            priorActionData = roundChain[i - 1]
+            presentActionData = roundChain[i]
 
             presentPlayer = presentActionData["player"]
 
@@ -94,28 +96,23 @@ def actionsValidator(actionChain, handNumber):
     print("Actions have been validated successfully.", hand_number=handNumber)
 
 
-def roundZeroSumValidator(rawActionChain, actionChain, handNumber):
+def roundZeroSumValidator(rawActionChain, roundChain, config, handNumber):
+    bankrollSum = config["player1"]["bankroll"] + config["player2"]["bankroll"]
 
     if rawActionChain:
-        player_1_bankroll = rawActionChain[0]["player_prev_bankroll"]
-        player_2_bankroll = rawActionChain[1]["player_prev_bankroll"]
-
         p2bankroll = 0
 
         # If someone folds in the first action
-        plist = actionChain[-1]["players"]
+        plist = roundChain[-1]["players"]
 
         for player in plist:
-            if actionChain[-1]["player"]["id"] != player["id"]:
+            if roundChain[-1]["player"]["id"] != player["id"]:
                 p2bankroll = player["bankroll"]
 
-        print(p2bankroll, hand_number=handNumber)
-
         condition = (
-            player_1_bankroll
-            + player_2_bankroll
-            - actionChain[-1]["pot_after"]
-            - actionChain[-1]["player"]["bankroll"]
+            bankrollSum
+            - roundChain[-1]["pot_after"]
+            - roundChain[-1]["player"]["bankroll"]
             - p2bankroll
         )
 
@@ -123,18 +120,18 @@ def roundZeroSumValidator(rawActionChain, actionChain, handNumber):
             condition
         )
 
-        print("Round is validated.", hand_number=handNumber)
+        print("Hand is validated.", hand_number=handNumber)
 
 
-def validator(actionChain, handNumber):
+def validator(handChain, handNumber):
     """
     Validates each specific metrics of each hands.
     """
 
-    for i in range(len(actionChain)):
+    for i in range(len(handChain)):
         # Pass if it is the first action of a game or the last winning action
 
-        actionData = actionChain[i]
+        actionData = handChain[i]
 
         # Pot validation
         pot0SumCondition = actionData["pot_after"] - (
@@ -151,8 +148,6 @@ def validator(actionChain, handNumber):
 
         # Bankroll Validation
         bld = actionData["blind"]
-
-        print(actionData, hand_number=handNumber)
 
         bankroll0SumCondition = (
             actionData["player_prev_bankroll"]
@@ -175,70 +170,74 @@ def validator(actionChain, handNumber):
             bankroll0SumCondition, actionData
         )
 
-        # Unstable and prolly not required
-        # # Call size validation
-        # if i - 1 >= 0:
-        #     priorActionData = actionChain[i - 1]
-        #     call0SumCondition = (
-        #         (
-        #             actionData["call_size"]
-        #             + (
-        #                 actionData["player"]["betamt"]
-        #                 - (
-        #                     priorActionData["bet"]
-        #                     if priorActionData["bet"] != -1
-        #                     else 0
-        #                 )
-        #             )
-        #         )
-        #         - (priorActionData["bet"] if priorActionData["bet"] != -1 else 0)
-        #         - priorActionData["call_size"]
-        #         - priorActionData["player"]["betamt"]
-        #     )
+        # Call size validation
+        # Based on the idea a player need to match the bet of previous player at any point of the game
+        # Formula: (CallSize + TotalBetAmountOfPlayer) - (OpponentTotalBetAmount) = (CallSize + (Pot/0{conditionally} - OpponentTotalBet)) - OpponentTotalBet
+        # Simplified Formula: CallSize + Pot/0{conditionally} - 2*OpponentTotalBetAmount
+
+        roundChain = roundChainExtractor(handChain, actionData["round"])
+
+        callValidator(roundChain)
+
+        # if i >= 1:
+        #     priorActionData = handChain[i - 1]
+
+        #     callSize = actionData["call_size"]
+        #     pot = actionData["pot_before"]
+        #     oppTotalBetAmt = priorActionData["player"]["betamt"]
+
+        #     if callSize == oppTotalBetAmt == 0:
+        #         pot = 0
+
+        #     call0SumCondition = callSize + pot - 2 * oppTotalBetAmt
 
         #     assert (
         #         call0SumCondition == 0
-        #     ), "Call zero sum condition (returned {}) failed in action: \n {}".format(
+        #     ), "Call zero sum condition (returned {}) failed in action: \n{}".format(
         #         call0SumCondition, actionData
         #     )
 
-    print("Pot and bankrolls validated successfully.", hand_number=handNumber)
+    print(
+        "Pot, bankrolls and call sizes are validated successfully.",
+        hand_number=handNumber,
+    )
 
 
-# def blind(actionChain, actionInObs, handNumber):
-#     roundChain = roundChainExtractor(actionChain, 0)
+def callValidator(roundChain):
+    """
 
-#     for i in range(-1, -3, -1):
-#         print(
-#             "\n\n1: {}\n2: {}\n\n".format(actionInObs, roundChain[i]),
-#             hand_number=handNumber,
-#         )
-#         if actionInObs["id"] == roundChain[i]["id"]:
-#             print(
-#                 "{}".format(actionInObs["id"] == roundChain[i]["id"]),
-#                 hand_number=handNumber,
-#             )
+    #### Call size validation
 
-#             if actionInObs["player"]["id"] == roundChain[i]["blind"]["bb"]["player"]:
-#                 return int(roundChain[i]["blind"]["bb"]["amt"])
-#             elif actionInObs["player"]["id"] == roundChain[i]["blind"]["sb"]["player"]:
-#                 return int(roundChain[i]["blind"]["sb"]["amt"])
+    Based on the idea a player need to match the bet of previous player at any point of the game.\n
+    Formula: (CallSize + TotalBetAmountOfPlayer) - (OpponentTotalBetAmount) = (CallSize + (Pot/0{conditionally} - OpponentTotalBet)) - OpponentTotalBet\n
+    Simplified Formula: CallSize + Pot/0{conditionally} - 2*OpponentTotalBetAmount\n
 
-#     return 0
+    """
+    potEqualiser = 0
 
-# playerID = actionInObs["player"]["id"]
-# for i in range(2):
-#     if actionChain[i] == actionInObs:
-#         if (
-#             actionChain[i]["round"] == 0
-#             and actionChain[i]["player"]["id"] == playerID
-#         ):
-#             if actionChain[i]["blind"]["bb"]["player"] == playerID:
-#                 return actionChain[i]["blind"]["bb"]["amt"]
-#             elif actionChain[i]["blind"]["sb"]["player"] == playerID:
-#                 return actionChain[i]["blind"]["sb"]["amt"]
+    if roundChain:
+        if roundChain[0]["round"] != 0:
+            potEqualiser = roundChain[0]["pot_before"]
 
-# return 0
+    for i in range(len(roundChain)):
+        if i >= 1:
+            actionData = roundChain[i]
+            priorActionData = roundChain[i - 1]
+
+            callSize = actionData["call_size"]
+            pot = actionData["pot_before"] - potEqualiser
+            oppTotalBetAmt = priorActionData["player"]["betamt"]
+
+            if callSize == oppTotalBetAmt == 0:
+                pot = 0
+
+            call0SumCondition = callSize + pot - 2 * oppTotalBetAmt
+
+            assert (
+                call0SumCondition == 0
+            ), "Call zero sum condition (returned {}) failed in action: \n{}".format(
+                call0SumCondition, actionData
+            )
 
 
 def roundChainExtractor(handChain, round_num):
@@ -260,10 +259,10 @@ def actionAssert(presentAction, priorAction, legalPriorActions, playerId):
     )
 
 
-def extractRoundChain(actionChain):
+def extractRoundChain(roundChain):
     rounds = []
     currentRound = -1
-    for action in actionChain:
+    for action in roundChain:
         roundNumber = action["round"]
         if roundNumber != currentRound:
             rounds.append([])

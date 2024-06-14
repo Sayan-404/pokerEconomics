@@ -27,10 +27,10 @@ class Game:
         simul=False,
         seed=None,
         id=0,
-        debug=False,
-        errChk=True,
+        config={},
     ):
         self.id = id
+        self.config = config
         self.deck = deck(seed)
         self.deck.shuffle()
         self.pot = 0
@@ -43,8 +43,6 @@ class Game:
         self.hand_number = 0
         self.all_in = 0
         self.number_of_hands = number_of_hands
-        self.debug = debug
-        self.errChk = errChk
         self.debug_data = []
         self.actionChain = list()
         # rounds are 0-indexed starting with pre-flop
@@ -147,7 +145,11 @@ class Game:
                 desc=f"Simulation ##{self.id}: ",
                 position=self.id,
             ):
-                chainValidate(self.actionChain, self.hand_number)
+                self.debug_data = {
+                    "config": self.config,
+                    "rawActionChain": self.actionChain,
+                }
+                chainValidate(self.debug_data, self.hand_number)
                 if not self.sub_play(i):
                     break
             enablePrint()
