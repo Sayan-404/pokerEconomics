@@ -140,24 +140,26 @@ def validator(actionChain, handNumber):
         )
 
         # Bankroll Validation
-        # bld = actionData["blind"]
+        bld = actionData["blind"]
 
-        # bankroll0SumCondition = (
-        #     actionData["player_prev_bankroll"]
-        #     - actionData["player"]["bankroll"]
-        #     - (
-        #         actionData["bet"]
-        #         if actionData["bet"] != -1
-        #         else actionData["call_size"]
-        #     )
-        #     - bld
-        # )
+        print(actionData, hand_number=handNumber)
 
-        # assert (
-        #     bankroll0SumCondition == 0
-        # ), "Bankroll zero sum condition (returned {}) failed in action: \n {}".format(
-        #     bankroll0SumCondition, actionData
-        # )
+        bankroll0SumCondition = (
+            actionData["player_prev_bankroll"]
+            - actionData["player"]["bankroll"]
+            - (
+                actionData["bet"]
+                if actionData["bet"] != -1
+                else actionData["call_size"]
+            )
+            - bld
+        )
+
+        assert (
+            bankroll0SumCondition == 0
+        ), "Bankroll zero sum condition (returned {}) failed in action: \n {}".format(
+            bankroll0SumCondition, actionData
+        )
 
         # Unstable and prolly not required
         # # Call size validation

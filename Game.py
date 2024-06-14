@@ -203,7 +203,14 @@ class Game:
                 return betsize
 
     def actionStash(
-        self, pot_before, player_prev_bankroll, action, call_value, player, betAmt=-1
+        self,
+        pot_before,
+        player_prev_bankroll,
+        action,
+        call_value,
+        player,
+        betAmt=-1,
+        blind=0,
     ):
         """
         To be called after all the betting functions are done.
@@ -217,7 +224,7 @@ class Game:
             "call_size": call_value,
             "bet": betAmt,
             "pot_after": self.pot,
-            "blind": self.blind,
+            "blind": blind,
             "player": player.to_dict(),
             "players": [player.to_dict() for player in self.players],
         }
@@ -299,6 +306,8 @@ class Game:
             if action == "c":
                 player_prev_bankroll = player.bankroll
 
+                blind = 0
+
                 handChain = extractChain(self.actionChain, handNumber=self.hand_number)
 
                 if len(handChain) == 0 or len(handChain) == 1:
@@ -307,11 +316,13 @@ class Game:
                         or player.id == self.blind["sb"]["player"]
                     ):
                         if callsize == 0 or callsize > self.blind["sb"]["amt"]:
-                            player_prev_bankroll += self.blind["bb"]["amt"]
+                            blind = self.blind["bb"]["amt"]
+                            player_prev_bankroll += blind
                         elif callsize == (
                             self.blind["bb"]["amt"] - self.blind["sb"]["amt"]
                         ):
-                            player_prev_bankroll += self.blind["sb"]["amt"]
+                            blind = self.blind["sb"]["amt"]
+                            player_prev_bankroll += blind
 
                 pot_before = self.pot
 
@@ -327,7 +338,13 @@ class Game:
                         )  # Else allow to "bet" (call the full amount)
 
                     self.actionStash(
-                        pot_before, player_prev_bankroll, action, callsize, player, bet
+                        pot_before,
+                        player_prev_bankroll,
+                        action,
+                        callsize,
+                        player,
+                        bet,
+                        blind=blind,
                     )
                 else:
                     print("Illegal move", hand_number=self.hand_number)
