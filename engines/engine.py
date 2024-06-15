@@ -64,4 +64,4 @@ if __name__ == "__main__":
     game.play()
     ch = input("Run compare test? (y/n): ")
     if ch == "y" or ch == "yes":
-        compare_test(game.logger.games_file)
+        compare_test(f"{game.logger.path}/games.csv")

@@ -29,18 +29,24 @@ class Logger:
             folder = f"r_{name}{number_of_hands}_{self.create_hash()}"
         self.path = f"{os.path.abspath(os.getcwd())}/data/{folder}"
         os.makedirs(self.path)
-        self.config_file = f"{self.path}/config.json"
-        self.hand_file = f"{self.path}/hand_"
-        self.games_file = f"{self.path}/games.csv"
+        self.config_file = open(f"{self.path}/config.json", "w")
+        self.hand_file = open(f"{self.path}/hand_0.txt", "a")
+        self.games_file = open(f"{self.path}/games.csv", "a")
         self.log_hands = log_hands
         original_print = builtins.print
         def custom_print(*args, **kwargs):
-            hand_number = -1
-            if "hand_number" in kwargs:
-                hand_number = kwargs.pop("hand_number", "")
             original_print(*args)
-            self.log_hand(*args, hand_number = hand_number)
+            self.log_hand(*args)
         builtins.print = custom_print
+
+    def close_files(self):
+        self.config_file.close()
+        self.games_file.close()
+        self.hand_file.close()
+    
+    def handle_hand_file(self, i):
+        self.hand_file.close()
+        self.hand_file = open(f"{self.path}/hand_{i}.txt", "a")
 
     def create_hash(self):
         current_time = time.time()
@@ -65,26 +71,20 @@ class Logger:
         config_data["time"] = str(datetime.datetime.now())
         config_data["seed"] = seed
         print(config_data)
-        with open(self.config_file, "w") as f:
-            json.dump(config_data, f, indent=4)
+        json.dump(config_data, self.config_file, indent=4)
         # initiating games csv
-        with open(self.games_file, "w", newline='') as f:
-            writer = csv.writer(f)
-            row = ["hand_no"] + [p.package_state()["id"]+"("+p.package_state()["strategy"]+")" for p in players] + ["winner", "ending_round"]
-            writer.writerow(row)
-            row = [0] + [p.package_state()["bankroll"] for p in players] + ["", -1]
-            writer.writerow(row)
+        writer = csv.writer(self.games_file)
+        row = ["hand_no"] + [p.package_state()["id"]+"("+p.package_state()["strategy"]+")" for p in players] + ["winner", "ending_round"]
+        writer.writerow(row)
+        row = [0] + [p.package_state()["bankroll"] for p in players] + ["", -1]
+        writer.writerow(row)
 
-    def log_hand(self, data, hand_number):
-        if not self.log_hands:
+    def log_hand(self, data):
+        if not self.log_hands or self.hand_file.closed:
             return
-        if hand_number == -1:
-            return
-        with open(f"{self.hand_file}{hand_number}.txt", "a") as f:
-            f.write(f"{data}\n")
+        self.hand_file.write(f"{data}\n")
         
     def log_result(self, data):
-        with open(self.games_file, "a", newline="") as f:
-            writer = csv.writer(f)
-            row = [data["hand_no"] + 1]  + [p for p in data["bankrolls"]] + [data["winner"], data["round"]]
-            writer.writerow(row)
+        writer = csv.writer(self.games_file)
+        row = [data["hand_no"] + 1]  + [p for p in data["bankrolls"]] + [data["winner"], data["round"]]
+        writer.writerow(row)
