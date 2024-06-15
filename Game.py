@@ -109,7 +109,6 @@ class Game:
         """
         self.hand_number = i
         self.logger.handle_hand_file(i)
-
         # Determining the number of players available to play
         count = len(self.players)
         for player in self.players:
@@ -128,6 +127,7 @@ class Game:
         self.preflop()
 
         # Flush and rotate dealer after pre-flop
+        self.logger.log_hand()
         self.flush()
         self.players = self.players[-1:] + self.players[:-1]
         self.pot = 0
@@ -248,7 +248,7 @@ class Game:
         # The last player where the action finishes
         end = self.playing - 1
         i = 0
-
+        betting_data = []
         while 1:
             # Printing information before a bet/call
             print(f"\nPot: {self.pot}")
@@ -304,6 +304,18 @@ class Game:
                 print(action)
             else:
                 action = input()  # Else take input from cli
+
+            current_betting_option_data = {
+                "pot": self.pot,
+                "num_players": self.playing,
+                "num_players_allin": self.all_in,
+                "player": player.id,
+                "callsize": callsize,
+                "present_total_bet": player.betamt,
+                "action": action,
+                "bet": -1,
+                "bankroll": player.bankroll
+            }
 
             # If action is call
             if action == "c":
@@ -444,7 +456,7 @@ class Game:
 
                     # Prints the bet amount
                     print(bet)
-
+                    current_betting_option_data["bet"] = bet
                     # If bankroll less than bet amount then player goes all in
                     if player.bankroll <= bet:
                         bet = player.bankroll
@@ -523,7 +535,7 @@ class Game:
 
                     # Print bet amount
                     print(bet)
-
+                    current_betting_option_data["bet"] = bet
                     # If bankroll is less than bet then player goes all in
                     if player.bankroll <= bet:
                         bet = player.bankroll
@@ -615,8 +627,9 @@ class Game:
                     # Initiate gameover method
                     self.gameover(winner)
 
+                    betting_data.append(current_betting_option_data)
                     # Returns 0 to confirm game ended
-                    return 0
+                    return 0, betting_data
 
                 # If there is only one person playing then game over (will be handled by betting function)
                 if i == end:
@@ -696,7 +709,8 @@ class Game:
                 self.gameover(winner)
 
                 # Returns 0 to confirm game ended
-                return 0
+                betting_data.append(current_betting_option_data)
+                return 0, betting_data
 
             # Exit condition for the loop when all the players have called
             if i == end:
@@ -704,6 +718,8 @@ class Game:
 
             # Change player index to next player and loop over
             i = (i + 1) % len(players)
+            betting_data.append(current_betting_option_data)
+        return 1, betting_data
 
     def preflop(self):
         """
@@ -743,7 +759,18 @@ class Game:
 
         for player in self.players:
             print(f"{player.id}'s blind -> {player.betamt}")
-        
+
+        self.logger.current_hand_data.update({
+            "blinds": {
+                "bankrolls": {
+                    player.id: player.bankroll for player in self.players
+                },
+                "blinds": {
+                    player.id: player.betamt for player in self.players
+                }
+            }
+        })
+
         print("\n-------PRE-FLOP------\n")
         for i in range(self.number_of_players):
             self.players[i].receive_card(self.deck.deal_card())
@@ -757,9 +784,22 @@ class Game:
                 print(card, end=" ")
 
             print("")
-
         # Proceed to flop conditionally after betting
-        if self.betting(self.players, bet_size) != 0:
+        ret = self.betting(self.players, bet_size)
+        
+        self.logger.current_hand_data.update({
+            "pre-flop": {
+                "bankrolls": {
+                    player.id: player.bankroll for player in self.players
+                },
+                "cards": {
+                    player.id: player.hand for player in self.players
+                },
+                "betting": ret[1]
+            }
+        })
+
+        if ret[0]:
             self.flop()
 
     def flop(self):
@@ -781,10 +821,23 @@ class Game:
         print(self.community_cards)
 
         # Proceed to turn conditionally
+        
+        self.logger.current_hand_data.update({
+            "flop": {
+                "bankrolls": {
+                    player.id: player.bankroll for player in self.players
+                },
+                "community_cards": self.community_cards,
+                "betting": []
+            }
+        })
+        
         if self.all_in >= self.playing - 1:
             self.turn()
         else:
-            if self.betting(self.players) != 0:
+            ret = self.betting(self.players)
+            self.logger.current_hand_data["flop"]["betting"] = ret[1]
+            if ret[0]:
                 self.turn()
 
     def turn(self):
@@ -803,11 +856,23 @@ class Game:
 
         print(self.community_cards)
 
+        self.logger.current_hand_data.update({
+            "turn": {
+                "bankrolls": {
+                    player.id: player.bankroll for player in self.players
+                },
+                "community_cards": self.community_cards,
+                "betting": []
+            }
+        })
+
         # Proceed to river conditionally
         if self.all_in >= self.playing - 1:
             self.river()
         else:
-            if self.betting(self.players) != 0:
+            ret = self.betting(self.players)
+            self.logger.current_hand_data["turn"]["betting"] = ret[1]
+            if ret[0]:
                 self.river()
 
     def river(self):
@@ -825,11 +890,24 @@ class Game:
         self.community_cards.append(str(self.deck.deal_card()))
         print(self.community_cards)
 
+        self.logger.current_hand_data.update({
+            "river": {
+                "bankrolls": {
+                    player.id: player.bankroll for player in self.players
+                },
+                "community_cards":
+                    self.community_cards,
+                "betting": []
+            }
+        })
+
         # Proceeds to showdown conditionally
         if self.all_in >= self.playing - 1:
             self.showdown(self.players)
         else:
-            if self.betting(self.players) != 0:
+            ret = self.betting(self.players)
+            self.logger.current_hand_data["river"]["betting"] = ret[1]
+            if ret[0]:
                 self.showdown(self.players)
 
     def gameover(self, winner):
@@ -851,6 +929,13 @@ class Game:
             "bankrolls": [],
         }
 
+        self.logger.current_hand_data["gameover"] = {
+            "winner": winner,
+            "round": self.round,
+            "bankrolls": {
+                player.id: player.bankroll for player in self.players
+            }
+        }
         print("")
 
         for id in bankrolls:

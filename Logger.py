@@ -30,14 +30,40 @@ class Logger:
         self.path = f"{os.path.abspath(os.getcwd())}/data/{folder}"
         os.makedirs(self.path)
         self.config_file = open(f"{self.path}/config.json", "w")
-        self.hand_file = open(f"{self.path}/hand_0.txt", "a")
+        self.hand_file = open(f"{self.path}/hand_0.json", "a")
+        self.current_hand_data = {
+            "blinds": {
+                "bankrolls": {},
+                "blinds": {}
+            },
+            "pre-flop": {
+                "bankrolls": {},
+                "cards": {},
+                "betting": []
+            },
+            "flop": {
+                "bankrolls": {},
+                "community_cards": [],
+                "betting": []
+            },
+            "turn": {
+                "bankrolls": {},
+                "community_cards": [],
+                "betting": []
+            },
+            "river": {
+                "bankrolls": {},
+                "community_cards": [],
+                "betting": []
+            },
+            "gameover": {
+                "winner" : "",
+                "round" : 0,
+                "bankrolls": {}  
+            }
+        }
         self.games_file = open(f"{self.path}/games.csv", "a")
         self.log_hands = log_hands
-        original_print = builtins.print
-        def custom_print(*args, **kwargs):
-            original_print(*args)
-            self.log_hand(*args)
-        builtins.print = custom_print
 
     def close_files(self):
         self.config_file.close()
@@ -46,7 +72,38 @@ class Logger:
     
     def handle_hand_file(self, i):
         self.hand_file.close()
-        self.hand_file = open(f"{self.path}/hand_{i}.txt", "a")
+        self.current_hand_data = {
+            "blinds": {
+                "bankrolls": {},
+                "blinds": {}
+            },
+            "pre-flop": {
+                "bankrolls": {},
+                "cards": {},
+                "betting": []
+            },
+            "flop": {
+                "bankrolls": {},
+                "community_cards": [],
+                "betting": []
+            },
+            "turn": {
+                "bankrolls": {},
+                "community_cards": [],
+                "betting": []
+            },
+            "river": {
+                "bankrolls": {},
+                "community_cards": [],
+                "betting": []
+            },
+            "gameover": {
+                "winner" : "",
+                "round" : 0,
+                "bankrolls": {}  
+            }
+        }
+        self.hand_file = open(f"{self.path}/hand_{i}.json", "a")
 
     def create_hash(self):
         current_time = time.time()
@@ -70,7 +127,6 @@ class Logger:
         config_data["date"] = str(datetime.date.today())
         config_data["time"] = str(datetime.datetime.now())
         config_data["seed"] = seed
-        print(config_data)
         json.dump(config_data, self.config_file, indent=4)
         # initiating games csv
         writer = csv.writer(self.games_file)
@@ -79,10 +135,12 @@ class Logger:
         row = [0] + [p.package_state()["bankroll"] for p in players] + ["", -1]
         writer.writerow(row)
 
-    def log_hand(self, data):
-        if not self.log_hands or self.hand_file.closed:
+    def log_hand(self):
+        if not self.log_hands:
             return
-        self.hand_file.write(f"{data}\n")
+        if self.hand_file.closed:
+            return
+        json.dump(self.current_hand_data, self.hand_file, indent=4)
         
     def log_result(self, data):
         writer = csv.writer(self.games_file)
