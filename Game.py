@@ -5,7 +5,7 @@ import os
 from tqdm import tqdm
 from testing.system_checks import chainValidate
 from testing.system_checks import extractChain
-
+import json
 
 # Disable print
 def blockPrint():
@@ -238,7 +238,56 @@ class Game:
             }
 
             self.actionChain.append(actionData)
+    def updateFrugality(self, path):
+        file = open(path,"r")
+        temp = json.load(file)
+        file.close()
 
+        with open(path,"w") as f:
+            
+            threeBet = temp["3bet"] / temp["handsPlayed"] * 100
+            pfr = temp["pfr"] / temp["handsPlayed"] * 100
+            temp["frugal"] = (threeBet * 3 + pfr * 2) / 5
+            json.dump(temp,f,indent=4)
+
+    def updateHud(self, round, action,player,players):
+        playerloc = f"playerHUDs/{player.id}"
+        if not os.path.exists(playerloc):
+            os.makedirs(playerloc)
+        
+        for _player in players:
+            if _player != player and _player.ingame:
+                dataloc = f"{playerloc}/{_player.id}.json"
+                if not os.path.exists(dataloc):
+                    os.mknod(dataloc)
+                    template = {
+                        "name" : f"{_player.id}",
+                        "handsPlayed" : 0,
+                        "vpip" : 0,
+                        "3bet" : 0,
+                        "pfr" : 0,
+                        "frugal": 0
+                    }
+                    with open(dataloc, "w") as f:
+                        json.dump(template, f, indent=4)
+                
+                file = open(dataloc,"r")
+                temp = json.load(file)
+                file.close()
+
+                with open(dataloc, "w") as f:
+        
+                    if round == 0:
+                        temp["handsPlayed"] += 1 #a logical error is encountered here
+                        if action == "r":
+                            temp["pfr"] += 1
+                    else:
+                        if action == "r":
+                            temp["3bet"] += 1
+                    json.dump(temp, f, indent=4)
+                    #NOW UPDATING THE FRUGALITY 
+                self.updateFrugality(dataloc)
+            
     def betting(self, players, betsize=0):
         """
         Handles the betting round.\n
@@ -304,7 +353,7 @@ class Game:
                 print(action)
             else:
                 action = input()  # Else take input from cli
-
+            self.updateHud(self.round, action,player,self.players)
             current_betting_option_data = {
                 "pot": self.pot,
                 "num_players": self.playing,
