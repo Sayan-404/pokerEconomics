@@ -775,6 +775,7 @@ class Game:
             # Change player index to next player and loop over
             i = (i + 1) % len(players)
             betting_data.append(current_betting_option_data)
+        betting_data.append(current_betting_option_data)
         return 1, betting_data
 
     def preflop(self):
