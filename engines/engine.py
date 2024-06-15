@@ -15,10 +15,14 @@ def get_player_decider(player):
     return getattr(module, "decide")
 
 
-def initialise_run(config, id=0, benchmark=False):
+def initialise_run(config, id=0, benchmark=False, test=False):
     data = {}
-    with open(f"configs/{config}.json", "r") as f:
-        data = json.load(f)
+
+    if test:
+        data = config
+    else:
+        with open(f"configs/{config}.json", "r") as f:
+            data = json.load(f)
 
     # Create players
     player1 = Player(
@@ -42,7 +46,14 @@ def initialise_run(config, id=0, benchmark=False):
     num = data["runs"]
     logger = Logger(log_hands=data["log_hands"], benchmark=benchmark)
     game = Game(
-        players, logger, number_of_hands=num, simul=data["simulation"], seed=seed, id=id
+        players,
+        logger,
+        number_of_hands=num,
+        simul=data["simulation"],
+        seed=seed,
+        id=id,
+        config=data,
+        test=test,
     )
     return game
 

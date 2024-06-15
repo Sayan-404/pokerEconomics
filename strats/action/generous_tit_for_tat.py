@@ -2,7 +2,7 @@
 # However, be more generous.
 
 import random
-from .utils import *
+from ..utils import *
 
 
 def decide(state):

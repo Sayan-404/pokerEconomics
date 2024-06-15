@@ -193,3 +193,7 @@ def privateValue(hand):
     score = score * 0.4167 - 1.67
 
     return score
+
+
+def publicValue(hand):
+    pass

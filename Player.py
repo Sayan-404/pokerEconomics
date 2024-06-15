@@ -61,3 +61,19 @@ class Player:
 
     def __str__(self):
         return f"{self.id}: {self.hand} {self.bankroll}"
+
+    def to_dict(
+        self,
+        include_vars=["id", "hand", "betamt", "ingame", "bankroll", "strategy_name"],
+    ):
+        """
+        Returns a dictionary representation of the Player object with selected variables.
+
+        Args:
+            include_vars (list, optional): A list of variable names to include in the dictionary.
+                Defaults to ["id", "bankroll", "strategy_name"].
+
+        Returns:
+            dict: A dictionary containing the selected player attributes.
+        """
+        return {var: getattr(self, var) for var in include_vars}
