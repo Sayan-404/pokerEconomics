@@ -1,0 +1,18 @@
+{
+    "players": {
+        "0": {
+            "id": "Sayan",
+            "bankroll": 100000,
+            "strategy": "action.cooperative"
+        },
+        "1": {
+            "id": "Sourjya",
+            "bankroll": 100000,
+            "strategy": "action.defective"
+        }
+    },
+    "number_of_hands": 10,
+    "date": "2024-06-15",
+    "time": "2024-06-15 13:01:21.604211",
+    "seed": 1717775133.970668
+}

@@ -1,9 +1,12 @@
 Sayan: 99832
 Sourjya: 100168
--------PRE-FLOP------
+
 ----BLINDS-----
+
 Sayan's blind -> 1
 Sourjya's blind -> 2
+-------PRE-FLOP------
+
 Sayan's cards
 9d
 Tc
@@ -12,121 +15,141 @@ Sourjya's cards
 As
 3s
 
-pot -> 3
-playing: 2
-all_in : 0
-Sayan's bankroll : 99831
-player bet amount: 1
-call size : 1
+
+Pot: 3
+Number of Players Playing: 2
+Number of Players All-In: 0
+Sayan's Bankroll: 99831
+Player's present total bet amount: 1
+Call size: 1
 Sayan's action -> call(c) / check(ch) / bet(b) / raise(r) / fold(f) / all in(a): 
 c
-pot -> 4
-playing: 2
-all_in : 0
-Sourjya's bankroll : 100166
-player bet amount: 2
-call size : 0
+
+Pot: 4
+Number of Players Playing: 2
+Number of Players All-In: 0
+Sourjya's Bankroll: 100166
+Player's present total bet amount: 2
+Call size: 0
 Sourjya's action -> call(c) / check(ch) / bet(b) / raise(r) / fold(f) / all in(a): 
 r
 Enter the raise: 
 10
-betsize -> 12
-pot -> 14
-playing: 2
-all_in : 0
-Sayan's bankroll : 99830
-player bet amount: 2
-call size : 10
+Player's current total bet size: 12
+
+Pot: 14
+Number of Players Playing: 2
+Number of Players All-In: 0
+Sayan's Bankroll: 99830
+Player's present total bet amount: 2
+Call size: 10
 Sayan's action -> call(c) / check(ch) / bet(b) / raise(r) / fold(f) / all in(a): 
 c
--------FLOP------
+
+-------------FLOP-------------
+
 ['6s', 'Qd', '9h']
-pot -> 24
-playing: 2
-all_in : 0
-Sayan's bankroll : 99820
-player bet amount: 0
-call size : 0
+
+Pot: 24
+Number of Players Playing: 2
+Number of Players All-In: 0
+Sayan's Bankroll: 99820
+Player's present total bet amount: 0
+Call size: 0
 Sayan's action -> call(c) / check(ch) / bet(b) / raise(r) / fold(f) / all in(a): 
 ch
-pot -> 24
-playing: 2
-all_in : 0
-Sourjya's bankroll : 100156
-player bet amount: 0
-call size : 0
+
+Pot: 24
+Number of Players Playing: 2
+Number of Players All-In: 0
+Sourjya's Bankroll: 100156
+Player's present total bet amount: 0
+Call size: 0
 Sourjya's action -> call(c) / check(ch) / bet(b) / raise(r) / fold(f) / all in(a): 
 b
 Enter the bet: 
 10
-betsize -> 10
-pot -> 34
-playing: 2
-all_in : 0
-Sayan's bankroll : 99820
-player bet amount: 0
-call size : 10
+Player's current total bet size: 10
+
+Pot: 34
+Number of Players Playing: 2
+Number of Players All-In: 0
+Sayan's Bankroll: 99820
+Player's present total bet amount: 0
+Call size: 10
 Sayan's action -> call(c) / check(ch) / bet(b) / raise(r) / fold(f) / all in(a): 
 c
--------TURN------
+
+-------------TURN-------------
+
 ['6s', 'Qd', '9h', '8s']
-pot -> 44
-playing: 2
-all_in : 0
-Sayan's bankroll : 99810
-player bet amount: 0
-call size : 0
+
+Pot: 44
+Number of Players Playing: 2
+Number of Players All-In: 0
+Sayan's Bankroll: 99810
+Player's present total bet amount: 0
+Call size: 0
 Sayan's action -> call(c) / check(ch) / bet(b) / raise(r) / fold(f) / all in(a): 
 ch
-pot -> 44
-playing: 2
-all_in : 0
-Sourjya's bankroll : 100146
-player bet amount: 0
-call size : 0
+
+Pot: 44
+Number of Players Playing: 2
+Number of Players All-In: 0
+Sourjya's Bankroll: 100146
+Player's present total bet amount: 0
+Call size: 0
 Sourjya's action -> call(c) / check(ch) / bet(b) / raise(r) / fold(f) / all in(a): 
 b
 Enter the bet: 
 10
-betsize -> 10
-pot -> 54
-playing: 2
-all_in : 0
-Sayan's bankroll : 99810
-player bet amount: 0
-call size : 10
+Player's current total bet size: 10
+
+Pot: 54
+Number of Players Playing: 2
+Number of Players All-In: 0
+Sayan's Bankroll: 99810
+Player's present total bet amount: 0
+Call size: 10
 Sayan's action -> call(c) / check(ch) / bet(b) / raise(r) / fold(f) / all in(a): 
 c
--------RIVER------
+
+-------------RIVER-------------
+
 ['6s', 'Qd', '9h', '8s', 'Ah']
-pot -> 64
-playing: 2
-all_in : 0
-Sayan's bankroll : 99800
-player bet amount: 0
-call size : 0
+
+Pot: 64
+Number of Players Playing: 2
+Number of Players All-In: 0
+Sayan's Bankroll: 99800
+Player's present total bet amount: 0
+Call size: 0
 Sayan's action -> call(c) / check(ch) / bet(b) / raise(r) / fold(f) / all in(a): 
 ch
-pot -> 64
-playing: 2
-all_in : 0
-Sourjya's bankroll : 100136
-player bet amount: 0
-call size : 0
+
+Pot: 64
+Number of Players Playing: 2
+Number of Players All-In: 0
+Sourjya's Bankroll: 100136
+Player's present total bet amount: 0
+Call size: 0
 Sourjya's action -> call(c) / check(ch) / bet(b) / raise(r) / fold(f) / all in(a): 
 b
 Enter the bet: 
 10
-betsize -> 10
-pot -> 74
-playing: 2
-all_in : 0
-Sayan's bankroll : 99800
-player bet amount: 0
-call size : 10
+Player's current total bet size: 10
+
+Pot: 74
+Number of Players Playing: 2
+Number of Players All-In: 0
+Sayan's Bankroll: 99800
+Player's present total bet amount: 0
+Call size: 10
 Sayan's action -> call(c) / check(ch) / bet(b) / raise(r) / fold(f) / all in(a): 
 c
-winner: Sourjya
+
+Winner: Sourjya
 Hand Ended
+
 Sayan stack: 99790
 Sourjya stack: 100210

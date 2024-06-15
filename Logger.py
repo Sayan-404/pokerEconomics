@@ -19,14 +19,17 @@ import uuid
 import hashlib
 
 class Logger:
-    def __init__(self, log_hands = False, benchmark = False): # each hand is logged if this is true
+    def __init__(self, log_hands = False, benchmark = False, strategies = [], number_of_hands = 0):
+        name = ""
+        for strat in strategies:
+            name += f"{strat}_"
         if benchmark:
-            folder = f"b_{datetime.date.today()}_{self.create_hash()}"
+            folder = f"b_{name}{number_of_hands}_{self.create_hash()}"
         else:
-            folder = f"{datetime.date.today()}_{self.create_hash()}"
+            folder = f"r_{name}{number_of_hands}_{self.create_hash()}"
         self.path = f"{os.path.abspath(os.getcwd())}/data/{folder}"
         os.makedirs(self.path)
-        self.config_file = f"{self.path}/config.txt"
+        self.config_file = f"{self.path}/config.json"
         self.hand_file = f"{self.path}/hand_"
         self.games_file = f"{self.path}/games.csv"
         self.log_hands = log_hands
@@ -48,12 +51,22 @@ class Logger:
 
 
     def log_config(self, players, num, seed):
+        config_data = {
+            "players": {}
+        }
+        for i in range(len(players)):
+            player_data = players[i].package_state()
+            del player_data["hand"]
+            del player_data["ingame"]
+            del player_data["betamt"]
+            config_data["players"][i] = player_data
+        config_data["number_of_hands"] = num
+        config_data["date"] = str(datetime.date.today())
+        config_data["time"] = str(datetime.datetime.now())
+        config_data["seed"] = seed
+        print(config_data)
         with open(self.config_file, "w") as f:
-            for player in players:
-                f.write(json.dumps(player.package_state(), indent=4))
-            f.write(f"\nNumber of hands: {num}\n")
-            f.write(f"Simulation starting time: {datetime.datetime.now()}\n")
-            f.write(f"Seed: {seed}")
+            json.dump(config_data, f, indent=4)
         # initiating games csv
         with open(self.games_file, "w", newline='') as f:
             writer = csv.writer(f)

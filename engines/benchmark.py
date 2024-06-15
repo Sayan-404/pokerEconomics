@@ -53,4 +53,4 @@ if __name__ == "__main__":
     multiplier = int(input("Enter multiplier: "))
     average_best_num_processes(multiplier)
     print("Cleaning up .....")
-    _ = subprocess.Popen("rm -rf data/b_2024*/", shell=True)
+    _ = subprocess.Popen("rm -rf data/b_*/", shell=True)

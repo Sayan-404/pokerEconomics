@@ -44,7 +44,7 @@ def initialise_run(config, id=0, benchmark=False, test=False):
         seed = data["seed"]
 
     num = data["runs"]
-    logger = Logger(log_hands=data["log_hands"], benchmark=benchmark)
+    logger = Logger(log_hands=data["log_hands"], benchmark=benchmark, strategies=[player.strategy_name for player in players], number_of_hands=num)
     game = Game(
         players,
         logger,

@@ -723,13 +723,6 @@ class Game:
             if player.bankroll == 0:
                 player.ingame = 0
 
-        print("\n-------------PRE-FLOP-------------", hand_number=self.hand_number)
-
-        # Deals player card
-        for i in range(self.number_of_players):
-            self.players[i].receive_card(self.deck.deal_card())
-            self.players[i].receive_card(self.deck.deal_card())
-
         bet_size = 2
 
         # Determines the blinds
@@ -756,11 +749,12 @@ class Game:
         print("\n----BLINDS-----\n", hand_number=self.hand_number)
 
         for player in self.players:
-            if player.betamt > 0:
-                print(
-                    f"{player.id}'s blind: {player.betamt}",
-                    hand_number=self.hand_number,
-                )
+            print(f"{player.id}'s blind -> {player.betamt}", hand_number=self.hand_number)
+        
+        print("-------PRE-FLOP------", hand_number=self.hand_number)
+        for i in range(self.number_of_players):
+            self.players[i].receive_card(self.deck.deal_card())
+            self.players[i].receive_card(self.deck.deal_card())
 
         print("", hand_number=self.hand_number)
 
