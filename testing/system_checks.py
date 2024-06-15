@@ -11,10 +11,9 @@ def chainValidate(debugData, handNumber):
     rawActionChain = debugData["rawActionChain"]
     config = debugData["config"]
     handChain = extractChain(rawActionChain, handNumber)
-    debugPrint(handChain, handNumber)
-    actionsValidator(handChain, handNumber)
-    validator(handChain, handNumber)
-    roundZeroSumValidator(rawActionChain, handChain, config, handNumber)
+    actionsValidator(handChain)
+    validator(handChain)
+    roundZeroSumValidator(rawActionChain, handChain, config)
 
 
 def extractChain(rawActionChain, handNumber):
@@ -27,7 +26,7 @@ def extractChain(rawActionChain, handNumber):
     return roundChain
 
 
-def actionsValidator(roundChain, handNumber):
+def actionsValidator(roundChain):
     """
     Validates all the actions taken in a hand.
     """
@@ -93,10 +92,8 @@ def actionsValidator(roundChain, handNumber):
                     presentPlayer["id"], action
                 )
 
-    print("Actions have been validated successfully.", hand_number=handNumber)
 
-
-def roundZeroSumValidator(rawActionChain, roundChain, config, handNumber):
+def roundZeroSumValidator(rawActionChain, roundChain, config):
     bankrollSum = config["player1"]["bankroll"] + config["player2"]["bankroll"]
 
     if rawActionChain:
@@ -120,10 +117,8 @@ def roundZeroSumValidator(rawActionChain, roundChain, config, handNumber):
             condition
         )
 
-        print("Hand is validated.", hand_number=handNumber)
 
-
-def validator(handChain, handNumber):
+def validator(handChain):
     """
     Validates each specific metrics of each hands.
     """
@@ -172,11 +167,6 @@ def validator(handChain, handNumber):
 
         roundChain = roundChainExtractor(handChain, actionData["round"])
         callValidator(roundChain)
-
-    print(
-        "Pot, bankrolls and call sizes are validated successfully.",
-        hand_number=handNumber,
-    )
 
 
 def callValidator(roundChain):
@@ -245,18 +235,3 @@ def extractRoundChain(roundChain):
             currentRound = roundNumber
         rounds[-1].append(action)
     return rounds
-
-
-def debugPrint(rawActionChain, handNumber):
-    if rawActionChain:
-        print(
-            "\n\n\n\n-------------------------------For Debug-------------------------------\n\n\n\n",
-            hand_number=handNumber,
-        )
-
-        prettyPrint(rawActionChain, handNumber)
-        print("", hand_number=handNumber)
-
-
-def prettyPrint(chain, handNumber):
-    print(js.dumps(chain, indent=4), hand_number=handNumber)

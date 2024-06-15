@@ -8,6 +8,7 @@ from testing.system_checks import extractChain
 import json
 import traceback
 
+
 # Disable print
 def blockPrint():
     sys.stdout = open(os.devnull, "w")
@@ -243,57 +244,57 @@ class Game:
             }
 
             self.actionChain.append(actionData)
-            
+
     def updateFrugality(self, path):
-        file = open(path,"r")
+        file = open(path, "r")
         temp = json.load(file)
         file.close()
 
-        with open(path,"w") as f:
-            
+        with open(path, "w") as f:
+
             threeBet = temp["3bet"] / temp["handsPlayed"] * 100
             pfr = temp["pfr"] / temp["handsPlayed"] * 100
             temp["frugal"] = (threeBet * 3 + pfr * 2) / 5
-            json.dump(temp,f,indent=4)
+            json.dump(temp, f, indent=4)
 
-    def updateHud(self, round, action,player,players):
+    def updateHud(self, round, action, player, players):
         playerloc = f"playerHUDs/{player.id}"
         if not os.path.exists(playerloc):
             os.makedirs(playerloc)
-        
+
         for _player in players:
             if _player != player and _player.ingame:
                 dataloc = f"{playerloc}/{_player.id}.json"
                 if not os.path.exists(dataloc):
                     os.mknod(dataloc)
                     template = {
-                        "name" : f"{_player.id}",
-                        "handsPlayed" : 0,
-                        "vpip" : 0,
-                        "3bet" : 0,
-                        "pfr" : 0,
-                        "frugal": 0
+                        "name": f"{_player.id}",
+                        "handsPlayed": 0,
+                        "vpip": 0,
+                        "3bet": 0,
+                        "pfr": 0,
+                        "frugal": 0,
                     }
                     with open(dataloc, "w") as f:
                         json.dump(template, f, indent=4)
-                
-                file = open(dataloc,"r")
+
+                file = open(dataloc, "r")
                 temp = json.load(file)
                 file.close()
 
                 with open(dataloc, "w") as f:
-        
+
                     if round == 0:
-                        temp["handsPlayed"] += 1 #a logical error is encountered here
+                        temp["handsPlayed"] += 1  # a logical error is encountered here
                         if action == "r":
                             temp["pfr"] += 1
                     else:
                         if action == "r":
                             temp["3bet"] += 1
                     json.dump(temp, f, indent=4)
-                    #NOW UPDATING THE FRUGALITY 
+                    # NOW UPDATING THE FRUGALITY
                 self.updateFrugality(dataloc)
-            
+
     def betting(self, players, betsize=0):
         """
         Handles the betting round.\n
@@ -370,7 +371,7 @@ class Game:
                 "present_total_bet": player.betamt,
                 "action": action,
                 "bet": -1,
-                "bankroll": player.bankroll
+                "bankroll": player.bankroll,
             }
 
             # If action is call
@@ -435,7 +436,7 @@ class Game:
                         blind = 0
 
                         handChain = extractChain(
-                            self.actionChain
+                            self.actionChain, handNumber=self.hand_number
                         )
 
                         if len(handChain) == 0 or len(handChain) == 1:
@@ -724,9 +725,7 @@ class Game:
                 bet = player.bankroll
                 betsize = bet + player.betamt
 
-                print(
-                    f"Player's current total bet size: {bet}"
-                )
+                print(f"Player's current total bet size: {bet}")
 
                 # Bets the player's bankroll
                 self.all_in += 1
@@ -817,16 +816,16 @@ class Game:
         for player in self.players:
             print(f"{player.id}'s blind -> {player.betamt}")
 
-        self.logger.current_hand_data.update({
-            "blinds": {
-                "bankrolls": {
-                    player.id: player.bankroll for player in self.players
-                },
+        self.logger.current_hand_data.update(
+            {
                 "blinds": {
-                    player.id: player.betamt for player in self.players
+                    "bankrolls": {
+                        player.id: player.bankroll for player in self.players
+                    },
+                    "blinds": {player.id: player.betamt for player in self.players},
                 }
             }
-        })
+        )
 
         print("\n-------PRE-FLOP------\n")
         for i in range(self.number_of_players):
@@ -843,18 +842,18 @@ class Game:
             print("")
         # Proceed to flop conditionally after betting
         ret = self.betting(self.players, bet_size)
-        
-        self.logger.current_hand_data.update({
-            "pre-flop": {
-                "bankrolls": {
-                    player.id: player.bankroll for player in self.players
-                },
-                "cards": {
-                    player.id: player.hand for player in self.players
-                },
-                "betting": ret[1]
+
+        self.logger.current_hand_data.update(
+            {
+                "pre-flop": {
+                    "bankrolls": {
+                        player.id: player.bankroll for player in self.players
+                    },
+                    "cards": {player.id: player.hand for player in self.players},
+                    "betting": ret[1],
+                }
             }
-        })
+        )
 
         if ret[0]:
             self.flop()
@@ -878,17 +877,19 @@ class Game:
         print(self.community_cards)
 
         # Proceed to turn conditionally
-        
-        self.logger.current_hand_data.update({
-            "flop": {
-                "bankrolls": {
-                    player.id: player.bankroll for player in self.players
-                },
-                "community_cards": self.community_cards,
-                "betting": []
+
+        self.logger.current_hand_data.update(
+            {
+                "flop": {
+                    "bankrolls": {
+                        player.id: player.bankroll for player in self.players
+                    },
+                    "community_cards": self.community_cards,
+                    "betting": [],
+                }
             }
-        })
-        
+        )
+
         if self.all_in >= self.playing - 1:
             self.turn()
         else:
@@ -913,15 +914,17 @@ class Game:
 
         print(self.community_cards)
 
-        self.logger.current_hand_data.update({
-            "turn": {
-                "bankrolls": {
-                    player.id: player.bankroll for player in self.players
-                },
-                "community_cards": self.community_cards,
-                "betting": []
+        self.logger.current_hand_data.update(
+            {
+                "turn": {
+                    "bankrolls": {
+                        player.id: player.bankroll for player in self.players
+                    },
+                    "community_cards": self.community_cards,
+                    "betting": [],
+                }
             }
-        })
+        )
 
         # Proceed to river conditionally
         if self.all_in >= self.playing - 1:
@@ -947,16 +950,17 @@ class Game:
         self.community_cards.append(str(self.deck.deal_card()))
         print(self.community_cards)
 
-        self.logger.current_hand_data.update({
-            "river": {
-                "bankrolls": {
-                    player.id: player.bankroll for player in self.players
-                },
-                "community_cards":
-                    self.community_cards,
-                "betting": []
+        self.logger.current_hand_data.update(
+            {
+                "river": {
+                    "bankrolls": {
+                        player.id: player.bankroll for player in self.players
+                    },
+                    "community_cards": self.community_cards,
+                    "betting": [],
+                }
             }
-        })
+        )
 
         # Proceeds to showdown conditionally
         if self.all_in >= self.playing - 1:
@@ -989,9 +993,7 @@ class Game:
         self.logger.current_hand_data["gameover"] = {
             "winner": winner,
             "round": self.round,
-            "bankrolls": {
-                player.id: player.bankroll for player in self.players
-            }
+            "bankrolls": {player.id: player.bankroll for player in self.players},
         }
         print("")
 
