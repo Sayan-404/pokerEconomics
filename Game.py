@@ -6,6 +6,7 @@ from tqdm import tqdm
 from testing.system_checks import chainValidate
 from testing.system_checks import extractChain
 import json
+import traceback
 
 # Disable print
 def blockPrint():
@@ -134,34 +135,38 @@ class Game:
         return 1
 
     def play(self, benchmark=False):
-        if benchmark and self.simul:
-            blockPrint()
-            for i in range(self.number_of_hands):
-                if not self.sub_play(i):
-                    break
-            enablePrint()
-        elif self.simul:
-            blockPrint()
-            for i in tqdm(
-                range(self.number_of_hands),
-                desc=f"Simulation ##{self.id}: ",
-                position=self.id,
-            ):
-                if self.test:
-                    self.debug_data = {
-                        "config": self.config,
-                        "rawActionChain": self.actionChain,
-                    }
-                    chainValidate(self.debug_data, self.hand_number)
+        try:
+            if benchmark and self.simul:
+                blockPrint()
+                for i in range(self.number_of_hands):
+                    if not self.sub_play(i):
+                        break
+                enablePrint()
+            elif self.simul:
+                blockPrint()
+                for i in tqdm(
+                    range(self.number_of_hands),
+                    desc=f"Simulation ##{self.id}: ",
+                    position=self.id,
+                ):
+                    if self.test:
+                        self.debug_data = {
+                            "config": self.config,
+                            "rawActionChain": self.actionChain,
+                        }
+                        chainValidate(self.debug_data, self.hand_number)
 
-                if not self.sub_play(i):
-                    break
-            enablePrint()
-        else:
-            for i in range(self.number_of_hands):
-                if not self.sub_play(i):
-                    break
-        self.logger.close_files()
+                    if not self.sub_play(i):
+                        break
+                enablePrint()
+            else:
+                for i in range(self.number_of_hands):
+                    if not self.sub_play(i):
+                        break
+            self.logger.close_files()
+        except Exception as e:
+            trc = traceback.format_exc()
+            self.logger.log_error(trc)
 
     def player_bet(self, player, amt):
         """
@@ -238,6 +243,7 @@ class Game:
             }
 
             self.actionChain.append(actionData)
+            
     def updateFrugality(self, path):
         file = open(path,"r")
         temp = json.load(file)
@@ -353,7 +359,8 @@ class Game:
                 print(action)
             else:
                 action = input()  # Else take input from cli
-            self.updateHud(self.round, action,player,self.players)
+            # self.updateHud(self.round, action,player,self.players)
+
             current_betting_option_data = {
                 "pot": self.pot,
                 "num_players": self.playing,

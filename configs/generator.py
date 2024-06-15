@@ -18,7 +18,7 @@ def create_single_config():
 
 def generate_round_robin_strategy_configs():
     strats = []
-    types = ["action", "value"]
+    types = ["action", "value", "sentient"]
     for ty in types:
         files = os.listdir(f"strats/{ty}/")
         for strat in files:

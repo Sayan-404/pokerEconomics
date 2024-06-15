@@ -112,6 +112,10 @@ class Logger:
         digest = hashlib.md5(identifier_string.encode()).hexdigest()
         return digest
 
+    def log_error(self, err):
+        filename = f"{self.path}/error.txt"
+        with open(filename, "w") as f:
+            f.write(err)
 
     def log_config(self, players, num, seed):
         config_data = {
