@@ -767,14 +767,13 @@ class Game:
                 betting_data.append(current_betting_option_data)
                 return 0, betting_data
 
+            betting_data.append(current_betting_option_data)
             # Exit condition for the loop when all the players have called
             if i == end:
                 break
 
             # Change player index to next player and loop over
             i = (i + 1) % len(players)
-            betting_data.append(current_betting_option_data)
-        betting_data.append(current_betting_option_data)
         return 1, betting_data
 
     def preflop(self):
