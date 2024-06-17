@@ -331,20 +331,35 @@ class Game:
             )
             print(f"Call size: {callsize}")
 
+            current_betting_option_data = {
+                "pot": self.pot,
+                "num_players": self.playing,
+                "num_players_allin": self.all_in,
+                "player": player.id,
+                "callsize": callsize,
+                "present_total_bet": player.betamt,
+                "action": "",
+                "bet": -1,
+                "bankroll": player.bankroll,
+            }
+
             # Check if the player is still in the current game
             if player.ingame == 0:
                 # If not then move to next player
                 i = (i + 1) % len(players)
+                betting_data.append(current_betting_option_data)
                 continue
 
             # If not then move to the next player
             if player.bankroll == 0:
                 # If all players have gone all in then break
                 if self.all_in >= self.playing - 1:
+                    betting_data.append(current_betting_option_data)
                     break
 
                 # Else move to next player
                 i = (i + 1) % len(players)
+                betting_data.append(current_betting_option_data)
                 continue
 
             # Print out the options
@@ -361,19 +376,7 @@ class Game:
             else:
                 action = input()  # Else take input from cli
             # self.updateHud(self.round, action,player,self.players)
-
-            current_betting_option_data = {
-                "pot": self.pot,
-                "num_players": self.playing,
-                "num_players_allin": self.all_in,
-                "player": player.id,
-                "callsize": callsize,
-                "present_total_bet": player.betamt,
-                "action": action,
-                "bet": -1,
-                "bankroll": player.bankroll,
-            }
-
+            current_betting_option_data["action"] = action
             # If action is call
             if action == "c":
                 if self.test:
@@ -425,6 +428,8 @@ class Game:
                 else:
                     print("Illegal move")
                     i = (i + len(players)) % len(players)
+                    current_betting_option_data["err"] = "Illegal move"
+                    betting_data.append(current_betting_option_data)
                     continue
 
             # If action is check
@@ -467,6 +472,8 @@ class Game:
                 else:
                     print("Illegal move")
                     i = (i + len(players)) % len(players)
+                    current_betting_option_data["err"] = "Illegal move"
+                    betting_data.append(current_betting_option_data)
                     continue
 
             # If action is bet
@@ -509,6 +516,8 @@ class Game:
                     if bet <= 0:
                         print("Bet size cannot be less than or equal to zero")
                         i = (i + len(players)) % len(players)
+                        current_betting_option_data["err"] = "Bet size cannot be less than or equal to zero"
+                        betting_data.append(current_betting_option_data)
                         continue
 
                     # Prints the bet amount
@@ -522,6 +531,7 @@ class Game:
                     # Checks if stack exceeded or not
                     if self.check_stack(bet - callsize) == 0:
                         i = (i + len(players)) % len(players)
+                        betting_data.append(current_betting_option_data)
                         continue
 
                     # Bet's the total bet amount
@@ -547,6 +557,8 @@ class Game:
                 else:
                     print("Illegal move")
                     i = (i + len(players)) % len(players)
+                    current_betting_option_data["err"] = "Illegal move"
+                    betting_data.append(current_betting_option_data)
                     continue
 
             # If action is raise
@@ -588,6 +600,8 @@ class Game:
                     if bet <= 0:
                         print("Raise size cannot be less than or equal to zero")
                         i = (i + len(players)) % len(players)
+                        current_betting_option_data["err"] = "Raise cannot be less than or equal to zero"
+                        betting_data.append(current_betting_option_data)
                         continue
 
                     # Print bet amount
@@ -601,6 +615,7 @@ class Game:
                     # Checks stack exceeded or not
                     if self.check_stack(bet - callsize) == 0:
                         i = (i + len(players)) % len(players)
+                        betting_data.append(current_betting_option_data)
                         continue
 
                     # Bets the effective bet amount
@@ -626,6 +641,8 @@ class Game:
                 else:
                     print("Illegal move")
                     i = (i + len(players)) % len(players)
+                    current_betting_option_data["err"] = "Illegal move"
+                    betting_data.append(current_betting_option_data)
                     continue
 
             # If action is fold
@@ -692,6 +709,7 @@ class Game:
                 if i == end:
                     end = (i - 1) % len(players)
                     print(f"end is -> {end}")
+                    betting_data.append(current_betting_option_data)
                     break
 
             # If action is all-in
@@ -747,6 +765,8 @@ class Game:
             else:
                 print("invalid Input")
                 i = (i + len(players)) % len(players)
+                current_betting_option_data["err"] = "Illegal move"
+                betting_data.append(current_betting_option_data)
                 continue
 
             # If only one person is playing then determines the winner (the sole person)
