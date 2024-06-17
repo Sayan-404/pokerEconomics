@@ -1,19 +1,19 @@
 from itertools import combinations
 from phevaluator.evaluator import evaluate_cards
-from .math_utils import standardise, kde_plot, inverse_range
+from .math_utils import scale, kde_plot, inverse_range
 from tqdm import tqdm
 
 def get_score(cards):
     score = evaluate_cards(*cards)
     if len(cards) == 5:
         score = inverse_range(score, 1, 7462)
-        score = standardise(score, 1, 7462)
+        score = scale(score, 1, 7462)
     elif len(cards) == 6:
         score = inverse_range(score, 1, 7450)
-        score = standardise(score, 1, 7450)
+        score = scale(score, 1, 7450)
     elif len(cards) == 7:
         score = inverse_range(score, 1, 7414)
-        score = standardise(score, 1, 7414)
+        score = scale(score, 1, 7414)
     return score
 
 if __name__ == "__main__":

@@ -4,7 +4,7 @@ import seaborn as sns
 def inverse_range(value, min_value, max_value):
     return (max_value + min_value) - value
 
-def standardise(value, old_min, old_max, new_min=0.0, new_max=10.0):
+def scale(value, old_min, old_max, new_min=0.0, new_max=10.0):
     return ((value - old_min) * (new_max - new_min) / (old_max - old_min)) + new_min
 
 def kde_plot(scores):
