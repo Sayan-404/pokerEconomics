@@ -1,6 +1,6 @@
 from itertools import combinations
 from phevaluator.evaluator import evaluate_cards
-from math_utils import standardise, kde_plot, inverse_range
+from .math_utils import standardise, kde_plot, inverse_range
 from tqdm import tqdm
 
 def get_score(cards):

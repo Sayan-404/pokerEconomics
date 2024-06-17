@@ -1,6 +1,11 @@
+import sys
+import os
+
+sys.path.append(os.getcwd())
+
 # Include utilities for developing strategies
-from chen import get_score
-from ph_score import get_score as get_ph_score
+from .chen import get_score
+from .ph_score import get_score as get_ph_score
 
 def systemResponse(state):
     """

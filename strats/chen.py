@@ -1,7 +1,7 @@
 import math
 
 from tqdm import tqdm
-from math_utils import standardise, kde_plot
+from .math_utils import standardise, kde_plot
 from itertools import combinations
 # IMPORTANT: the score in chen are not uniformly distributed, ie pairs of cards are not equally distributed for each given score range
 # therefore a mean understanding does not suffice and a mode understanding is necessary
@@ -65,5 +65,3 @@ if __name__ == "__main__":
     one_d_scores = [score[1] for score in scores]
     print(f"max: {max(one_d_scores)} min: {min(one_d_scores)}")
     kde_plot([score[1] for score in scores])
-
-    # range: 
