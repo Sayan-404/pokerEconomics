@@ -294,6 +294,23 @@ class Game:
                     json.dump(temp, f, indent=4)
                     # NOW UPDATING THE FRUGALITY
                 self.updateFrugality(dataloc)
+    def HUDdetails(self, bettingData):
+        pot = bettingData["pot"]
+        bet = bettingData["bet"]
+        player = [_player for _player in self.players if _player.id == bettingData["player"]][0]
+        # player = player[0]
+        action = bettingData["action"]
+        frugality = 0
+        # opp = [_player for _player in self.players if _player != player]
+        # opp = opp[0]
+        if(action == "b"):
+            frugality = bet/pot + bet/player.bankroll
+        if (action == "r"):
+            frugality = (bet/pot + bet/player.bankroll)/2 
+        player.frugal += frugality
+        player.meanFrugal = player.frugal / self.number_of_hands
+
+
 
     def betting(self, players, betsize=0):
         """
@@ -543,7 +560,7 @@ class Game:
                         f"Player's current total bet size: {betsize}",
                     )
                     end = (i - 1) % len(players)
-
+                    self.HUDdetails(current_betting_option_data)
                     if self.test:
                         self.actionStash(
                             pot_before,
@@ -627,7 +644,7 @@ class Game:
                         f"Player's current total bet size: {betsize}",
                     )
                     end = (i - 1) % len(players)
-
+                    self.HUDdetails(current_betting_option_data)
                     if self.test:
                         self.actionStash(
                             pot_before,
@@ -638,6 +655,7 @@ class Game:
                             bet,
                             blind=blind,
                         )
+                    
                 else:
                     print("Illegal move")
                     i = (i + len(players)) % len(players)

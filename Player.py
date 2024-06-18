@@ -7,6 +7,8 @@ class Player:
         self.ingame = 1
         self.decide = strategy  # this points to the decide function in every strategy file, this function has the signature decide(state)
         self.strategy_name = strategy_name
+        self.frugal = 0
+        self.meanFrugal = 0
         # it takes the state and returns two values: move, bet
         # moves could be: c, ch, b, r, f
         # b and r are accompanied with a non-negative bet value
@@ -24,6 +26,7 @@ class Player:
             "betamt": self.betamt,
             "ingame": self.ingame,
             "strategy": self.strategy_name,
+            "frugality": self.meanFrugal,
         }
 
     def flush(self):
