@@ -1,0 +1,171 @@
+{
+    "blinds": {
+        "bankrolls": {
+            "Sourjya": 100041,
+            "Sayan": 99956
+        },
+        "blinds": {
+            "Sourjya": 1,
+            "Sayan": 2
+        }
+    },
+    "pre-flop": {
+        "bankrolls": {
+            "Sourjya": 100030,
+            "Sayan": 99946
+        },
+        "cards": {
+            "Sourjya": [
+                "As",
+                "8s"
+            ],
+            "Sayan": [
+                "5d",
+                "Qd"
+            ]
+        },
+        "betting": [
+            {
+                "pot": 3,
+                "num_players": 2,
+                "num_players_allin": 0,
+                "player": "Sourjya",
+                "callsize": 1,
+                "present_total_bet": 1,
+                "action": "r",
+                "bet": 11,
+                "bankroll": 100041
+            },
+            {
+                "pot": 14,
+                "num_players": 2,
+                "num_players_allin": 0,
+                "player": "Sayan",
+                "callsize": 10,
+                "present_total_bet": 2,
+                "action": "c",
+                "bet": -1,
+                "bankroll": 99956
+            }
+        ]
+    },
+    "flop": {
+        "bankrolls": {
+            "Sourjya": 100030,
+            "Sayan": 99946
+        },
+        "community_cards": [
+            "Tc",
+            "4c",
+            "Ts",
+            "8c",
+            "3s"
+        ],
+        "betting": [
+            {
+                "pot": 24,
+                "num_players": 2,
+                "num_players_allin": 0,
+                "player": "Sourjya",
+                "callsize": 0,
+                "present_total_bet": 0,
+                "action": "b",
+                "bet": 10,
+                "bankroll": 100030
+            },
+            {
+                "pot": 34,
+                "num_players": 2,
+                "num_players_allin": 0,
+                "player": "Sayan",
+                "callsize": 10,
+                "present_total_bet": 0,
+                "action": "c",
+                "bet": -1,
+                "bankroll": 99946
+            }
+        ]
+    },
+    "turn": {
+        "bankrolls": {
+            "Sourjya": 100020,
+            "Sayan": 99936
+        },
+        "community_cards": [
+            "Tc",
+            "4c",
+            "Ts",
+            "8c",
+            "3s"
+        ],
+        "betting": [
+            {
+                "pot": 44,
+                "num_players": 2,
+                "num_players_allin": 0,
+                "player": "Sourjya",
+                "callsize": 0,
+                "present_total_bet": 0,
+                "action": "b",
+                "bet": 10,
+                "bankroll": 100020
+            },
+            {
+                "pot": 54,
+                "num_players": 2,
+                "num_players_allin": 0,
+                "player": "Sayan",
+                "callsize": 10,
+                "present_total_bet": 0,
+                "action": "c",
+                "bet": -1,
+                "bankroll": 99936
+            }
+        ]
+    },
+    "river": {
+        "bankrolls": {
+            "Sourjya": 100010,
+            "Sayan": 99926
+        },
+        "community_cards": [
+            "Tc",
+            "4c",
+            "Ts",
+            "8c",
+            "3s"
+        ],
+        "betting": [
+            {
+                "pot": 64,
+                "num_players": 2,
+                "num_players_allin": 0,
+                "player": "Sourjya",
+                "callsize": 0,
+                "present_total_bet": 0,
+                "action": "b",
+                "bet": 10,
+                "bankroll": 100010
+            },
+            {
+                "pot": 74,
+                "num_players": 2,
+                "num_players_allin": 0,
+                "player": "Sayan",
+                "callsize": 10,
+                "present_total_bet": 0,
+                "action": "c",
+                "bet": -1,
+                "bankroll": 99926
+            }
+        ]
+    },
+    "gameover": {
+        "winner": "Sourjya",
+        "round": 3,
+        "bankrolls": {
+            "Sourjya": 100084,
+            "Sayan": 99916
+        }
+    }
+}
