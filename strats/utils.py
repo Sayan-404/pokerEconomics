@@ -4,8 +4,7 @@ import os
 sys.path.append(os.getcwd())
 
 # Include utilities for developing strategies
-from .chen import get_score
-from .ph_score import get_score as get_ph_score
+from math_utils import create_probabilistic_score
 
 def systemResponse(state):
     """
@@ -152,14 +151,9 @@ def canDefect(state):
     return return_value
 
 
-def privateValue(hand):
-    # IMP: the scores are standardised between 0 and 10, the range has been significantly shrunk for post flop hands and so the floating precision is very high
-    # some strategies might need to understand past scores (to see increase or decrease), just element community cards from the end and call this to get previous score
-    if len(hand) == 2:
-        score = get_score(hand)
-    elif len(hand) >= 5 and len(hand) <=7:
-        score = get_ph_score(hand)
-    return score
+def privateValue(hole_cards, community_cards=[]):
+    # returns a probability of roughly how good the hand is compared to other possible hands
+    return create_probabilistic_score(hole_cards, community_cards)
 
 
 def publicValue(hand):

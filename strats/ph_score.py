@@ -19,8 +19,8 @@ def get_score(cards):
 if __name__ == "__main__":
     ranks = "23456789TJQKA"
     suits = "scdh"
-    decks = [r+s for r in ranks for s in suits]
-    cards = list(combinations(decks, 5))
+    deck = [r+s for r in ranks for s in suits]
+    cards = list(combinations(deck, 5))
     scores = []
     for j in tqdm(range(len(cards))):
         scores.append((cards[j], get_score(cards[j])))
