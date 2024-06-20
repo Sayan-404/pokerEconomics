@@ -1,10 +1,11 @@
+from .math_utils import create_probabilistic_score
 import sys
 import os
 
 sys.path.append(os.getcwd())
 
 # Include utilities for developing strategies
-from math_utils import create_probabilistic_score
+
 
 def systemResponse(state):
     """
@@ -18,9 +19,8 @@ def systemResponse(state):
     return 0
 
 
-def defectiveMove(
-    state, betAmt=10
-):  # By default bet amount (betAmt) is set to 10 units
+# By default bet amount (betAmt) is set to 10 units
+def defectiveMove(state, betAmt=10):
     """
     Returns the suitable defective move based on the current state of the game.
     """
@@ -99,23 +99,27 @@ def availableMoves(state, betamt=10):
     valid_moves = []
 
     if call_value == 0 and state["round"] == 0:
-        # In the initial round, if call_value is 0 and regardless of the blinds, one can raise, check or fold
-        valid_moves = [("r", call_value + effective_max_bet), ("ch", -1), ("f", -1)]
+        # In the round 0, if call_value is 0 and regardless of the blinds
+        # One can raise, check or fold
+        valid_moves = [("r", call_value + effective_max_bet),
+                       ("ch", -1), ("f", -1)]
 
         # (fixDefection) Still accounting for a corner case of bankroll being lesser than or equal to call_value
 
     elif call_value > 0:
         # If call_value is not equal to 0, one can call, raise or fold
-        valid_moves = [("c", -1), ("r", call_value + effective_max_bet), ("f", -1)]
+        valid_moves = [("c", -1), ("r", call_value +
+                                   effective_max_bet), ("f", -1)]
 
-        # If call_value is greater than bankroll, to be in the game, one has to go all in either cooperative/defective ways
+        # If call_value is greater than bankroll, to be in the game, one has to go all in e>ither cooperative/defective ways
         if call_value >= state["player"]["bankroll"]:
             valid_moves = [("a", -1), ("f", -1)]
 
         # (fixDefection) If raise amount is greater than bankroll, one has to go all in
 
     elif call_value <= 0:
-        valid_moves = [("ch", -1), ("b", call_value + effective_max_bet), ("f", -1)]
+        valid_moves = [("ch", -1), ("b", call_value +
+                                    effective_max_bet), ("f", -1)]
 
         # (fixDefection) If bet amount is greater than bankroll, one has to go all in
 
@@ -156,8 +160,13 @@ def privateValue(hole_cards, community_cards=[]):
     return create_probabilistic_score(hole_cards, community_cards)
 
 
+def potentialPrivateValue(hole_cards, community_cards=[]):
+    pass
+
+
 def publicValue(hand):
     pass
+
 
 def potOdds(hand):
     pass
