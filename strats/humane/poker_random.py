@@ -1,7 +1,7 @@
 # Based on the changing style strategy
 # Changes playing style randomly if there's a profitable environment
 
-from Strategy import Strategy
+from ..Strategy import Strategy
 import random
 
 

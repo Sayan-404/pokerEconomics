@@ -8,15 +8,16 @@ class Sane(Strategy):
     def decide(self, information):
         self.initialise(information)
 
-        if self.signal is True:
-            return self.defectiveMove
-        elif self.signal is None:
+        if (self.signal is True) or (self.signal is None):
+            if self.style == 1:
+                return self.defectiveMove
+
             return self.cooperativeMove
-        else:
-            return self.surrenderMove
+
+        return self.surrenderMove
 
 
-strategy = Sane("Sane")
+strategy = Sane("PokerRandom")
 
 
 def decide(state):

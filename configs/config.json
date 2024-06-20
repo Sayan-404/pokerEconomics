@@ -1,8 +1,7 @@
 {
-    "log_hands": true,
-    "runs": 30,
+    "log_hands": false,
+    "runs": 1000000,
     "simulation": true,
-	"player1": { "id": "Sayan", "bankroll": 100000, "strategy": "humane.sane" },
-	"player2": { "id": "Sourjya", "bankroll": 100000, "strategy": "action.defective" },
-    "seed": 1717775133.970668
+	"player1": { "id": "Sayan", "bankroll": 100000, "strategy": "action.random" },
+	"player2": { "id": "Sourjya", "bankroll": 100000, "strategy": "action.defective" }
 }
