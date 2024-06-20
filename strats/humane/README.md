@@ -26,7 +26,7 @@ This in essence is the human version (and arguably the true version) of random.
 
 "It is playing a hand weakly on one round of betting to suck people in for later bets".
 
-### Algorithm
+### Algorithm for Slowplaying
 
 ```algorithm
 IF SIGNAL:
@@ -44,7 +44,7 @@ IF SIGNAL:
 
 Basic idea is to predict the probability that opponent will call-in in order to identify profitable opportunities and over-play weak hands.
 
-### Algorithm
+### Algorithm for Bluffing
 
 ```algorithm
 IF SIGNAL:
@@ -60,7 +60,7 @@ ELSE:
 
 Bet with a hand which is not likely to be the best hand at the moment but has a good chance of outdrawing calling hands.
 
-### Algorithm
+### Algorithm for Semi-Bluffing
 
 ```algorithm
 IF SIGNAL:

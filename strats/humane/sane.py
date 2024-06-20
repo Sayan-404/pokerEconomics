@@ -16,6 +16,8 @@ class Sane(Strategy):
             return self.surrenderMove
 
 
+strategy = Sane("Sane")
+
+
 def decide(state):
-    strategy = Sane("Sane")
     return strategy.decide(state)

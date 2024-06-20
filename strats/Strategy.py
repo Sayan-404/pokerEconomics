@@ -6,11 +6,18 @@ class Strategy:
         self.strategy = strategyName
         self.environment = None
         self.privateValue = None
+
+        # Potential private value is the probabilistic calculation of the chance events of getting a better hands
+        # (or being in a better situation in future, game-theoretically speaking)
         self.potentialPrivateValue = None
+
         self.costToRisk = 0
         self.costToWinnings = 0
+
+        # Here the potential variables are probabilistic calculation of chance events
         self.potentialCostToRisk = 0
         self.potentialCostToWinnings = 0
+
         self.signal = None
         self.defectiveMove = None
         self.cooperativeMove = None
