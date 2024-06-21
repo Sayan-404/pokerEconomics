@@ -1,5 +1,7 @@
 from itertools import combinations
 from .math_utils import create_probabilistic_score
+from phevaluator.evaluator import evaluate_cards
+import numpy as np
 import sys
 import os
 
@@ -170,17 +172,36 @@ def potential(hole_cards, community_cards):
     deck = set([r+s for r in ranks for s in suits])
     deck = deck - hole_cards
     deck = deck - community_cards
-    opp_cards = list(combinations(deck, 1)) # only implements one card look-ahead
+    future_board = list(combinations(deck, 1)) # only implements one card look-ahead
+    opp_cards = list(combinations(deck, 2))
     w = {card: 1/len(opp_cards) for card in opp_cards}
-    
-
-def potentialPrivateValue(hole_cards, community_cards=[]):
-    pass
-
-
-def publicValue(hand):
-    pass
-
-
-def potOdds(hand):
-    pass
+    hp = np.zeros((3, 3))
+    t = hole_cards | community_cards
+    current_rank5 = evaluate_cards(*t)
+    for cards in opp_cards:
+        t = set(cards) | community_cards
+        opp_rank = evaluate_cards(*t)
+        if current_rank5 > opp_rank:
+            index = 0
+        elif current_rank5 == opp_rank:
+            index = 1
+        else:
+            index = 2
+        for future_cards in future_board:
+            board = community_cards | set(future_cards)
+            t = hole_cards | board
+            current_rank6 = evaluate_cards(*t)
+            t = set(cards) | board
+            opp_rank = evaluate_cards(*t)
+            if current_rank6 > opp_rank:
+                hp[index][0] += w[cards]
+            elif current_rank6 == opp_rank:
+                hp[index][1] += w[cards]
+            else:
+                hp[index][2] += w[cards]
+    hp_total = hp.sum(axis=0)
+    print(hp)
+    print(hp_total)
+    ppot1 = (hp[2][0] + hp[2][1]/2 + hp[1][0]/2) / (hp_total[2] + hp_total[1]/2)
+    npot1 = (hp[0][2] + hp[0][1]/2 + hp[1][2]/2) / (hp_total[0] + hp_total[1]/2)
+    return ppot1, npot1

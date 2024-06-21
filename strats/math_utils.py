@@ -21,7 +21,7 @@ def create_probabilistic_score(hole_cards, community_cards=[]):
         return chen.get_score(cards) if len(cards) == 2 else ph_score.get_score(cards)
     current_rank = get_score(hole_cards | community_cards)
     for cards in opp_cards:
-        rank = get_score(cards | community_cards)
+        rank = get_score(set(cards) | community_cards)
         if rank > current_rank:
             ahead += w[cards]
         elif rank == current_rank:
