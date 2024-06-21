@@ -13,24 +13,21 @@ def create_probabilistic_score(hole_cards, community_cards=[]):
     deck = set([r+s for r in ranks for s in suits])
     deck = deck - hole_cards
     deck = deck - community_cards
-    if len(community_cards) == 3: # 47c2
-        opp_cards = list(combinations(deck, 2))
-    elif len(community_cards) == 4: # 46c1
-        opp_cards = list(combinations(deck, 1))
+    opp_cards = list(combinations(deck, 2))
 
     w = {card: 1/len(opp_cards) for card in opp_cards}
     ahead = tied = behind = 0.0
     def get_score(cards):
         return chen.get_score(cards) if len(cards) == 2 else ph_score.get_score(cards)
     current_rank = get_score(hole_cards | community_cards)
-    for card in opp_cards:
-        rank = get_score(set(card) | community_cards)
+    for cards in opp_cards:
+        rank = get_score(cards | community_cards)
         if rank > current_rank:
-            ahead += w[card]
+            ahead += w[cards]
         elif rank == current_rank:
-            tied += w[card]
+            tied += w[cards]
         else:
-            behind += w[card]
+            behind += w[cards]
     return 1 - ((ahead + tied/2) / (ahead + tied + behind))
 
 def inverse_range(value, min_value, max_value):

@@ -1,3 +1,4 @@
+from itertools import combinations
 from .math_utils import create_probabilistic_score
 import sys
 import os
@@ -159,6 +160,19 @@ def privateValue(hole_cards, community_cards=[]):
     # returns a probability of roughly how good the hand is compared to other possible hands
     return create_probabilistic_score(hole_cards, community_cards)
 
+def potential(hole_cards, community_cards):
+    community_cards = set(community_cards)
+    if len(community_cards) < 3:
+        return -1 # only plausible post flop
+    hole_cards = set(hole_cards)
+    ranks = "23456789TJQKA"
+    suits = "scdh"
+    deck = set([r+s for r in ranks for s in suits])
+    deck = deck - hole_cards
+    deck = deck - community_cards
+    opp_cards = list(combinations(deck, 1)) # only implements one card look-ahead
+    w = {card: 1/len(opp_cards) for card in opp_cards}
+    
 
 def potentialPrivateValue(hole_cards, community_cards=[]):
     pass
