@@ -13,7 +13,10 @@ def create_probabilistic_score(hole_cards, community_cards=[]):
     deck = set([r+s for r in ranks for s in suits])
     deck = deck - hole_cards
     deck = deck - community_cards
-    opp_cards = list(combinations(deck, 2))
+    if len(community_cards) == 3: # 47c2
+        opp_cards = list(combinations(deck, 2))
+    elif len(community_cards) == 4: # 46c1
+        opp_cards = list(combinations(deck, 1))
 
     w = {card: 1/len(opp_cards) for card in opp_cards}
     ahead = tied = behind = 0.0
