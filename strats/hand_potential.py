@@ -30,7 +30,7 @@ def potential(hole_cards, community_cards):
         else:
             index = behind
         future_community_cards = deck - set(opp_hole_cards)
-        future_community_cards = list(combinations(future_community_cards, 2)) # only implements one card look-ahead
+        future_community_cards = list(combinations(future_community_cards, 1)) # only implements one card look-ahead
         for future_cards in future_community_cards:
 
             hp_total[index] += w[opp_hole_cards]
