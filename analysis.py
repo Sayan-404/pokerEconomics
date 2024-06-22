@@ -8,7 +8,7 @@ import os
 def plot(file_path):
 
     # Load the CSV data
-    df = pd.read_csv(f"{file_path}/games.csv")
+    df = pd.read_csv(f"{file_path}games.csv")
 
     # Interpolate data to create smooth curves
     x = df["hand_no"]
@@ -34,20 +34,20 @@ def plot(file_path):
     plt.ylabel("Scores")
     plt.legend()
     plt.grid(True)
-    plt.savefig(f"{file_path}/analysis.png")
+    plt.savefig(f"{file_path}analysis.png")
 
     # Optionally, show the plot
     plt.show()
 
 def show_hand(file_path):
-    if not os.path.isfile(f"{file_path}/hand_0.txt"):
+    if not os.path.isfile(f"{file_path}hand_0.json"):
         print("hands are not logged (hand_0 not found)")
         return
     while(1):
         hand = input("enter hand number (-1 to exit): ")
         if hand == "-1":
             break
-        hand = f"{file_path}/hand_{hand}.txt"
+        hand = f"{file_path}hand_{hand}.json"
         if not os.path.isfile(hand):
             print("hand not logged")
             continue
@@ -57,7 +57,7 @@ def show_hand(file_path):
 # Set up command line argument parsing
 parser = argparse.ArgumentParser(description="Analyser")
 parser.add_argument(
-    "file_path", type=str, help="path to the CSV file containing the game data"
+    "file_path", type=str, help="path to the folder containing game data"
 )
 parser.add_argument(
     "--plot", help="plot bankrolls", action=argparse.BooleanOptionalAction

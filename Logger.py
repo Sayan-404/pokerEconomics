@@ -72,6 +72,8 @@ class Logger:
     
     def handle_hand_file(self, i):
         self.hand_file.close()
+        if not self.log_hands:
+            return
         self.current_hand_data = {
             "blinds": {
                 "bankrolls": {},
