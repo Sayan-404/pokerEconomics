@@ -22,13 +22,13 @@ def create_probabilistic_score(hole_cards, community_cards=[]):
     current_rank = get_score(hole_cards | community_cards)
     for cards in opp_cards:
         rank = get_score(set(cards) | community_cards)
-        if rank > current_rank:
+        if rank < current_rank:
             ahead += w[cards]
         elif rank == current_rank:
             tied += w[cards]
         else:
             behind += w[cards]
-    return 1 - ((ahead + tied/2) / (ahead + tied + behind))
+    return ((ahead + tied/2) / (ahead + tied + behind))  # *100 is the percentage of hands that we beat or at least tie given the input
 
 def inverse_range(value, min_value, max_value):
     return (max_value + min_value) - value
