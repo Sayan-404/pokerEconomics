@@ -48,8 +48,11 @@ class Strategy:
             self.holeCards, self.communityCards)
 
         if self.communityCards:
-            self.potentialPrivateValue = potentialPrivateValue(
-                self.holeCards, self.communityCards)
+            if len(self.holeCards + self.communityCards) < 7:
+                self.potentialPrivateValue = potentialPrivateValue(
+                    self.holeCards, self.communityCards)
+            else:
+                self.potentialPrivateValue = 0
 
         self.environment = systemResponse(information)
 
@@ -109,13 +112,14 @@ class Strategy:
         # This is direct implementation of the logic of Page 12 of the thesis
         if self.potentialPrivateValue != 0:
             if self.potentialPrivateValue[0] >= self.costToWinnings:
-                # Profitable scenario if one has the chance to beat at least defectionMin of the hands
+                # Profitable scenario if one has the chance to beat at least defectionMin% of the hands
                 if (self.privateValue >= defectionMin):
                     return True
 
                 return None
+            # Calculation based on NPOT to be added |>
 
-        # If there's a chance of beating at least 40% of hands then cooperate
+        # If there's a chance of beating at least cooperationMin% of hands then cooperate
         if (self.privateValue >= cooperationMin):
             return None
 

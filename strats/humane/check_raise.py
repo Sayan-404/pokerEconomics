@@ -45,6 +45,7 @@ class CheckRaise(Strategy):
 
                 return self.prodigalMove
             else:
+                # Probability skewed as the it is not determined which is the first action of the round
                 self.calculateProbability()
                 return self.prodigalMove
 

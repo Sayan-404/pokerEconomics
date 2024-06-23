@@ -3,6 +3,6 @@
     "runs": 1000000,
     "simulation": true,
     "seed": 1719105962.9278178,
-	"player1": { "id": "Sayan", "bankroll": 10, "strategy": "action.cooperative" },
-	"player2": { "id": "Sourjya", "bankroll": 10, "strategy": "humane.poker_random" }
+	"player1": { "id": "Sayan", "bankroll": 1000, "strategy": "action.defective" },
+	"player2": { "id": "Sourjya", "bankroll": 1000, "strategy": "humane.poker_random" }
 }
