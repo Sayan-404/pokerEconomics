@@ -2,25 +2,20 @@ from phevaluator.evaluator import evaluate_cards
 import numpy as np
 from itertools import combinations
 
-def potential(hole_cards, community_cards):
-    community_cards = set(community_cards)
+def potential(deck, hole_cards, community_cards):
     if len(community_cards) < 3 | len(community_cards) == 5:
         return -1 # only plausible for flop, and turn
-    hole_cards = set(hole_cards)
-    ranks = "23456789TJQKA"
-    suits = "scdh"
-    deck = set([r+s for r in ranks for s in suits])
-    deck = deck - hole_cards
-    deck = deck - community_cards
     opp_cards = list(combinations(deck, 2))
     w = {card: 1/len(opp_cards) for card in opp_cards}
+
     hp = np.zeros((3, 3))
     hp_total = np.zeros(3)
-    t = hole_cards | community_cards
+
+    t = hole_cards + community_cards
     current_rank5 = evaluate_cards(*t)
     ahead, tied, behind = 0, 1, 2
     for opp_hole_cards in opp_cards:
-        t = set(opp_hole_cards) | community_cards
+        t = opp_hole_cards + community_cards
         opp_rank = evaluate_cards(*t)
 
         if current_rank5 > opp_rank:
@@ -29,17 +24,17 @@ def potential(hole_cards, community_cards):
             index = tied
         else:
             index = behind
-        future_community_cards = deck - set(opp_hole_cards)
+        future_community_cards = [card for card in deck if card not in opp_hole_cards]
         future_community_cards = list(combinations(future_community_cards, 1)) # only implements one card look-ahead
-        for future_cards in future_community_cards:
 
+        for future_cards in future_community_cards:
             hp_total[index] += w[opp_hole_cards]
 
-            future_board = community_cards | set(future_cards)
+            future_board = future_cards + community_cards
             t = hole_cards | future_board
             current_rank6 = evaluate_cards(*t)
 
-            t = set(opp_hole_cards) | future_board
+            t = opp_hole_cards + future_board
             opp_rank = evaluate_cards(*t)
 
             if current_rank6 > opp_rank:

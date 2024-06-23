@@ -158,13 +158,13 @@ def canDefect(state):
     return return_value
 
 
-def privateValue(hole_cards, community_cards=[]):
+def privateValue(deck, hole_cards, community_cards=[]):
     # returns a probability of roughly how good the hand is compared to other possible hands
-    return create_probabilistic_score(hole_cards, community_cards)
+    return create_probabilistic_score(deck, hole_cards, community_cards)
 
 
-def potentialPrivateValue(hole_cards, community_cards):
-    return potential(hole_cards, community_cards)
+def potentialPrivateValue(deck, hole_cards, community_cards):
+    return potential(deck, hole_cards, community_cards)
 
 
 def ir(holeCards):

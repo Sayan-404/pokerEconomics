@@ -5,7 +5,6 @@ import os
 from tqdm import tqdm
 from testing.system_checks import chainValidate
 from testing.system_checks import extractChain
-import json
 import traceback
 
 
@@ -86,7 +85,8 @@ class Game:
             "pot": self.pot,
             "round": self.round,
             "max_bet": self.get_max_bet(player_index),
-            "blinds": self.blind
+            "blinds": self.blind,
+            "current_deck": self.deck.cards
             # there should be a position variable indicating the position of the player in the table
         }
 
@@ -825,6 +825,7 @@ class Game:
         for i in range(self.number_of_players):
             self.players[i].receive_card(self.deck.deal_card())
             self.players[i].receive_card(self.deck.deal_card())
+            self.players[i].hand.sort()
 
         # Print the cards of players
         for i in range(self.number_of_players):
@@ -866,7 +867,7 @@ class Game:
         # Displaying the flop
         for _ in range(3):
             self.community_cards.append(str(self.deck.deal_card()))
-
+        self.community_cards.sort()
         # Print the community cards
         print(self.community_cards)
 
@@ -905,6 +906,7 @@ class Game:
 
         # Add a single card
         self.community_cards.append(str(self.deck.deal_card()))
+        self.community_cards.sort()
 
         print(self.community_cards)
 
@@ -942,6 +944,7 @@ class Game:
 
         # Add a single card
         self.community_cards.append(str(self.deck.deal_card()))
+        self.community_cards.sort()
         print(self.community_cards)
 
         self.logger.current_hand_data.update(

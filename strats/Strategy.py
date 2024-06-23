@@ -46,6 +46,7 @@ class Strategy:
         self.holeCards = information["player"]["hand"]
         self.communityCards = information["community_cards"]
         self.round = information["round"]
+        self.deck = information["current_deck"]
 
         self.environment = systemResponse(information)
 
@@ -129,7 +130,7 @@ class Strategy:
 
         if self.round == 0:
             # Signal on the pre-flop
-            pv = privateValue(self.holeCards)
+            pv = privateValue(self.deck, self.holeCards)
             incomeRate = ir(self.holeCards)
             irp = (incomeRate + 351)/1055
 
@@ -160,7 +161,7 @@ class Strategy:
         if self.round == 1:
             # Signal on the flop
             potentialPV = potentialPrivateValue(
-                self.holeCards, self.communityCards)
+                self.deck, self.holeCards, self.communityCards)
 
             metric = 0
 
@@ -178,8 +179,8 @@ class Strategy:
 
         if self.round == 2:
             # Signal on the turn
-            pv = privateValue(self.holeCards, self.communityCards)
-            potPV = potentialPrivateValue(self.holeCards, self.communityCards)
+            pv = privateValue(self.deck, self.holeCards, self.communityCards)
+            potPV = potentialPrivateValue(self.deck, self.holeCards, self.communityCards)
 
             # Calculating Effective hand strength' with thesis formula (6.4) on page 37
             ehs = pv + (1 - pv)*potPV[0] - pv*potPV[1]
@@ -198,7 +199,7 @@ class Strategy:
 
         if self.round == 3:
             # Signal on the river
-            pv = privateValue(self.holeCards, self.communityCards)
+            pv = privateValue(self.deck, self.holeCards, self.communityCards)
 
             if self.callValue != 0:
                 if (pv > self.costToWinnings):
