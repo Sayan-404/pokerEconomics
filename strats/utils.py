@@ -168,6 +168,9 @@ def potentialPrivateValue(hole_cards, community_cards):
 
 
 def ir(holeCards):
+    # Lowest: -351
+    # Highest: 704
+
     first = cardTypes.index(holeCards[0][0])
     second = cardTypes.index(holeCards[1][0])
 
