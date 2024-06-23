@@ -15,8 +15,9 @@ class SlowPlaying(Strategy):
             self.weakHandRound = -1
 
         if (self.signal is True):
-            # If weak hand round is -1 then initialise the weak hand round for recall
-            if self.weakHandRound == -1:
+            # If weak hand round is -1 then initialise the weak hand round for recall and frugal move
+            # Frugal move if it is in the same round
+            if (self.weakHandRound == -1) or (self.round == self.weakHandRound):
                 self.weakHandRound = self.round
                 return self.frugalMove
             # If weak hand round previously occurred then defect if the signal is still true

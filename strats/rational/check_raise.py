@@ -1,6 +1,9 @@
 # In a single round, if taking the first action, check first
 # Only if it's known that opponent will call
 
+# TODO Fix the first action probability
+# TODO Maybe adjust to use self.roundFirstAction
+
 from ..Strategy import Strategy
 
 

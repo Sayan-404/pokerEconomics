@@ -217,7 +217,7 @@ class Strategy:
                 if (pv >= (self.potentialCostToWinnings + tightnessFactor)):
                     return True
 
-                if (pv >= (self.potentialCostToWinnings - tightnessUpperRanges[4 - tightnessFactor])):
+                if (pv >= (self.potentialCostToWinnings - tightnessUpperRanges[4 - tightnessUpperRanges.index(tightnessFactor)])):
                     return None
 
         return self.surrenderMove
