@@ -38,7 +38,7 @@ def systemResponse(state):
 
 
 # By default bet amount (betAmt) is set to 10 units
-def defectiveMove(state, betAmt=10):
+def prodigalMove(state, betAmt=10):
     """
     Returns the suitable defective move based on the current state of the game.
     """
@@ -46,7 +46,7 @@ def defectiveMove(state, betAmt=10):
     # Returns suitable defective move from the available moves
 
     if not canDefect(state):
-        return cooperativeMove(state)
+        return frugalMove(state)
 
     moves = availableMoves(state, betAmt)
 
@@ -57,7 +57,7 @@ def defectiveMove(state, betAmt=10):
             return move
 
 
-def cooperativeMove(state):
+def frugalMove(state):
     """
     Returns the suitable cooperative move based on the current state of the game.
     """

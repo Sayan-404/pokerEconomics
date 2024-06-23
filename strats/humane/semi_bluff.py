@@ -13,10 +13,10 @@ class SemiBluff(Strategy):
         self.initialise(information)
 
         if (self.signal is True):
-            return self.defectiveMove
+            return self.prodigalMove
 
         if (self.signal is None):
-            return self.cooperativeMove
+            return self.frugalMove
 
         return self.surrenderMove
 

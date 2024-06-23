@@ -1,5 +1,5 @@
-from ..utils import defectiveMove
+from ..utils import prodigalMove
 
 
 def decide(state):
-    return defectiveMove(state)
+    return prodigalMove(state)

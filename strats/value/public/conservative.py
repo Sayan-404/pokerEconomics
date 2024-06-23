@@ -7,6 +7,6 @@ def decide(state):
     value = publicValue(state["player"]["hand"])
 
     if value > 9:
-        return cooperativeMove(state)
+        return frugalMove(state)
 
     return "f", -1

@@ -133,19 +133,19 @@ class TestUtilities(unittest.TestCase):
 
     def testDefectiveMoves(self):
 
-        self.assertEqual(defectiveMove(test_state_0), ("r", 10))
-        self.assertEqual(defectiveMove(test_state_1), ("b", 10))
-        self.assertEqual(defectiveMove(test_state_2), ("r", 50))
-        self.assertEqual(defectiveMove(test_state_3), ("a", -1))
-        self.assertEqual(cooperativeMove(test_state_4), ("a", -1))
+        self.assertEqual(prodigalMove(test_state_0), ("r", 10))
+        self.assertEqual(prodigalMove(test_state_1), ("b", 10))
+        self.assertEqual(prodigalMove(test_state_2), ("r", 50))
+        self.assertEqual(prodigalMove(test_state_3), ("a", -1))
+        self.assertEqual(frugalMove(test_state_4), ("a", -1))
 
     def testCooperativeMoves(self):
 
-        self.assertEqual(cooperativeMove(test_state_0), ("ch", -1))
-        self.assertEqual(cooperativeMove(test_state_1), ("ch", -1))
-        self.assertEqual(cooperativeMove(test_state_2), ("c", -1))
-        self.assertEqual(cooperativeMove(test_state_3), ("c", -1))
-        self.assertEqual(cooperativeMove(test_state_4), ("a", -1))
+        self.assertEqual(frugalMove(test_state_0), ("ch", -1))
+        self.assertEqual(frugalMove(test_state_1), ("ch", -1))
+        self.assertEqual(frugalMove(test_state_2), ("c", -1))
+        self.assertEqual(frugalMove(test_state_3), ("c", -1))
+        self.assertEqual(frugalMove(test_state_4), ("a", -1))
 
     def testAvailableMoves(self):
         result_0 = set(availableMoves(test_state_0))
@@ -153,35 +153,40 @@ class TestUtilities(unittest.TestCase):
         try:
             self.assertTrue(all(elem in result_0 for elem in expected_0))
         except AssertionError:
-            print(f"Error in test_state_0: Result={result_0}, Expected={expected_0}")
+            print(
+                f"Error in test_state_0: Result={result_0}, Expected={expected_0}")
 
         result_1 = set(availableMoves(test_state_1))
         expected_1 = set([("b", 10), ("ch", -1), ("f", -1)])
         try:
             self.assertTrue(all(elem in result_1 for elem in expected_1))
         except AssertionError:
-            print(f"Error in test_state_1: Result={result_1}, Expected={expected_1}")
+            print(
+                f"Error in test_state_1: Result={result_1}, Expected={expected_1}")
 
         result_2 = set(availableMoves(test_state_2))
         expected_2 = set([("r", 50), ("c", -1), ("f", -1)])
         try:
             self.assertTrue(all(elem in result_2 for elem in expected_2))
         except AssertionError:
-            print(f"Error in test_state_2: Result={result_2}, Expected={expected_2}")
+            print(
+                f"Error in test_state_2: Result={result_2}, Expected={expected_2}")
 
         result_3 = set(availableMoves(test_state_3))
         expected_3 = set([("a", -1), ("c", -1), ("f", -1)])
         try:
             self.assertTrue(all(elem in result_3 for elem in expected_3))
         except AssertionError:
-            print(f"Error in test_state_3: Result={result_3}, Expected={expected_3}")
+            print(
+                f"Error in test_state_3: Result={result_3}, Expected={expected_3}")
 
         result_4 = set(availableMoves(test_state_4))
         expected_4 = set([("a", -1), ("f", -1)])
         try:
             self.assertTrue(all(elem in result_4 for elem in expected_4))
         except AssertionError:
-            print(f"Error in test_state_4: Result={result_4}, Expected={expected_4}")
+            print(
+                f"Error in test_state_4: Result={result_4}, Expected={expected_4}")
 
 
 if __name__ == "__main__":

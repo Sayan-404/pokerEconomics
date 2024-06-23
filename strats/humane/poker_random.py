@@ -16,9 +16,9 @@ class PokerRandom(Strategy):
 
         if (self.signal is True) or (self.signal is None):
             if self.style == 1:
-                return self.defectiveMove
+                return self.prodigalMove
 
-            return self.cooperativeMove
+            return self.frugalMove
 
         return self.surrenderMove
 

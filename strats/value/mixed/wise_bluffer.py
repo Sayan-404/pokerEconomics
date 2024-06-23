@@ -6,12 +6,12 @@ def decide(state):
     public = publicValue(state["player"]["hand"])
 
     if state["round"] == 0:
-        return cooperativeMove(state)
+        return frugalMove(state)
 
     # Bluff
     if (public - private) >= 3:
-        return defectiveMove(state)
+        return prodigalMove(state)
     elif private > 8:  # Appropriately play a strong card
-        return defectiveMove(state)
+        return prodigalMove(state)
 
-    return cooperativeMove(state)
+    return frugalMove(state)

@@ -1,5 +1,5 @@
-from ..utils import cooperativeMove
+from ..utils import frugalMove
 
 
 def decide(state):
-    return cooperativeMove(state)
+    return frugalMove(state)

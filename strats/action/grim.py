@@ -8,8 +8,8 @@ def decide(state):
     response = 0
 
     sysRes = systemResponse(state)
-    defMove = defectiveMove(state)
-    cooMove = cooperativeMove(state)
+    defMove = prodigalMove(state)
+    cooMove = frugalMove(state)
 
     def move_decider():
         nonlocal response

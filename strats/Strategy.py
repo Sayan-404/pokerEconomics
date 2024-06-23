@@ -1,4 +1,4 @@
-from .utils import privateValue, potentialPrivateValue, systemResponse, defectiveMove, cooperativeMove
+from .utils import privateValue, potentialPrivateValue, systemResponse, prodigalMove, frugalMove
 
 
 class Strategy:
@@ -18,14 +18,15 @@ class Strategy:
 
         self.holeCards = []
         self.communityCards = []
+        self.round = -1
 
         # Here the potential variables are probabilistic calculation of chance events
         self.potentialCostToRisk = 0
         self.potentialCostToWinnings = 0
 
         self.signal = None
-        self.defectiveMove = None
-        self.cooperativeMove = None
+        self.prodigalMove = None
+        self.frugalMove = None
         self.surrenderMove = ("f", -1)
 
     def initialise(self, information, tightness):
@@ -40,6 +41,7 @@ class Strategy:
 
         self.holeCards = information["player"]["hand"]
         self.communityCards = information["community_cards"]
+        self.round = information["round"]
 
         self.privateValue = privateValue(
             self.holeCards, self.communityCards)
@@ -50,8 +52,8 @@ class Strategy:
 
         self.environment = systemResponse(information)
 
-        self.defectiveMove = defectiveMove(information, betAmt=bet)
-        self.cooperativeMove = cooperativeMove(information)
+        self.prodigalMove = prodigalMove(information, betAmt=bet)
+        self.frugalMove = frugalMove(information)
 
         if callValue != 0:
             # Here costToWinnings is the pot odds

@@ -7,8 +7,8 @@ def decide(state):
     value = publicValue(state["player"]["hand"])
 
     if state["round"] == 0:
-        return cooperativeMove
+        return frugalMove
     elif value > 8:
-        return cooperativeMove(state)
+        return frugalMove(state)
 
     return "f", -1

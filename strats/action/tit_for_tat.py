@@ -5,6 +5,6 @@ from ..utils import *
 
 def decide(state):
     if systemResponse(state) == 0:
-        return cooperativeMove(state)
+        return frugalMove(state)
     else:
-        return defectiveMove(state)
+        return prodigalMove(state)

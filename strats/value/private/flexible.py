@@ -7,8 +7,8 @@ def decide(state):
     value = privateValue(state["player"]["hand"])
 
     if state["round"] == 0:
-        return cooperativeMove
+        return frugalMove
     elif value > 5:
-        return defectiveMove(state)
+        return prodigalMove(state)
 
-    return cooperativeMove(state)
+    return frugalMove(state)
