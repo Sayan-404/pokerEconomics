@@ -12,7 +12,7 @@ class PokerRandom(Strategy):
 
     def decide(self, information):
         self.style = random.randrange(0, 2)
-        self.initialise(information)
+        self.initialise(information, 0)
 
         if (self.signal is True) or (self.signal is None):
             if self.style == 1:
