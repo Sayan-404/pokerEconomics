@@ -19,6 +19,7 @@ class Strategy:
         self.holeCards = []
         self.communityCards = []
         self.round = -1
+        self.callValue = -1
 
         # Here the potential variables are probabilistic calculation of chance events
         self.potentialCostToRisk = 0
@@ -31,10 +32,10 @@ class Strategy:
 
     def initialise(self, information, tightness):
         """
-        Takes the information state and initialises all the variables before making an action.
+            Takes the information state and initialises all the variables before making an action.
         """
 
-        callValue = information["call_value"]
+        self.callValue = information["call_value"]
         playerBetAmt = information["player"]["betamt"]
         pot = information["pot"]
         bet = 10
@@ -55,18 +56,19 @@ class Strategy:
         self.prodigalMove = prodigalMove(information, betAmt=bet)
         self.frugalMove = frugalMove(information)
 
-        if callValue != 0:
+        if self.callValue != 0:
             # Here costToWinnings is the pot odds
-            self.costToWinnings = callValue / (callValue + pot)
+            self.costToWinnings = self.callValue / (self.callValue + pot)
 
             # Here costToRisk is the amount a player is expected to lose if they make the call
-            self.costToRisk = callValue / (callValue + playerBetAmt)
+            self.costToRisk = self.callValue / (self.callValue + playerBetAmt)
 
             # Here potential cost to winnings is implied odds (Page 13 of thesis)
             # "hitting your hand means you very likely will win"
             # "and additionally your opponent is likely play to the showdown"
             # "If you hit you can expect to make an extra bet (from opponent)"
-            self.potentialCostToWinnings = callValue / ((callValue*2) + pot)
+            self.potentialCostToWinnings = self.callValue / \
+                ((self.callValue*2) + pot)
 
             # Here potential cost to risk is the amount a person is expected to loss if they hti
             self.potentialCostToRisk = bet / (bet + playerBetAmt)
@@ -87,9 +89,9 @@ class Strategy:
 
     def signalFn(self, tightness=1):
         """
-        Analyses the information and gives signal.\n
-        Based on the logic given in page 12 of the thesis.\n
-        Returns: True, False, None
+            Analyses the information and gives signal.\n
+            Based on the logic given in page 12 of the thesis.\n
+            Returns: True, False, None
         """
 
         # These values must be re-calculated statistically
