@@ -1,4 +1,4 @@
-from .utils import privateValue, potentialPrivateValue, systemResponse, defectiveMove, cooperativeMove
+from .utils import privateValue, systemResponse, defectiveMove, cooperativeMove
 
 
 class Strategy:
@@ -9,7 +9,7 @@ class Strategy:
 
         # Potential private value is the probabilistic calculation of the chance events of getting a better hands
         # (or being in a better situation in future, game-theoretically speaking)
-        self.potentialPrivateValue = None
+        self.potentialPrivateValue = 0
 
         self.costToRisk = 0
         self.costToWinnings = 0
@@ -35,8 +35,8 @@ class Strategy:
 
         self.privateValue = privateValue(
             information["player"]["hand"], information["community_cards"])
-        self.potentialPrivateValue = potentialPrivateValue(
-            information["player"]["hand"])
+        # self.potentialPrivateValue = potentialPrivateValue(
+        #     information["player"]["hand"])
 
         self.environment = systemResponse(information)
 
@@ -67,10 +67,11 @@ class Strategy:
         """
 
         noneCondition = (self.potentialCostToWinnings <=
-                         self.potentialCostToRisk)
+                         self.potentialCostToRisk) or ((self.privateValue - self.costToWinnings) > 0.03)
 
         if self.costToRisk is not None:
-            noneCondition = (self.costToWinnings < self.costToRisk)
+            noneCondition = (self.costToWinnings < self.costToRisk) or (
+                (self.privateValue - self.costToWinnings) > 0.03)
 
         # Final None Condition
         # noneCondition = ((self.potentialPrivateValue - self.costToWinnings)
@@ -80,7 +81,6 @@ class Strategy:
             # Margin of positive 10 gap between the two metrics
             return True
         elif noneCondition:
-            # Margin of positive 10 gap between the two metrics
             return None
         else:
             return False

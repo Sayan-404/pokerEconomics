@@ -2,24 +2,6 @@
 
 In the initial round (pre-flop), even if the call value is 0, by the rules of poker, one will have to raise if they are the BB or SB.
 
-## Signal
-
-Based on various factors like pot odds, hand strength and hand potential, it will signal the player to stay or leave the game.
-
-### Algorithm
-
-```algorithm
-IF (PotOdds > HandStrength):
-    RETURN true
-ELSE IF (PotOdds > HandPotential):
-    FACTOR IN THE IMPLIED AND REVERSE IMPLIED ODDS:
-        RETURN  true
-ELSE:
-    RETURN false
-```
-
-Although this is a generic algorithm, other variations should be considered as well.
-
 ## State contents
 
 ```json
@@ -38,7 +20,11 @@ Although this is a generic algorithm, other variations should be considered as w
             "pot": self.pot,
             "round": self.round,
             "max_bet": self.get_max_bet(player_index),
+            "blinds": {
+                    "bb": {"player": bb_player.id, "amt": bb_amt},
+                    "sb": {"player": sb_player.id, "amt": sb_amt},
+            }
 }
 ```
 
-If max_bet <= bankroll go all in.
+if max_bet <= bankroll go all in

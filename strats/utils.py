@@ -10,12 +10,29 @@ sys.path.append(os.getcwd())
 
 def systemResponse(state):
     """
-    Analyse the response from the opponents/system.
+    Analyse the response from the opponents/system. This function is only suitable for heads-up.
 
     Returns 0 for cooperative and 1 for defective.
     """
     if state["call_value"] != 0 and state["round"] != 0:
         return 1
+
+    # Handles pre-flop's special cases
+    if state["round"] == 0:
+        blindType = ""
+        blind = 0
+
+        if state["player"]["id"] == state["blinds"]["bb"]["player"]:
+            blind = state["blinds"]["bb"]["amt"]
+            blindType = "bb"
+        elif state["player"]["id"] == state["blinds"]["sb"]["player"]:
+            blind = state["blinds"]["sb"]["amt"]
+            blindType = "sb"
+
+        if (blindType == "sb") and ((state["call_value"] - blind) != 0):
+            return 1
+        elif (blindType == "bb") and ((state["call_value"] - blind) != (-blind)):
+            return 1
 
     return 0
 
@@ -39,29 +56,6 @@ def defectiveMove(state, betAmt=10):
         elif move[0] == "a":
             return move
 
-    # Previous Implementation
-    # callValue = state["call_value"]
-    # bankroll = state["player"]["bankroll"]
-    # maxBet = state["max_bet"]
-
-    # move = []
-
-    # if callValue != 0:
-    #     if maxBet == 0:
-    #         move = ["c", -1]
-    #     else:
-    #         move = ["r", min(callValue + betAmt, maxBet)]
-    # elif callValue == 0:
-    #     if state["round"] == 0:
-    #         move = ["r", min(callValue + betAmt, maxBet)]
-    #     else:
-    #         move = ["b", min(callValue + betAmt, maxBet)]
-
-    # if bankroll <= move[1]:
-    #     move = ["a", -1]
-
-    # return move
-
 
 def cooperativeMove(state):
     """
@@ -77,17 +71,6 @@ def cooperativeMove(state):
             return move
         elif move[0] == "a":
             return move
-
-    # Previous Implementation
-    # if state["call_value"] != 0:
-    #     move = ("c", -1)
-    # else:
-    #     move = ("ch", -1)
-
-    # if state["call_value"] >= state["player"]["bankroll"]:
-    #     move = ("a", -1)
-
-    # return move
 
 
 def availableMoves(state, betamt=10):
@@ -160,5 +143,6 @@ def privateValue(hole_cards, community_cards=[]):
     # returns a probability of roughly how good the hand is compared to other possible hands
     return create_probabilistic_score(hole_cards, community_cards)
 
-def handPotential(hole_cards, community_cards):
+
+def potentialPrivateValue(hole_cards, community_cards):
     return potential(hole_cards, community_cards)

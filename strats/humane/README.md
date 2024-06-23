@@ -22,11 +22,11 @@ RETURN fold
 
 This in essence is the human version (and arguably the true version) of random.
 
-## Slowplaying
+## Slow-Playing
 
 "It is playing a hand weakly on one round of betting to suck people in for later bets".
 
-### Algorithm for Slowplaying
+### Algorithm for Slow-Playing
 
 ```algorithm
 IF SIGNAL:

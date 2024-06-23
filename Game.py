@@ -86,6 +86,7 @@ class Game:
             "pot": self.pot,
             "round": self.round,
             "max_bet": self.get_max_bet(player_index),
+            "blinds": self.blind
             # there should be a position variable indicating the position of the player in the table
         }
 
@@ -248,20 +249,19 @@ class Game:
     def HUDdetails(self, bettingData):
         pot = bettingData["pot"]
         bet = bettingData["bet"]
-        player = [_player for _player in self.players if _player.id == bettingData["player"]][0]
+        player = [_player for _player in self.players if _player.id ==
+                  bettingData["player"]][0]
         # player = player[0]
         action = bettingData["action"]
         frugality = 0
         # opp = [_player for _player in self.players if _player != player]
         # opp = opp[0]
-        if(action == "b"):
+        if (action == "b"):
             frugality = bet/pot + bet/player.bankroll
         if (action == "r"):
-            frugality = (bet/pot + bet/player.bankroll)/2 
+            frugality = (bet/pot + bet/player.bankroll)/2
         player.frugal += frugality
         player.meanFrugal = player.frugal / self.number_of_hands
-
-
 
     def betting(self, players, betsize=0):
         """
@@ -365,7 +365,8 @@ class Game:
                                 blind = self.blind["bb"]["amt"]
                                 player_prev_bankroll += blind
                             elif callsize == (
-                                self.blind["bb"]["amt"] - self.blind["sb"]["amt"]
+                                self.blind["bb"]["amt"] -
+                                    self.blind["sb"]["amt"]
                             ):
                                 blind = self.blind["sb"]["amt"]
                                 player_prev_bankroll += blind
@@ -421,7 +422,8 @@ class Game:
                                     blind = self.blind["bb"]["amt"]
                                     player_prev_bankroll += blind
                                 elif callsize == (
-                                    self.blind["bb"]["amt"] - self.blind["sb"]["amt"]
+                                    self.blind["bb"]["amt"] -
+                                        self.blind["sb"]["amt"]
                                 ):
                                     blind = self.blind["sb"]["amt"]
                                     player_prev_bankroll += blind
@@ -464,7 +466,8 @@ class Game:
                                 blind = self.blind["bb"]["amt"]
                                 player_prev_bankroll += blind
                             elif callsize == (
-                                self.blind["bb"]["amt"] - self.blind["sb"]["amt"]
+                                self.blind["bb"]["amt"] -
+                                    self.blind["sb"]["amt"]
                             ):
                                 blind = self.blind["sb"]["amt"]
                                 player_prev_bankroll += blind
@@ -549,7 +552,8 @@ class Game:
                                 blind = self.blind["bb"]["amt"]
                                 player_prev_bankroll += blind
                             elif callsize == (
-                                self.blind["bb"]["amt"] - self.blind["sb"]["amt"]
+                                self.blind["bb"]["amt"] -
+                                    self.blind["sb"]["amt"]
                             ):
                                 blind = self.blind["sb"]["amt"]
                                 player_prev_bankroll += blind
@@ -606,7 +610,7 @@ class Game:
                             bet,
                             blind=blind,
                         )
-                    
+
                 else:
                     print("Illegal move")
                     i = (i + len(players)) % len(players)
@@ -634,7 +638,8 @@ class Game:
                                 blind = self.blind["bb"]["amt"]
                                 player_prev_bankroll += blind
                             elif callsize == (
-                                self.blind["bb"]["amt"] - self.blind["sb"]["amt"]
+                                self.blind["bb"]["amt"] -
+                                    self.blind["sb"]["amt"]
                             ):
                                 blind = self.blind["sb"]["amt"]
                                 player_prev_bankroll += blind
@@ -701,7 +706,8 @@ class Game:
                                 blind = self.blind["bb"]["amt"]
                                 player_prev_bankroll += blind
                             elif callsize == (
-                                self.blind["bb"]["amt"] - self.blind["sb"]["amt"]
+                                self.blind["bb"]["amt"] -
+                                    self.blind["sb"]["amt"]
                             ):
                                 blind = self.blind["sb"]["amt"]
                                 player_prev_bankroll += blind
