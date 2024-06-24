@@ -63,4 +63,4 @@ def potential(deck, hole_cards, community_cards):
     
     cdef double ppot1 = (hp[behind][ahead] + hp[behind][tied] / 2 + hp[tied][ahead] / 2) / (hp_total[behind] + hp_total[tied] / 2)
     cdef double npot1 = (hp[ahead][behind] + hp[ahead][tied] / 2 + hp[tied][behind] / 2) / (hp_total[ahead] + hp_total[tied] / 2)
-    return ppot1, npot1, rank_data
+    return ppot1, npot1
