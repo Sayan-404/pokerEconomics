@@ -11,9 +11,9 @@ def create_probabilistic_score(deck, hole_cards, community_cards=[]):
     ahead = tied = behind = 0.0
     def get_score(cards):
         return chen.get_score(cards) if len(cards) == 2 else ph_score.get_score(cards)
-    current_rank = get_score(hole_cards + community_cards)
+    current_rank = get_score([*hole_cards, *community_cards])
     for cards in opp_cards:
-        rank = get_score(cards + community_cards)
+        rank = get_score([*cards, *community_cards])
         if rank < current_rank:
             ahead += w[cards]
         elif rank == current_rank:

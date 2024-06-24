@@ -15,7 +15,7 @@ class Strategy:
         # CostToWinnings is the pot odds - the opportunity cost of a hand
         self.costToRisk = 0
         self.costToWinnings = 0
-
+        self.rank_data = {}
         self.holeCards = []
         self.communityCards = []
         self.round = -1
@@ -162,7 +162,7 @@ class Strategy:
             # Signal on the flop
             potentialPV = potentialPrivateValue(
                 self.deck, self.holeCards, self.communityCards)
-
+            self.rank_data = potentialPV[3]
             metric = 0
 
             if self.callValue != 0:
@@ -181,7 +181,7 @@ class Strategy:
             # Signal on the turn
             pv = privateValue(self.deck, self.holeCards, self.communityCards)
             potPV = potentialPrivateValue(self.deck, self.holeCards, self.communityCards)
-
+            self.rank_data = potPV[3]
             # Calculating Effective hand strength' with thesis formula (6.4) on page 37
             ehs = pv + (1 - pv)*potPV[0] - pv*potPV[1]
 

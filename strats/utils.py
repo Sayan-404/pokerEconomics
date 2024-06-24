@@ -114,7 +114,7 @@ def availableMoves(state, betamt=10):
         valid_moves = [("c", -1), ("r", call_value +
                                    effective_max_bet), ("f", -1)]
 
-        # If call_value is greater than bankroll, to be in the game, one has to go all in e>ither cooperative/defective ways
+        # If call_value is greater than bankroll, to be in the game, one has to go all in either cooperative/defective ways
         if call_value >= state["player"]["bankroll"]:
             valid_moves = [("a", -1), ("f", -1)]
 
