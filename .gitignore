@@ -10,5 +10,5 @@ __pycache__
 /data/b_*/
 .vscode
 build/
-strats/*.so
-strats/*.c
+potential_data/*.so
+potential_data/*.c
