@@ -114,7 +114,7 @@ def availableMoves(state, betamt=10):
         valid_moves = [("c", -1), ("r", call_value +
                                    effective_max_bet), ("f", -1)]
 
-        # If call_value is greater than bankroll, to be in the game, one has to go all in e>ither cooperative/defective ways
+        # If call_value is greater than bankroll, to be in the game, one has to go all in either cooperative/defective ways
         if call_value >= state["player"]["bankroll"]:
             valid_moves = [("a", -1), ("f", -1)]
 
@@ -158,13 +158,13 @@ def canDefect(state):
     return return_value
 
 
-def privateValue(hole_cards, community_cards=[]):
+def privateValue(deck, hole_cards, community_cards=[]):
     # returns a probability of roughly how good the hand is compared to other possible hands
-    return create_probabilistic_score(hole_cards, community_cards)
+    return create_probabilistic_score(deck, hole_cards, community_cards)
 
 
-def potentialPrivateValue(hole_cards, community_cards):
-    return potential(hole_cards, community_cards)
+def potentialPrivateValue(deck, hole_cards, community_cards):
+    return potential(deck, hole_cards, community_cards)
 
 
 def ir(holeCards):
