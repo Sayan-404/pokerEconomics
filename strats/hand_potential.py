@@ -13,10 +13,12 @@ def potential(deck, hole_cards, community_cards):
     rank_data = {}
     t = [*hole_cards, *community_cards]
     current_rank5, rank_data = rank(*t, rank_data=rank_data)
+    
     ahead, tied, behind = 0, 1, 2
     for opp_hole_cards in opp_cards:
         t = [*opp_hole_cards, *community_cards]
         opp_rank, rank_data = rank(*t, rank_data=rank_data)
+
         if current_rank5 > opp_rank:
             index = ahead
         elif current_rank5 == opp_rank:
@@ -44,4 +46,4 @@ def potential(deck, hole_cards, community_cards):
                 hp[index][behind] += w[opp_hole_cards]
     ppot1 = (hp[behind][ahead] + hp[behind][tied]/2 + hp[tied][ahead]/2) / (hp_total[behind] + hp_total[tied]/2)
     npot1 = (hp[ahead][behind] + hp[ahead][tied]/2 + hp[tied][behind]/2) / (hp_total[ahead] + hp_total[tied]/2)
-    return ppot1, npot1
+    return ppot1, npot1, rank_data
