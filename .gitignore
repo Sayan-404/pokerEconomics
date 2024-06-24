@@ -9,3 +9,6 @@ __pycache__
 /data/r_*/
 /data/b_*/
 .vscode
+build/
+strats/*.so
+strats/*.c
