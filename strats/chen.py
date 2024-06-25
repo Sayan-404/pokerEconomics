@@ -51,7 +51,6 @@ def get_score(cards):
             score += 1
 
     score = math.ceil(score)
-    score = scale(score, -1, 20)
     return score
 
 if __name__ == "__main__":
