@@ -1,0 +1,6 @@
+[submodule "handevaluator/handevaluator/pybind11"]
+	path = handevaluator/handevaluator/pybind11
+	url = https://github.com/pybind/pybind11.git
+[submodule "handevaluator/pybind11"]
+	path = handevaluator/pybind11
+	url = https://github.com/pybind/pybind11.git

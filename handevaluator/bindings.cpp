@@ -9,5 +9,5 @@ int evaluate_cards(const std::vector<std::string>& cards) {
 }
 
 PYBIND11_MODULE(phevaluator_bindings, m) {
-    m.def("evaluate_cards", &evaluate_cards, "Evaluate poker hand cards");
+    m.def("evaluate_cards", &evaluate_cards);
 }
