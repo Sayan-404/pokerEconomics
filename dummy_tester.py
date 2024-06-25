@@ -7,7 +7,7 @@ suit = "csdh"
 deck = [r+s for r in rank for s in suit]
 possible_combinations = list(combinations(deck, 5))
 total_time = 0
-runs = 100000
+runs = 1
 for _ in range(runs):
     a = time.time()
     t = possible_combinations[random.randint(0, len(possible_combinations)-1)]
