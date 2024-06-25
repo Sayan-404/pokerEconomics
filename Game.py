@@ -86,7 +86,8 @@ class Game:
             "pot": self.pot,
             "round": self.round,
             "max_bet": self.get_max_bet(player_index),
-            "blinds": self.blind
+            "blinds": self.blind,
+            "deck": [str(card) for card in self.deck.cards],
             # there should be a position variable indicating the position of the player in the table
         }
 

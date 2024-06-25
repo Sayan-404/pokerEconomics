@@ -1,6 +1,6 @@
 from phevaluator.evaluator import evaluate_cards
 
-def rank(*cards, rank_data):
+def rank(cards, rank_data):
     cards = list(cards)
     cards.sort()
     if tuple(cards) in rank_data:

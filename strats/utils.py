@@ -163,8 +163,8 @@ def privateValue(hole_cards, community_cards=[]):
     return create_probabilistic_score(hole_cards, community_cards)
 
 
-def potentialPrivateValue(hole_cards, community_cards, rank_data):
-    return potential(hole_cards, community_cards, rank_data)
+def potentialPrivateValue(deck, hole_cards, community_cards, rank_data):
+    return potential(deck, hole_cards, community_cards, rank_data)
 
 
 def ir(holeCards):
