@@ -23,6 +23,7 @@ class Strategy:
         self.playerBetAmt = -1
         self.pot = 0
         self.betAmt = 0
+        self.rank_data = {}
 
         # Here the potential variables are probabilistic calculation of chance events
         self.potentialCostToRisk = 0
@@ -160,8 +161,8 @@ class Strategy:
         if self.round == 1:
             # Signal on the flop
             potentialPV = potentialPrivateValue(
-                self.holeCards, self.communityCards)
-
+                self.holeCards, self.communityCards, self.rank_data)
+            self.rank_data = potentialPV[2]
             metric = 0
 
             if self.callValue != 0:
@@ -179,8 +180,8 @@ class Strategy:
         if self.round == 2:
             # Signal on the turn
             pv = privateValue(self.holeCards, self.communityCards)
-            potPV = potentialPrivateValue(self.holeCards, self.communityCards)
-
+            potPV = potentialPrivateValue(self.holeCards, self.communityCards, self.rank_data)
+            self.rank_data = potPV[2]
             # Calculating Effective hand strength' with thesis formula (6.4) on page 37
             ehs = pv + (1 - pv)*potPV[0] - pv*potPV[1]
 
