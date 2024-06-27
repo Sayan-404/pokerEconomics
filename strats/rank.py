@@ -1,3 +1,7 @@
+import os, sys
+
+sys.path.append(os.getcwd())
+
 # from phevaluator.evaluator import evaluate_cardss
 from evaluator.evaluate_cards import evaluate_cards as evaluate_cards
 

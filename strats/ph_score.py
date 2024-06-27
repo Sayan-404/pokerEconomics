@@ -1,7 +1,13 @@
+import os, sys
+
+sys.path.append(os.getcwd())
+
+
 from itertools import combinations
-from phevaluator.evaluator import evaluate_cards
-from .math_utils import scale, kde_plot, inverse_range
+from evaluator.evaluate_cards import evaluate_cards
+from strats.math_utils import scale, kde_plot, inverse_range
 from tqdm import tqdm
+
 
 def get_score(cards):
     score = evaluate_cards(*cards)
@@ -16,6 +22,7 @@ def get_score(cards):
         score = scale(score, 1, 7414)
     return score
 
+
 if __name__ == "__main__":
     ranks = "23456789TJQKA"
     suits = "scdh"
@@ -27,6 +34,6 @@ if __name__ == "__main__":
     one_d_scores = [score[1] for score in scores]
     kde_plot(one_d_scores)
     print(f"max: {max(one_d_scores)} min: {min(one_d_scores)}")
-        # 5 cards: 1 to 7462
-        # 6 cards: 1 to 7450
-        # 7 cards: 1 to 7414
+    # 5 cards: 1 to 7462
+    # 6 cards: 1 to 7450
+    # 7 cards: 1 to 7414

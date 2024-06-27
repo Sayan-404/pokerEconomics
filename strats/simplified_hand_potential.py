@@ -1,3 +1,7 @@
+import os, sys
+
+sys.path.append(os.getcwd())
+
 from itertools import combinations
 from evaluator.evaluate_cards import evaluate_cards as evaluate_cards
 # from phevaluator.evaluator import evaluate_cards

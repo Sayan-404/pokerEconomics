@@ -1,4 +1,5 @@
-from phevaluator.evaluator import evaluate_cards
+from evaluator.evaluate_cards import evaluate_cards
+
 
 class Showdown:
     def __init__(self, community_cards, players):
@@ -14,13 +15,14 @@ class Showdown:
         r = evaluate_cards(*hand)
         return r
 
-    def winner(self): # returns index of winning player, 0-indexed
+    def winner(self):  # returns index of winning player, 0-indexed
         max_rank = 999999
         max_index = 0
         for i in range(len(self.player_hands)):
             if self.rank(self.player_hands[i]) < max_rank:
                 max_rank = self.rank(self.player_hands[i])
                 max_index = i
-        return max_index    
+        return max_index
+
     def __str__(self):
         return f'{self.player_hands} {self.community_cards}'

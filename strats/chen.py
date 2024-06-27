@@ -1,15 +1,16 @@
-import pickle
 import math
 import statistics
 
+import os, sys
+
+sys.path.append(os.getcwd())
+
 from tqdm import tqdm
-from .math_utils import scale, kde_plot
+from strats.math_utils import scale, kde_plot
 from itertools import combinations
 # IMPORTANT: the score in chen are not uniformly distributed, ie pairs of cards are not equally distributed for each given score range
 # therefore a mean understanding does not suffice and a mode understanding is necessary
 # run this file to see a distribution and infer strategies
-
-SCORES = []
 
 
 def get_score(cards):
@@ -59,40 +60,6 @@ def get_score(cards):
 
     score = math.ceil(score)
     return score
-
-
-def generateCache():
-    global SCORES
-
-    if not SCORES:
-        ranks = "23456789TJQKA"
-        suits = "scdh"
-        deck = [r+s for r in ranks for s in suits]
-        hole_cards = sorted(list(combinations(deck, 2)))
-
-        SCORES = [[sorted(cards), get_score(cards)] for cards in hole_cards]
-
-        with open("./strats/chenCache.bin", "wb") as f:
-            pickle.dump(SCORES, f)
-
-        # print("Cache generated and saved to chenCache.bin")
-
-
-def chenScore(cards):
-    global SCORES
-
-    if not SCORES:
-        try:
-            with open("./strats/chenCache.bin", "rb") as f:
-                SCORES = pickle.load(f)
-        except FileNotFoundError:
-            generateCache()
-
-    cards = sorted(cards)
-
-    for i in range(len(SCORES)):
-        if (SCORES[i][0][0] == cards[0]) and (SCORES[i][0][1] == cards[1]):
-            return SCORES[i][1]
 
 
 if __name__ == "__main__":
