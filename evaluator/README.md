@@ -6,6 +6,7 @@
     cmake ..
     make pheval
     cd ..
+    (for mac: rename build/libpheval.0.6.0.dylib to build/libpheval.so.0.6.0)
     g++ -fPIC --shared -std=c++11 -I include/ wrapper.cpp build/libpheval.so.0.6.0 -o wrapper.so
 ```
 
