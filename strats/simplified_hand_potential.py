@@ -1,5 +1,6 @@
 from itertools import combinations
-from phevaluator.evaluator import evaluate_cards
+from evaluator.evaluate_cards import evaluate_cards as evaluate_cards
+# from phevaluator.evaluator import evaluate_cards
 
 def potential(deck, hole_cards, community_cards, type_lookahead=1):
     # 1 type_lookahead is 1 card look ahead

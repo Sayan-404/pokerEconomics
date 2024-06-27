@@ -1,4 +1,5 @@
-from phevaluator.evaluator import evaluate_cards
+# from phevaluator.evaluator import evaluate_cardss
+from evaluator.evaluate_cards import evaluate_cards as evaluate_cards
 
 def rank(cards, rank_data):
     cards = list(cards)
