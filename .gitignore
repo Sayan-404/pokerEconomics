@@ -9,4 +9,3 @@ __pycache__
 /data/r_*/
 /data/b_*/
 .vscode
-build/
