@@ -1,0 +1,16 @@
+{
+    "log_hands": false,
+    "runs": 100,
+    "simulation": true,
+    "player1": {
+        "id": "action.cooperative",
+        "bankroll": 1500000,
+        "strategy": "action.cooperative"
+    },
+    "player2": {
+        "id": "action.random_no_fold",
+        "bankroll": 1500000,
+        "strategy": "action.random_no_fold"
+    },
+    "seed": null
+}
