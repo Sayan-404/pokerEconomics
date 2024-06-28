@@ -105,8 +105,7 @@ if __name__ == "__main__":
                     region_name='eu-north-1'
                 )
                 ec2 = session.client('ec2')
-                instance_id = os.popen(
-                    'curl http://169.254.169.254/latest/meta-data/instance-id').read().strip()
+                instance_id = "i-0d6870b19e0b6110e"
                 ec2.stop_instances(InstanceIds=[instance_id])
                 print(f"Instance {instance_id} is shutting down.")
             except Exception as e:
