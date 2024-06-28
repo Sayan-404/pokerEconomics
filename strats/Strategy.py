@@ -100,49 +100,8 @@ class Strategy:
 
         # For pre-flop
         if self.round == 0:
-<<<<<<< HEAD
-            # Signal on the pre-flop
-            pv = privateValue(self.deck, self.holeCards)
-            incomeRate = ir(self.holeCards)
-            irp = (incomeRate + 351)/1055
-
-            # Big Blind's action if callValue is 0
-            if self.callValue == 0:
-                if irp >= pv:
-                    if pv >= self.potentialCostToWinnings:
-                        return True
-
-                    return None
-
-            if self.callValue != 0:
-                # When it's small blind's action
-                if self.callValue == self.playerBetAmt:
-                    if irp >= pv:
-                        if pv >= self.costToWinnings:
-                            return True
-
-                    return None
-                else:
-                    # If the prodigal factor is satisfied then defect
-                    if pv >= (self.costToWinnings + tightnessFactor):
-                        return True
-
-                    if pv >= self.costToWinnings:
-                        return None
-
-        if self.round == 1:
-            # Signal on the flop
-            potentialPV = potentialPrivateValue(
-                self.deck, self.holeCards, self.communityCards)
-            self.rank_data = potentialPV[3]
-            metric = 0
-
-            if self.callValue != 0:
-                metric = self.costToWinnings
-=======
             # Gets the score by Chen's formula
             score = chenScore(self.holeCards)
->>>>>>> main
 
             if self.callValue == 0:
                 # 4 was found to be the average score of all hands
@@ -153,31 +112,6 @@ class Strategy:
 
                 return None
 
-<<<<<<< HEAD
-        if self.round == 2:
-            # Signal on the turn
-            pv = privateValue(self.deck, self.holeCards, self.communityCards)
-            potPV = potentialPrivateValue(self.deck, self.holeCards, self.communityCards)
-            self.rank_data = potPV[3]
-            # Calculating Effective hand strength' with thesis formula (6.4) on page 37
-            ehs = pv + (1 - pv)*potPV[0] - pv*potPV[1]
-
-            # Calculated with formula 6.7 on page 40 of thesis
-            showdownOdds = (self.callValue + (4 * self.betAmt)) / \
-                (self.pot + self.callValue + (8*self.betAmt))
-
-            if (ehs > showdownOdds):
-                positiveEhs = ehs + pv*potPV[1]
-
-                if (positiveEhs >= showdownOdds):
-                    return True
-
-                return None
-
-        if self.round == 3:
-            # Signal on the river
-            pv = privateValue(self.deck, self.holeCards, self.communityCards)
-=======
             if self.callValue != 0:
                 # If score greater than or equal to 12 then raise/re-raise
                 # If score greater than or equal to 10 but less than 12 then call to raises
@@ -188,7 +122,6 @@ class Strategy:
                 return None
 
         return None
->>>>>>> main
 
         # def signalFn(self, tightness=1):
         #     """

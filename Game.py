@@ -86,11 +86,7 @@ class Game:
             "round": self.round,
             "max_bet": self.get_max_bet(player_index),
             "blinds": self.blind,
-<<<<<<< HEAD
-            "current_deck": [str(card) for card in self.deck.cards]
-=======
             "deck": [str(card) for card in self.deck.cards],
->>>>>>> main
             # there should be a position variable indicating the position of the player in the table
         }
 

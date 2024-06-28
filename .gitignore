@@ -10,9 +10,6 @@ __pycache__
 /data/b_*/
 .vscode
 build/
-<<<<<<< HEAD
 potential_data/*.so
 potential_data/*.c
-=======
 wrapper.so
->>>>>>> main

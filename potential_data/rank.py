@@ -1,4 +1,4 @@
-from phevaluator.evaluator import evaluate_cards
+from evaluator.evaluate_cards import evaluate_cards
 
 
 def rank(*cards, rank_data):
