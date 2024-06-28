@@ -1,4 +1,4 @@
-cd evaluator
+cd potential_data/evaluator
 mkdir -p build
 cd build
 cmake ..
