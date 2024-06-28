@@ -100,6 +100,6 @@ if __name__ == "__main__":
         if aws:
             instance_id = os.popen(
                 'curl http://169.254.169.254/latest/meta-data/instance-id').read().strip()
-            ec2 = boto3.client('ec2')
+            ec2 = boto3.client('ec2', region_name="eu-north-1")
             ec2.stop_instances(InstanceIds=[instance_id])
             print(f"Instance {instance_id} is shutting down.")
