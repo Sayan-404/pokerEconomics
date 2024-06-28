@@ -98,8 +98,16 @@ if __name__ == "__main__":
         # shuts down the instance
         # add an IAM role with ec2:StopInstance permission and add this role to the ec2 instance
         if aws:
-            instance_id = os.popen(
-                'curl http://169.254.169.254/latest/meta-data/instance-id').read().strip()
-            ec2 = boto3.client('ec2', region_name="eu-north-1")
-            ec2.stop_instances(InstanceIds=[instance_id])
-            print(f"Instance {instance_id} is shutting down.")
+            try:
+                session = boto3.Session(
+                    aws_access_key_id='AKIA3FLD3AZJIJD3DSO7',
+                    aws_secret_access_key='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',
+                    region_name='eu-north-1'
+                )
+                ec2 = session.client('ec2')
+                instance_id = os.popen(
+                    'curl http://169.254.169.254/latest/meta-data/instance-id').read().strip()
+                ec2.stop_instances(InstanceIds=[instance_id])
+                print(f"Instance {instance_id} is shutting down.")
+            except Exception as e:
+                print(f"Failed to shut down instance: {e}")
