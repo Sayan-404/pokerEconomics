@@ -7,3 +7,7 @@ tqdm==4.66.4
 boto3
 cython
 seaborn
+numba
+seaborn
+PyQt5
+cython

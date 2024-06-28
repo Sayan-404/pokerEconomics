@@ -1,10 +1,10 @@
-import os, sys
+from engine import initialise_run
+from multiprocessing import Pool
+import json
+import os
+import sys
 
 sys.path.append(os.getcwd())
-
-import json
-from multiprocessing import Pool
-from engine import initialise_run
 
 
 def configList():
@@ -34,8 +34,6 @@ if __name__ == "__main__":
         id = i
         data = [id, configs[i]]
         params.append(data)
-
-    print(params)
 
     with Pool(len(configs)) as p:
         p.map(run_game, params)
