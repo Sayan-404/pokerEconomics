@@ -6,7 +6,7 @@ def potential(deck, hole_cards, community_cards, rank_data):
     if len(community_cards) < 3 | len(community_cards) == 5:
         return -1 # only plausible for flop, and turn
     opp_cards = list(combinations(deck, 2))
-    w = {card: 1/len(opp_cards) for card in opp_cards}
+    w = {card: 1/len(opp_cards) for card in opp_cards} #dictionary 0 diye initialise
     hp = np.zeros((3, 3))
     hp_total = np.zeros(3)
     t = hole_cards + community_cards
@@ -23,7 +23,7 @@ def potential(deck, hole_cards, community_cards, rank_data):
         else:
             index = behind
         future_community_cards = [card for card in deck if card not in opp_hole_cards]
-        future_community_cards = list(combinations(future_community_cards, 1)) # only implements one card look-ahead
+        future_community_cards = list(combinations(future_community_cards, 2)) # only implements one card look-ahead
         for future_cards in future_community_cards:
 
             hp_total[index] += w[opp_hole_cards]
@@ -44,3 +44,12 @@ def potential(deck, hole_cards, community_cards, rank_data):
     ppot1 = (hp[behind][ahead] + hp[behind][tied]/2 + hp[tied][ahead]/2) / (hp_total[behind] + hp_total[tied]/2)
     npot1 = (hp[ahead][behind] + hp[ahead][tied]/2 + hp[tied][behind]/2) / (hp_total[ahead] + hp_total[tied]/2)
     return ppot1, npot1, rank_data
+
+if __name__ == "__main__":
+    rank = "23456789TJQKA"
+    suit = "csdh"
+    deck = [r+s for r in rank for s in suit]
+    hole=["Ah","Kd"]
+    comm_cards=["3d","4c","Js"]
+
+    print(potential(deck,hole,comm_cards))

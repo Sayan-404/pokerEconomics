@@ -259,6 +259,6 @@ def equity(hole_cards, community_cards):
     }
 
 if __name__ == "__main__":
-    comm_cards = ["8s", "7c", "9c"]
-    hole = ["Ah", "5h"]
+    comm_cards = ["9c", "8s", "7d"]
+    hole = ["Td", "Ks"]
     print(equity(hole, comm_cards))
