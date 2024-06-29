@@ -140,7 +140,7 @@ potentials potential2(char hole[2][3], char comm_cards[5][3]) {
     for(k=0;k<3;k++)
         remove_card(&deck[0],comm_cards[k],&deck_size);
         
-    for(i=0;k<deck_size;k++)
+    for(i=0;i<deck_size-1;i++)
         for(j=i+1;j<deck_size;j++)
             {
                 char oppcards[2][3];
@@ -152,9 +152,9 @@ potentials potential2(char hole[2][3], char comm_cards[5][3]) {
                 if(ourrank5 < opprank)
                     index=AHEAD;
                 else if(ourrank5 == opprank)
-                    index == TIED;
+                    index = TIED;
                 else
-                    index == BEHIND;
+                    index = BEHIND;
                 
                 char t_deck[DECK_SIZE][CARD_LENGTH];
                 int t_deck_size = DECK_SIZE;
@@ -169,35 +169,38 @@ potentials potential2(char hole[2][3], char comm_cards[5][3]) {
                 }
                 
                 //we draw two cards from the t_deck to make a 5 card board 
-                for(l=0;l<t_deck_size;l++) {
-                    char remaining_cards[2][CARD_LENGTH];
-                    strcpy(remaining_cards[0],t_deck[l]);
-                    strcpy(remaining_cards[1],t_deck[(l+1)%t_deck_size]);
+                int m;
+                for(l=0;l<t_deck_size-1;l++) {
+                    for(m=l+1;m<t_deck_size;m++) {
+                        char remaining_cards[2][CARD_LENGTH];
+                        strcpy(remaining_cards[0],t_deck[l]);
+                        strcpy(remaining_cards[1],t_deck[m]);
 
-                    hp_total[index] += 1;
+                        hp_total[index] += 1;
 
-                    char five_card_board[5][CARD_LENGTH];
-                    int h;
-                    // printf("%s ",remaining_cards[0]);
-                    // printf("%s ",remaining_cards[1]);
-                    // printf("\n");
-                    for(h=0;h<5;h++) {
-                        if(h<3)
-                            strcpy(five_card_board[h],comm_cards[h]);
+                        char five_card_board[5][CARD_LENGTH];
+                        int h;
+                        // printf("%s ",remaining_cards[0]);
+                        // printf("%s ",remaining_cards[1]);
+                        // printf("\n");
+                        for(h=0;h<5;h++) {
+                            if(h<3)
+                                strcpy(five_card_board[h],comm_cards[h]);
+                            else
+                                strcpy(five_card_board[h],remaining_cards[h-3]);
+                        }
+                        ourrank7=rank7(hole,five_card_board);
+                        opprank=rank7(oppcards,five_card_board);
+                        // printf("ourrank: %f",ourrank7);
+                        // printf("opprank: %f",opprank);
+                        // exit(0);
+                        if(ourrank7<opprank)
+                            hp[index][AHEAD] += 1;
+                        else if(ourrank7 == opprank)
+                            hp[index][TIED] += 1;
                         else
-                            strcpy(five_card_board[h],remaining_cards[h-3]);
+                            hp[index][BEHIND] += 1;
                     }
-                    ourrank7=rank7(hole,five_card_board);
-                    opprank=rank7(oppcards,five_card_board);
-                    // printf("ourrank: %f",ourrank7);
-                    // printf("opprank: %f",opprank);
-                    // exit(0);
-                    if(ourrank7<opprank)
-                        hp[index][AHEAD] += 1;
-                    else if(ourrank7 == opprank)
-                        hp[index][TIED] += 1;
-                    else
-                        hp[index][BEHIND] += 1;
                 }
             }
     ppot2 = (hp[BEHIND][AHEAD] + hp[BEHIND][TIED]/2 + hp[TIED][AHEAD]/2) / (hp_total[BEHIND] + hp_total[TIED]/2);
@@ -208,13 +211,33 @@ potentials potential2(char hole[2][3], char comm_cards[5][3]) {
 }
 
 void main() {
+    int i;
+    // for(i=0;i<100;i++)
+    // {
+        
+    //     // char deck[DECK_SIZE][CARD_LENGTH];
+    //     // create_deck(&deck[0]);
+    //     // char used[5][CARD_LENGTH];
+    //     // char hole[2][CARD_LENGTH];
+    //     // char comm[3][CARD_LENGTH];
+    //     // int j,k;
+        
+    //     // for(j=0;i<2;j++){
+    //     //     char card[] = deck[(int) rand() % 51];
+    //     //     for(k=0;k<5;k++)
+    //     //         if(strcmp(card,used[k]) == 0)
+        
+    //     char hole[2][3] = {"Ad","Qc"};
+    //     char comm_cards[5][3] = {"3h","4c","Jh"};
+    //     potentials pot = potential2(hole,comm_cards);
+    // }
     char hole[2][3] = {"Ad","Qc"};
     char comm_cards[5][3] = {"3h","4c","Jh"};
     // int ourrank=rank5(hole,comm_cards);
     potentials pot = potential2(hole,comm_cards);
-    printf("ppot2: %f",pot.ppot);
-    printf("npot2: %f",pot.npot);
-    // printf("Our Rank: %d", ourrank);
+    // printf("ppot2: %f",pot.ppot);
+    // printf("npot2: %f",pot.npot);
+    // // printf("Our Rank: %d", ourrank);
 }
 
  
