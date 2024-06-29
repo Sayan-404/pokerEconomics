@@ -1,18 +1,22 @@
-import boto3
-from engine import initialise_run
 import multiprocessing
 import re
 import math
 import os
 import sys
+import traceback
+import gc
+
+from engine import initialise_run
 
 sys.path.append(os.getcwd())
 
+from aws import shutdownInstance
 
 def run_game(data):
     id, config = data
     game = initialise_run(config, id)
     game.play()
+    gc.collect()
 
 
 def run_configs(configs):
@@ -32,9 +36,11 @@ if __name__ == "__main__":
     try:
         optimal_instances = int(input(
             "Enter optimal number of instances/ processes (run benchmark.py to get optimal number of processes): "))
+        
         if optimal_instances <= 0:
             print("Negative instances not allowed")
             exit(1)
+
         configs = []
         batch = input("Enter batch: ")
         directory = f"configs/{batch}" if batch else ""
@@ -45,6 +51,7 @@ if __name__ == "__main__":
                 y = x.string.split(".")[0]
                 if y != "config" and y != "benchmark_config":
                     configs.append(x.string[0:x.string.rfind(".")])
+
         enum_configs = {i: configs[i] for i in range(len(configs))}
         configs = []
         print("Enter numbers (separated by spaces) corresponding to configs according to the list below (-1 for all): ")
@@ -62,9 +69,11 @@ if __name__ == "__main__":
             else:
                 configs.append(
                     f"{batch}/{enum_configs[key]}" if batch != "" else enum_configs[key])
+                
         if len(configs) > optimal_instances:
             ch = input(
                 "Number of configs chosen exceeds optimal number of instances, do you wish to run in groups? (y/n): ")
+            
             if ch == "n" or ch == "no":
                 ch = input("WARNING: are you sure? (y/n): ")
                 print(f"Total number of instances: {len(configs)}.")
@@ -72,6 +81,7 @@ if __name__ == "__main__":
                     print("quitting ...")
                     exit(1)
                 run_configs(configs)
+
             elif ch == "y" or ch == "yes":
                 num_groups = math.ceil(len(configs) / optimal_instances)
                 print(f"Total groups: {num_groups}")
@@ -93,20 +103,9 @@ if __name__ == "__main__":
             run_configs(configs)
     except Exception as e:
         print(f"An error occurred.")
-        print(e)
+        traceback.print_exc()
     finally:
         # shuts down the instance
         # add an IAM role with ec2:StopInstance permission and add this role to the ec2 instance
         if aws:
-            try:
-                session = boto3.Session(
-                    aws_access_key_id='AKIA3FLD3AZJIJD3DSO7',
-                    aws_secret_access_key='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',
-                    region_name='ap-south-1'
-                )
-                ec2 = session.client('ec2')
-                instance_id = "i-016c0aa1d69f88495"
-                ec2.stop_instances(InstanceIds=[instance_id])
-                print(f"Instance {instance_id} is shutting down.")
-            except Exception as e:
-                print(f"Failed to shut down instance: {e}")
+            shutdownInstance()
