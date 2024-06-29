@@ -10,7 +10,7 @@ sudo apt-get upgrade -y
 sudo apt-get install -y python3 python3-pip python3-venv
 
 # Install GCC and G++
-sudo apt-get install -y gcc g++
+sudo apt-get install -y gcc g++ cmake
 
 # Install additional essential build tools
 sudo apt-get install -y build-essential
