@@ -102,10 +102,10 @@ if __name__ == "__main__":
                 session = boto3.Session(
                     aws_access_key_id='AKIA3FLD3AZJIJD3DSO7',
                     aws_secret_access_key='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',
-                    region_name='eu-north-1'
+                    region_name='ap-south-1'
                 )
                 ec2 = session.client('ec2')
-                instance_id = "i-0d6870b19e0b6110e"
+                instance_id = "i-016c0aa1d69f88495"
                 ec2.stop_instances(InstanceIds=[instance_id])
                 print(f"Instance {instance_id} is shutting down.")
             except Exception as e:
