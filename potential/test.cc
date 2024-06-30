@@ -1,6 +1,8 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <unordered_map>
+#include <cmath>
 
 // Function to generate combinations
 std::vector<std::vector<std::string>> generateCombinations(const std::vector<std::string> &elements, int r)
@@ -39,26 +41,62 @@ std::vector<std::string> create_deck()
             deck.push_back(rank + suit);
         }
     }
+
+    // Sorting the deck
+    std::sort(deck.begin(), deck.end());
+
     return deck;
+}
+
+std::vector<long long> generate_first_n_primes(int n)
+{
+    std::vector<long long> primes;
+    long long num = 2; // The first prime number
+    while (primes.size() < n)
+    {
+        bool isPrime = true;
+        for (long long i = 2; i <= std::sqrt(num); ++i)
+        {
+            if (num % i == 0)
+            {
+                isPrime = false;
+                break;
+            }
+        }
+        if (isPrime)
+        {
+            primes.push_back(num);
+        }
+        ++num;
+    }
+    return primes;
+}
+
+std::unordered_map<std::string, long long> create_card_prime_map(const std::vector<std::string> &deck, const std::vector<long long> &primes)
+{
+    std::unordered_map<std::string, long long> cardPrimeMap;
+    for (size_t i = 0; i < deck.size(); ++i)
+    {
+        cardPrimeMap[deck[i]] = primes[i];
+    }
+    return cardPrimeMap;
 }
 
 int main()
 {
-    std::vector<std::string> elements = create_deck();
-    int r = 5;
+    std::vector<std::string> deck = create_deck();
+    std::vector<long long> primes = generate_first_n_primes(52);
 
-    std::vector<std::vector<std::string>> combos = generateCombinations(elements, r);
+    std::unordered_map<std::string, long long> cardPrimeMap = create_card_prime_map(deck, primes);
 
-    // Print combinations
-    for (const auto &combo : combos)
-    {
-        std::cout << "[ ";
-        for (const auto &item : combo)
-        {
-            std::cout << item << " ";
-        }
-        std::cout << "]\n";
-    }
+    std::cout << deck[1] << std::endl;
+    std::cout << cardPrimeMap[deck[1]] << std::endl;
+
+    // Print the card-prime mapping
+    // for (const auto &pair : cardPrimeMap)
+    // {
+    //     std::cout << "Card: " << pair.first << " -> Prime: " << pair.second << std::endl;
+    // }
 
     return 0;
 }
