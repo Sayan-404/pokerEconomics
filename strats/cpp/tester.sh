@@ -8,7 +8,7 @@ count=0
 for ((i=1; i<=100; i++)); do
     # Measure the execution time
     start_time=$(date +%s%N)
-    "./hand_potential"
+    "./hand_potential_int"
     end_time=$(date +%s%N)
 
     # Calculate the execution time in nanoseconds
