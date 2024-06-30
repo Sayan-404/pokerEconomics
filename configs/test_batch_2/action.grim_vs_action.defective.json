@@ -1,0 +1,16 @@
+{
+    "log_hands": false,
+    "runs": 1000000,
+    "simulation": true,
+    "player1": {
+        "id": "action.grim",
+        "bankroll": -1,
+        "strategy": "action.grim"
+    },
+    "player2": {
+        "id": "action.defective",
+        "bankroll": -1,
+        "strategy": "action.defective"
+    },
+    "seed": null
+}
