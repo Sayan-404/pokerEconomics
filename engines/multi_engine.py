@@ -1,11 +1,10 @@
 import re
-import math
 import os
 import sys
 import traceback
 import gc
 
-from multiprocessing import Pool, get_context
+from multiprocessing import get_context
 
 from engine import initialise_run
 from aws import shutdownInstance
