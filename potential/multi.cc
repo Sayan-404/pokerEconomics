@@ -3,9 +3,11 @@
 #include <vector>
 #include <chrono>
 #include <iomanip>
+#include <iterator>
 #include <mutex>
 #include <fstream>
 #include <nlohmann/json.hpp>
+#include "utils/combinations.h"
 
 using json = nlohmann::json;
 std::mutex mtx; // Mutex to protect console output
@@ -35,6 +37,21 @@ void print_progress(int thread_id, int progress, double it_per_sec, double eta)
     std::cout << it_per_sec << " it/s ETA: " << eta << " s";
 
     std::cout.flush(); // Ensure the output is printed immediately
+}
+
+std::vector<std::string> create_deck()
+{
+    std::vector<std::string> suits = {"h", "d", "c", "s"};
+    std::vector<std::string> ranks = {"2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K", "A"};
+    std::vector<std::string> deck;
+    for (const auto &suit : suits)
+    {
+        for (const auto &rank : ranks)
+        {
+            deck.push_back(rank + suit);
+        }
+    }
+    return deck;
 }
 
 void foo(int thread_id)
@@ -88,27 +105,49 @@ void foo(int thread_id)
 
 int main()
 {
-    const int numThreads = 10; // Number of threads
-    std::vector<std::thread> threads;
+    int numThreads;
 
-    std::cout << "Starting threads...\n";
+    std::cout << "Enter number of threads: ";
+    std::cin >> numThreads;
 
-    // Move cursor to start of the screen and clear the screen
-    std::cout << "\033[H\033[J";
+    std::vector<std::string> deck = create_deck();
 
-    // Start the threads
-    for (int i = 0; i < numThreads; ++i)
+    int r;
+    std::cout << "Enter 0 for flop and 1 for turn: ";
+    std::cin >> r;
+
+    std::vector<std::vector<std::string>> possible_range = generateCombinations(deck, r);
+
+    // Print the generated combinations
+    for (const auto &combo : possible_range)
     {
-        threads.emplace_back(foo, i);
+        for (const auto &card : combo)
+        {
+            std::cout << card << " ";
+        }
+        std::cout << std::endl;
     }
 
-    // Wait for all threads to finish
-    for (auto &t : threads)
-    {
-        t.join();
-    }
+    // std::vector<std::thread> threads;
 
-    std::cout << "All threads completed.\n";
+    // std::cout << "Starting threads...\n";
+
+    // // Move cursor to start of the screen and clear the screen
+    // std::cout << "\033[H\033[J";
+
+    // // Start the threads
+    // for (int i = 0; i < numThreads; ++i)
+    // {
+    //     threads.emplace_back(foo, i);
+    // }
+
+    // // Wait for all threads to finish
+    // for (auto &t : threads)
+    // {
+    //     t.join();
+    // }
+
+    // std::cout << "All threads completed.\n";
 
     return 0;
 }
