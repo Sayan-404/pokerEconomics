@@ -6,7 +6,6 @@
 #include <string.h>
 #include <stdbool.h>
 
-#define CARD_LENGTH 3
 #define DECK_SIZE 52
 
 #define AHEAD 1
@@ -160,8 +159,8 @@ void main() {
     int comm_cards[5] = {6,8,38};
     // int ourrank=rank5(hole,comm_cards);
     potentials pot = potential2(hole,comm_cards);
-    printf("ppot2: %f",pot.ppot);
-    printf("npot2: %f",pot.npot);
+    // printf("ppot2: %f",pot.ppot);
+    // printf("npot2: %f",pot.npot);
     // // printf("Our Rank: %d", ourrank);
 }
 
