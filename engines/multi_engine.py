@@ -1,4 +1,3 @@
-import multiprocessing
 import re
 import math
 import os
@@ -6,23 +5,36 @@ import sys
 import traceback
 import gc
 
+from multiprocessing import Pool, get_context
+
 from engine import initialise_run
+from aws import shutdownInstance
 
 sys.path.append(os.getcwd())
 
-from aws import shutdownInstance
+def init_pool(configs):
+    global shared_configs
+    shared_configs = configs
 
 def run_game(data):
+    """
+    Worker processes for multiprocessing.
+    """
     id, config = data
-    game = initialise_run(config, id)
+    game = initialise_run(shared_configs[id], id)
     game.play()
+    del game
     gc.collect()
 
-
 def run_configs(configs):
-    payload = enumerate(configs)
-    with multiprocessing.Pool(processes=len(configs)) as pool:
-        pool.map(run_game, list(payload))
+    payload = list(enumerate(configs))
+    num_processes = min(len(configs), os.cpu_count() or 1)
+    ctx = get_context("spawn")
+    with ctx.Pool(processes=num_processes, initializer=init_pool, initargs=(configs,)) as pool:
+        results = pool.map(run_game, payload)
+        pool.close()
+        pool.join()
+    gc.collect()
 
 # be a little conservative in choosing the total number of optimal instances
 # in reality this multi engine will run an iteration, that is one multi process after another
@@ -34,13 +46,6 @@ if __name__ == "__main__":
     aws = True if input("Is this running on AWS? (y/n): ") == "y" else False
 
     try:
-        optimal_instances = int(input(
-            "Enter optimal number of instances/ processes (run benchmark.py to get optimal number of processes): "))
-        
-        if optimal_instances <= 0:
-            print("Negative instances not allowed")
-            exit(1)
-
         configs = []
         batch = input("Enter batch: ")
         directory = f"configs/{batch}" if batch else ""
@@ -69,38 +74,8 @@ if __name__ == "__main__":
             else:
                 configs.append(
                     f"{batch}/{enum_configs[key]}" if batch != "" else enum_configs[key])
-                
-        if len(configs) > optimal_instances:
-            ch = input(
-                "Number of configs chosen exceeds optimal number of instances, do you wish to run in groups? (y/n): ")
-            
-            if ch == "n" or ch == "no":
-                ch = input("WARNING: are you sure? (y/n): ")
-                print(f"Total number of instances: {len(configs)}.")
-                if len(configs) < 1:
-                    print("quitting ...")
-                    exit(1)
-                run_configs(configs)
 
-            elif ch == "y" or ch == "yes":
-                num_groups = math.ceil(len(configs) / optimal_instances)
-                print(f"Total groups: {num_groups}")
-                config_groups = []
-                num_members = len(configs) // num_groups
-                for i in range(num_groups-1):
-                    t = []
-                    for j in range(num_members*i, num_members*i+num_members):
-                        t.append(configs[j])
-                    config_groups.append(t)
-                t = []
-                for j in range(num_members*(num_groups-1), len(configs)):
-                    t.append(configs[j])
-                config_groups.append(t)
-                for i in range(len(config_groups)):
-                    print(f"RUNNING GROUP #{i}")
-                    run_configs(config_groups[i])
-        else:
-            run_configs(configs)
+        run_configs(configs)
     except Exception as e:
         print(f"An error occurred.")
         traceback.print_exc()
