@@ -3,6 +3,8 @@
 #include <algorithm>
 #include <unordered_map>
 #include <cmath>
+#include <cstring>
+#include "hand_potential.h"
 
 // Function to generate combinations
 std::vector<std::vector<std::string>> generateCombinations(const std::vector<std::string> &elements, int r)
@@ -89,14 +91,26 @@ int main()
 
     std::unordered_map<std::string, long long> cardPrimeMap = create_card_prime_map(deck, primes);
 
-    std::cout << deck[1] << std::endl;
-    std::cout << cardPrimeMap[deck[1]] << std::endl;
+    // Select example hole cards and community cards
+    std::string hole_cards[] = {deck[0], deck[1]};
+    std::string community_cards[] = {deck[2], deck[3], deck[4], deck[5], deck[6]};
 
-    // Print the card-prime mapping
-    // for (const auto &pair : cardPrimeMap)
-    // {
-    //     std::cout << "Card: " << pair.first << " -> Prime: " << pair.second << std::endl;
-    // }
+    // Convert hole cards to C-style char arrays
+    char hole[2][3];
+    for (int i = 0; i < 2; ++i) {
+        std::strcpy(hole[i], hole_cards[i].c_str());
+    }
+
+    // Convert community cards to C-style char arrays
+    char comm_cards[5][3];
+    for (int i = 0; i < 5; ++i) {
+        std::strcpy(comm_cards[i], community_cards[i].c_str());
+    }
+
+    // Call the C function
+    potentials result = potential2(hole, comm_cards);
+    std::cout << result.ppot << std::endl;
+    std::cout << result.npot << std::endl;
 
     return 0;
 }
