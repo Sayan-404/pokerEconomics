@@ -5,14 +5,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-#include "lookuptable.h"
+#include "newlookuptable.h"
 
 #define DECK_SIZE 52
 
 #define AHEAD 1
 #define TIED 0
 #define BEHIND 2
-long runs = 0;
+
 typedef struct {
     float ppot;
     float npot;
@@ -45,34 +45,12 @@ void remove_card(int *deck,int card, int* deck_size) {
 }
 
 int rank7(int hole[2], int comm_cards[3]) {
-    runs++;
-    int hand[] = {hole[0], hole[1], comm_cards[0], comm_cards[1], comm_cards[2], comm_cards[3], comm_cards[4]};
-    int handlength = 7;
-    struct DataItem* result = search(hand,handlength);
-    if (result != NULL) {
-        return result->data;
-        printf("%d",result->data);
-    }
-    else{
-        int rank = evaluate_7cards(hole[0], hole[1], comm_cards[0], comm_cards[1], comm_cards[2], comm_cards[3], comm_cards[4]);
-        insert(hand,handlength,rank);
-        return rank;
-    }
+    int rank = evaluate_7cards(hole[0], hole[1], comm_cards[0], comm_cards[1], comm_cards[2], comm_cards[3], comm_cards[4]);
+    return rank;
 }
 int rank5(int hole[2], int comm_cards[3]) {
-    runs++;
-    int hand[] = {hole[0], hole[1], comm_cards[0], comm_cards[1], comm_cards[2]};
-    int handlength = 5;
-    struct DataItem* result = search(hand,handlength);
-    if (result != NULL) {
-        return result->data;
-        printf("%d",result->data);
-    }
-    else{
-        int rank = evaluate_5cards(hole[0], hole[1], comm_cards[0], comm_cards[1], comm_cards[2]);
-        insert(hand,handlength,rank);
-        return rank;
-    }
+    int rank = evaluate_5cards(hole[0], hole[1], comm_cards[0], comm_cards[1], comm_cards[2]);
+    return rank;
 }
 
 // char* makedeck()
@@ -157,7 +135,25 @@ potentials potential2(int hole[2], int comm_cards[5]) {
                             else
                                 five_card_board[h] = remaining_cards[h-3];
                             }
-                        ourrank7=rank7(hole,five_card_board);
+                        struct DataItem* pItem;
+                        pItem = pSearch(remaining_cards,2);
+                        if(pItem != NULL){
+                            // printf("found something");
+                            ourrank7 = pItem->data;
+                        }
+                        else {
+                            ourrank7=rank7(hole,five_card_board);
+                            pInsert(remaining_cards,2,ourrank7);
+                        }
+                        int opp4[4]={t_deck[l],t_deck[m],oppcards[0],oppcards[1]};
+                        struct DataItem* oppItem;
+                        oppItem = oppSearch(opp4,4);
+                        // if(oppItem != NULL)
+                        //     opprank=oppItem->data;
+                        // else {
+                        //     opprank=rank7(oppcards,five_card_board);
+                        //     oppInsert(opp4,4,opprank);
+                        // }
                         opprank=rank7(oppcards,five_card_board);
                         // printf("ourrank: %f",ourrank7);
                         // printf("opprank: %f",opprank);
@@ -185,8 +181,8 @@ void main() {
     potentials pot = potential2(hole,comm_cards);
     printf("ppot2: %f",pot.ppot);
     printf("npot2: %f",pot.npot);
-    printf("collisions: %d",collisions);
-    printf("runs: %ld",runs); 
+    // printf("collisions: %d",collisions);
+    // printf("runs: %ld",runs); 
     // // printf("Our Rank: %d", ourrank);
 }
 
