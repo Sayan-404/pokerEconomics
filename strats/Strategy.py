@@ -90,12 +90,76 @@ class Strategy:
         raise NotImplementedError(
             f"The decide function is not implemented by {self.strategy}")
 
+    # def signalFn(self, tightness=2):
+    #     """
+    #         Analyses the information and gives signal.\n
+    #         Based on the logic given in page 12 of the thesis.\n
+    #         Returns: True, False, None
+    #     """
+
+    #     # For pre-flop
+    #     if self.round == 0:
+    #         # Gets the score by Chen's formula
+    #         score = chenScore(self.holeCards)
+
+    #         if self.callValue == 0:
+    #             # 4 was found to be the average score of all hands
+    #             # Rationale: A hand needs to be better than average
+    #             if score > 4:
+    #                 if score > 12:
+    #                     return True
+
+    #             return None
+
+    #         if self.callValue != 0:
+    #             # If score greater than or equal to 12 then raise/re-raise
+    #             # If score greater than or equal to 10 but less than 12 then call to raises
+    #             if score > 10:
+    #                 if score > 12:
+    #                     return True
+
+    #             return None
+
+    #     return None
+
+    # def signalFn(self, tightness=1):
+    #     """
+    #         Analyses the information and gives signal.\n
+    #         Based on the logic given in page 12 of the thesis.\n
+    #         Returns: True, False, None
+    #     """
+
+    #     # These values must be re-calculated statistically
+    #     defectionMin = 0.3
+    #     cooperationMin = 0.4
+
+    #     if tightness == 0:
+    #         defectionMin = 0.1
+    #         cooperationMin = 0.2
+
+    #     if tightness == 2:
+    #         defectionMin = 0.5
+    #         cooperationMin = 0.60
+
+    #     # This is direct implementation of the logic of Page 12 of the thesis
+    #     if self.potentialPrivateValue != 0:
+    #         if self.potentialPrivateValue[0] >= self.costToWinnings:
+    #             # Profitable scenario if one has the chance to beat at least defectionMin% of the hands
+    #             if (self.privateValue >= defectionMin):
+    #                 return True
+
+    #             return None
+    #         # Calculation based on NPOT to be added |>
+
+    #     # If there's a chance of beating at least cooperationMin% of hands then cooperate
+    #     if (self.privateValue >= cooperationMin):
+    #         return None
+
+    #     return False
+
     def signalFn(self, tightness=2):
-        """
-            Analyses the information and gives signal.\n
-            Based on the logic given in page 12 of the thesis.\n
-            Returns: True, False, None
-        """
+        tightnessUpperRanges = [0.02, 0.04, 0.06, 0.08, 0.1]
+        tightnessFactor = tightnessUpperRanges[tightness]
 
         # For pre-flop
         if self.round == 0:
@@ -120,141 +184,71 @@ class Strategy:
 
                 return None
 
-        return None
+        if self.round == 1:
+            # Signal on the flop
+            pv = privateValue(self.holeCards, self.communityCards)
+            potPV = potentialPrivateValue(self.holeCards, self.communityCards)
 
-        # def signalFn(self, tightness=1):
-        #     """
-        #         Analyses the information and gives signal.\n
-        #         Based on the logic given in page 12 of the thesis.\n
-        #         Returns: True, False, None
-        #     """
+            ehs = pv + (1 - pv)*potPV[0] - pv*potPV[1]
 
-        #     # These values must be re-calculated statistically
-        #     defectionMin = 0.3
-        #     cooperationMin = 0.4
+            showdownOdds = (self.callValue + 4*self.betAmt) / \
+                (self.pot + self.callValue + 8*self.betAmt)
+            
+            if (ehs > showdownOdds):
+                positiveEhs = ehs + pv*potPV[1]
 
-        #     if tightness == 0:
-        #         defectionMin = 0.1
-        #         cooperationMin = 0.2
+                if (positiveEhs >= showdownOdds):
+                    return True
 
-        #     if tightness == 2:
-        #         defectionMin = 0.5
-        #         cooperationMin = 0.60
+                return None
+            
 
-        #     # This is direct implementation of the logic of Page 12 of the thesis
-        #     if self.potentialPrivateValue != 0:
-        #         if self.potentialPrivateValue[0] >= self.costToWinnings:
-        #             # Profitable scenario if one has the chance to beat at least defectionMin% of the hands
-        #             if (self.privateValue >= defectionMin):
-        #                 return True
 
-        #             return None
-        #         # Calculation based on NPOT to be added |>
+        if self.round == 2:
+            # Signal on the turn
+            pv = privateValue(self.holeCards, self.communityCards)
+            potPV = potentialPrivateValue(self.holeCards, self.communityCards)
 
-        #     # If there's a chance of beating at least cooperationMin% of hands then cooperate
-        #     if (self.privateValue >= cooperationMin):
-        #         return None
+            # Calculating Effective hand strength' with thesis formula (6.4) on page 37
+            ehs = pv + (1 - pv)*potPV[0] - pv*potPV[1]
 
-        #     return False
+            # Calculated with formula 6.7 on page 40 of thesis
+            showdownOdds = (self.callValue + (4 * self.betAmt)) / \
+                (self.pot + self.callValue + (8*self.betAmt))
 
-        # def signalFn(self, tightness=2):
-        #     tightnessUpperRanges = [0.02, 0.04, 0.06, 0.08, 0.1]
-        #     tightnessFactor = tightnessUpperRanges[tightness]
+            if (ehs > showdownOdds):
+                positiveEhs = ehs + pv*potPV[1]
 
-        #     if self.round == 0:
-        #         # Signal on the pre-flop
-        #         pv = privateValue(self.holeCards)
-        #         incomeRate = ir(self.holeCards)
-        #         irp = (incomeRate + 351)/1055
+                if (positiveEhs >= showdownOdds):
+                    return True
 
-        #         # Big Blind's action if callValue is 0
-        #         if self.callValue == 0:
-        #             if irp >= pv:
-        #                 if pv >= self.potentialCostToWinnings:
-        #                     return True
+                return None
 
-        #                 return None
+        if self.round == 3:
+            # Signal on the river
+            pv = privateValue(self.holeCards, self.communityCards)
 
-        #         if self.callValue != 0:
-        #             # When it's small blind's action
-        #             if self.callValue == self.playerBetAmt:
-        #                 if irp >= pv:
-        #                     if pv >= self.costToWinnings:
-        #                         return True
+            if self.callValue != 0:
+                if (pv > self.costToWinnings):
+                    # Maximise the probable payout by making the pv almost equal to cost to winnings
+                    # Formula mathematically calculated
+                    # Profit maximisation and only suitable if strategy wants to defect
+                    self.betAmt = (pv*(self.callValue + self.pot) -
+                                   self.callValue)/(1 - 2*pv)
 
-        #                 return None
-        #             else:
-        #                 # If the prodigal factor is satisfied then defect
-        #                 if pv >= (self.costToWinnings + tightnessFactor):
-        #                     return True
+                    return True
 
-        #                 if pv >= self.costToWinnings:
-        #                     return None
+                elif (self.costToWinnings - pv) <= tightnessFactor:
+                    return None
 
-        #     if self.round == 1:
-        #         # Signal on the flop
-        #         potentialPV = potentialPrivateValue(
-        #             self.holeCards, self.communityCards)
+            if self.callValue == 0:
+                if (pv >= (self.potentialCostToWinnings + tightnessFactor)):
+                    return True
 
-        #         metric = 0
+                if (pv >= (self.potentialCostToWinnings - tightnessUpperRanges[4 - tightnessUpperRanges.index(tightnessFactor)])):
+                    return None
 
-        #         if self.callValue != 0:
-        #             metric = self.costToWinnings
-
-        #         if self.callValue == 0:
-        #             metric = self.potentialCostToWinnings
-
-        #         if potentialPV[0] >= metric:
-        #             if potentialPV[0] >= (metric + tightnessFactor):
-        #                 return True
-
-        #             return None
-
-        #     if self.round == 2:
-        #         # Signal on the turn
-        #         pv = privateValue(self.holeCards, self.communityCards)
-        #         potPV = potentialPrivateValue(self.holeCards, self.communityCards)
-
-        #         # Calculating Effective hand strength' with thesis formula (6.4) on page 37
-        #         ehs = pv + (1 - pv)*potPV[0] - pv*potPV[1]
-
-        #         # Calculated with formula 6.7 on page 40 of thesis
-        #         showdownOdds = (self.callValue + (4 * self.betAmt)) / \
-        #             (self.pot + self.callValue + (8*self.betAmt))
-
-        #         if (ehs > showdownOdds):
-        #             positiveEhs = ehs + pv*potPV[1]
-
-        #             if (positiveEhs >= showdownOdds):
-        #                 return True
-
-        #             return None
-
-        #     if self.round == 3:
-        #         # Signal on the river
-        #         pv = privateValue(self.holeCards, self.communityCards)
-
-        #         if self.callValue != 0:
-        #             if (pv > self.costToWinnings):
-        #                 # Maximise the probable payout by making the pv almost equal to cost to winnings
-        #                 # Formula mathematically calculated
-        #                 # Profit maximisation and only suitable if strategy wants to defect
-        #                 self.betAmt = (pv*(self.callValue + self.pot) -
-        #                                self.callValue)/(1 - 2*pv)
-
-        #                 return True
-
-        #             elif (self.costToWinnings - pv) <= tightnessFactor:
-        #                 return None
-
-        #         if self.callValue == 0:
-        #             if (pv >= (self.potentialCostToWinnings + tightnessFactor)):
-        #                 return True
-
-        #             if (pv >= (self.potentialCostToWinnings - tightnessUpperRanges[4 - tightnessUpperRanges.index(tightnessFactor)])):
-        #                 return None
-
-        #     return self.surrenderMove
+        return self.surrenderMove
 
     def __str__(self):
         return f"{self.strategy}"
