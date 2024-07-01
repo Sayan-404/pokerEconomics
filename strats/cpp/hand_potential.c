@@ -231,8 +231,8 @@ void main() {
     //     char comm_cards[5][3] = {"3h","4c","Jh"};
     //     potentials pot = potential2(hole,comm_cards);
     // }
-    char hole[2][3] = {"Ad","Qc"};
-    char comm_cards[5][3] = {"3h","4c","Jh"};
+    char hole[2][3] = {"Ac","8d"};
+    char comm_cards[5][3] = {"Jh","8c","9s"};
     // int ourrank=rank5(hole,comm_cards);
     potentials pot = potential2(hole,comm_cards);
     printf("ppot2: %f",pot.ppot);

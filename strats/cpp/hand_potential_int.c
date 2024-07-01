@@ -5,13 +5,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include "lookuptable.h"
 
 #define DECK_SIZE 52
 
 #define AHEAD 1
 #define TIED 0
 #define BEHIND 2
-
+long runs = 0;
 typedef struct {
     float ppot;
     float npot;
@@ -44,12 +45,34 @@ void remove_card(int *deck,int card, int* deck_size) {
 }
 
 int rank7(int hole[2], int comm_cards[3]) {
-    int rank = evaluate_7cards(hole[0], hole[1], comm_cards[0], comm_cards[1], comm_cards[2], comm_cards[3], comm_cards[4]);
-    return rank;
+    runs++;
+    int hand[] = {hole[0], hole[1], comm_cards[0], comm_cards[1], comm_cards[2], comm_cards[3], comm_cards[4]};
+    int handlength = 7;
+    struct DataItem* result = search(hand,handlength);
+    if (result != NULL) {
+        return result->data;
+        printf("%d",result->data);
+    }
+    else{
+        int rank = evaluate_7cards(hole[0], hole[1], comm_cards[0], comm_cards[1], comm_cards[2], comm_cards[3], comm_cards[4]);
+        insert(hand,handlength,rank);
+        return rank;
+    }
 }
 int rank5(int hole[2], int comm_cards[3]) {
-    int rank = evaluate_5cards(hole[0], hole[1], comm_cards[0], comm_cards[1], comm_cards[2]);
-    return rank;
+    runs++;
+    int hand[] = {hole[0], hole[1], comm_cards[0], comm_cards[1], comm_cards[2]};
+    int handlength = 5;
+    struct DataItem* result = search(hand,handlength);
+    if (result != NULL) {
+        return result->data;
+        printf("%d",result->data);
+    }
+    else{
+        int rank = evaluate_5cards(hole[0], hole[1], comm_cards[0], comm_cards[1], comm_cards[2]);
+        insert(hand,handlength,rank);
+        return rank;
+    }
 }
 
 // char* makedeck()
@@ -94,7 +117,8 @@ potentials potential2(int hole[2], int comm_cards[5]) {
                 // printf("oppcards: %d %d",oppcards[0],oppcards[1]);
                 // exit(1);
                 opprank = rank5(oppcards,comm_cards);
-                
+                // printf("%f",opprank);
+                // exit(1);
                 if(ourrank5 < opprank)
                     index=AHEAD;
                 else if(ourrank5 == opprank)
@@ -159,8 +183,10 @@ void main() {
     int comm_cards[5] = {6,8,38};
     // int ourrank=rank5(hole,comm_cards);
     potentials pot = potential2(hole,comm_cards);
-    // printf("ppot2: %f",pot.ppot);
-    // printf("npot2: %f",pot.npot);
+    printf("ppot2: %f",pot.ppot);
+    printf("npot2: %f",pot.npot);
+    printf("collisions: %d",collisions);
+    printf("runs: %ld",runs); 
     // // printf("Our Rank: %d", ourrank);
 }
 
