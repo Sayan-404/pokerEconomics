@@ -6,10 +6,10 @@
 #include <iterator>
 #include <mutex>
 #include <fstream>
-#include <nlohmann/json.hpp>
-#include "utils/combinations.h"
+// #include <nlohmann/json.hpp>
+// #include "utils/combinations.h"
 
-using json = nlohmann::json;
+// using json = nlohmann::json;
 std::mutex mtx; // Mutex to protect console output
 
 void print_progress(int thread_id, int progress, double it_per_sec, double eta)
@@ -54,52 +54,39 @@ std::vector<std::string> create_deck()
     return deck;
 }
 
-void foo(int thread_id)
+void childWorker()
+{
+    /*
+        Worker function for multi-threading.
+    */
+   int a = 1+1;
+}
+
+void updateBar(std::chrono::time_point<std::chrono::high_resolution_clock> start_time, int thread_id, int present_iteration, int total_iterations)
+{
+    using namespace std::chrono;
+
+    auto now = high_resolution_clock::now();
+    duration<double> elapsed = now - start_time;
+    double elapsed_sec = elapsed.count();
+    double it_per_sec = present_iteration / elapsed_sec;
+    double eta = (total_iterations - present_iteration) / it_per_sec;
+
+    print_progress(thread_id, present_iteration, it_per_sec, eta);
+}
+
+void parentWorker(int thread_id)
 {
     using namespace std::chrono;
 
     auto start_time = high_resolution_clock::now(); // Start time
+
     int iterations = 100;
 
     for (int i = 0; i <= iterations; ++i)
     {
-        // Create a JSON object
-        json j;
-
-        // Add data to the JSON object
-        j["name"] = "John Doe";
-        j["age"] = 30;
-        j["address"] = {
-            {"street", "123 Main St"},
-            {"city", "Anytown"},
-            {"zip", "12345"}};
-        j["phone_numbers"] = {"555-1234", "555-5678"};
-        j["is_student"] = false;
-
-        // Write JSON to file
-        std::ofstream file("output" + std::to_string(thread_id) + "_" + std::to_string(i) + ".json");
-        if (file.is_open())
-        {
-            file << std::setw(4) << j << std::endl; // Pretty print with 4-space indentation
-            file.close();
-        }
-        else
-        {
-            std::cerr << "Unable to open file for writing" << std::endl;
-        }
-
-        auto now = high_resolution_clock::now();
-        duration<double> elapsed = now - start_time;
-        double elapsed_sec = elapsed.count();
-        double it_per_sec = i / elapsed_sec;
-        double eta = (iterations - i) / it_per_sec;
-
-        print_progress(thread_id, i, it_per_sec, eta);
-    }
-
-    {
-        std::lock_guard<std::mutex> guard(mtx); // Ensure exclusive access to console
-        std::cout << "\nThread " << thread_id << " finished.\n";
+        childWorker();
+        updateBar(start_time, thread_id, i, iterations);
     }
 }
 
@@ -110,44 +97,44 @@ int main()
     std::cout << "Enter number of threads: ";
     std::cin >> numThreads;
 
-    std::vector<std::string> deck = create_deck();
+    // std::vector<std::string> deck = create_deck();
 
-    int r;
-    std::cout << "Enter 0 for flop and 1 for turn: ";
-    std::cin >> r;
+    // int r;
+    // std::cout << "Enter 0 for flop and 1 for turn: ";
+    // std::cin >> r;
 
-    std::vector<std::vector<std::string>> possible_range = generateCombinations(deck, r);
+    // // std::vector<std::vector<std::string>> possible_range = generateCombinations(deck, r);
 
-    // Print the generated combinations
-    for (const auto &combo : possible_range)
+    // // Print the generated combinations
+    // for (const auto &combo : deck)
+    // {
+    //     for (const auto &card : combo)
+    //     {
+    //         std::cout << card << " ";
+    //     }
+    //     std::cout << std::endl;
+    // }
+
+    std::vector<std::thread> threads;
+
+    std::cout << "Starting threads...\n";
+
+    // Move cursor to start of the screen and clear the screen
+    std::cout << "\033[H\033[J";
+
+    // Start the threads
+    for (int i = 0; i < numThreads; ++i)
     {
-        for (const auto &card : combo)
-        {
-            std::cout << card << " ";
-        }
-        std::cout << std::endl;
+        threads.emplace_back(parentWorker, i);
     }
 
-    // std::vector<std::thread> threads;
+    // Wait for all threads to finish
+    for (auto &t : threads)
+    {
+        t.join();
+    }
 
-    // std::cout << "Starting threads...\n";
-
-    // // Move cursor to start of the screen and clear the screen
-    // std::cout << "\033[H\033[J";
-
-    // // Start the threads
-    // for (int i = 0; i < numThreads; ++i)
-    // {
-    //     threads.emplace_back(foo, i);
-    // }
-
-    // // Wait for all threads to finish
-    // for (auto &t : threads)
-    // {
-    //     t.join();
-    // }
-
-    // std::cout << "All threads completed.\n";
+    std::cout << "\n\nAll threads completed.\n";
 
     return 0;
 }
