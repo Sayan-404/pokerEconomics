@@ -28,10 +28,6 @@ int PlayerArray[PLAYER_SIZE];
 // struct DataItem* mediumArray[MEDIUM];
 // struct DataItem* largeArray[LARGE];
 int *microArray;
-
-void intialise() {
-    microArray = (int *)calloc(MICRO,sizeof(int));
-}
 int oppSearch(int hand[],int handlength) {
     return 0;
     int i;

@@ -183,6 +183,7 @@ void main() {
     int hole[2]={49,40};
     int comm_cards[5] = {6,8,38};
     // int ourrank=rank5(hole,comm_cards);
+    microArray =(int *)calloc(MICRO,sizeof(int));
     clock_t t;
     t = clock();
     potentials pot = potential2(hole,comm_cards);
@@ -191,7 +192,7 @@ void main() {
     printf("\n first function execution time: %f\n",time_taken);
     printf("ppot2: %f",pot.ppot);
     printf("npot2: %f",pot.npot);
-
+    free(microArray);
     // printf("\nmicroarray: %d",microarray);
     // printf("\nlargearray: %d",largearray);
     // printf("collisions: %d",collisions);
