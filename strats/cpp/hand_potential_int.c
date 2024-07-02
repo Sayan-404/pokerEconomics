@@ -138,14 +138,14 @@ potentials potential2(int hole[2], int comm_cards[5]) {
                             else
                                 five_card_board[h] = remaining_cards[h-3];
                             }
-                        int pItem = oppSearch(remaining_cards,2);
+                        int pItem = pSearch(remaining_cards,2);
                         if(pItem != 0){
                             // printf("found something");
                             ourrank7 = pItem;
                         }
                         else {
                             ourrank7=rank7(hole,five_card_board);
-                            oppInsert(remaining_cards,2,ourrank7);
+                            pInsert(remaining_cards,2,ourrank7);
                         }
                         
                         int opp4[4]={remaining_cards[0],remaining_cards[1],oppcards[0],oppcards[1]};

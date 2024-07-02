@@ -23,8 +23,8 @@ int primeArray[] = {
     };
 
 
-int PlayerArray[PLAYER_SIZE];
 
+int *PlayerArray;
 // struct DataItem* microArray = (struct Dataitem*)malloc(MICRO * sizeof(struct Dataitem*));
 // struct DataItem* smallArray[SMALL];
 // struct DataItem* mediumArray[MEDIUM];
@@ -33,9 +33,12 @@ int *microArray;
 
 void freeArray() {
     free(microArray);
+    free(PlayerArray);
 }
 void assignArray() {
     microArray =(int *)calloc(MICRO,sizeof(int));
+    PlayerArray=(int *)calloc(MICRO,sizeof(int));
+
 }
 int oppSearch(int hand[],int handlength) {
     // if(used == 0)
@@ -58,17 +61,17 @@ int oppSearch(int hand[],int handlength) {
     }
 }
 
-// int pSearch(int hand[],int handlength) {
-//     int i;
-//     long key=1;
-//     for(i=0;i<handlength;i++) {
-//         key *= primeArray[hand[i]];
-//     }
-//     if(PlayerArray[key] != 0)
-//         return PlayerArray[key];
-//     else
-//         return 0;
-// }
+int pSearch(int hand[],int handlength) {
+    int i;
+    long key=1;
+    for(i=0;i<handlength;i++) {
+        key *= primeArray[hand[i]];
+    }
+    if(PlayerArray[key] != 0)
+        return PlayerArray[key];
+    else
+        return 0;
+}
 
 void oppInsert(int hand[],int handlength,int data) {
     int i;
@@ -79,12 +82,12 @@ void oppInsert(int hand[],int handlength,int data) {
     }
     microArray[key] = data;
 }
-// void pInsert(int hand[],int handlength,int data) {
-//    int i;
-//     long key=1;
+void pInsert(int hand[],int handlength,int data) {
+   int i;
+    long key=1;
 
-//     for(i=0;i<handlength;i++) {
-//             key *= primeArray[hand[i]];
-//     }
-//     PlayerArray[key] = data;
-// }
+    for(i=0;i<handlength;i++) {
+            key *= primeArray[hand[i]];
+    }
+    PlayerArray[key] = data;
+}
