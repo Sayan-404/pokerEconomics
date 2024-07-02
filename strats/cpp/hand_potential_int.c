@@ -192,8 +192,8 @@ void main() {
     printf("\n first function execution time: %f\n",time_taken);
     printf("ppot2: %f",pot.ppot);
     printf("npot2: %f",pot.npot);
-    printf("\nmicroarray: %d",microarray);
-    printf("\nlargearray: %d",largearray);
+    // printf("\nmicroarray: %d",microarray);
+    // printf("\nlargearray: %d",largearray);
     // printf("collisions: %d",collisions);
     // printf("runs: %ld",runs); 
     // // printf("Our Rank: %d", ourrank);

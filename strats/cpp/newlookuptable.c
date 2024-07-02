@@ -31,8 +31,6 @@ struct DataItem* microArray[MICRO];
 // struct DataItem* mediumArray[MEDIUM];
 // struct DataItem* largeArray[LARGE];
 
-int microarray=0;
-int largearray=0;
 struct DataItem* oppSearch(int hand[],int handlength) {
     int i;
     long key=1;
@@ -41,70 +39,68 @@ struct DataItem* oppSearch(int hand[],int handlength) {
     }
     // printf("%ld ",key);
     if(key) {
-        microarray++;
         // printf("in here");
         // exit(1);
-        int hashIndex = key % MICRO;
-        while(microArray[hashIndex] != NULL) {
+        while(microArray[key] != NULL) {
         
-            if(microArray[hashIndex]->key == key)
-                return microArray[hashIndex]; 
+            if(microArray[key]->key == key)
+                return microArray[key]; 
                 
             //go to next cell
-            ++hashIndex;
+            ++key;
             
             //wrap around the table
-            hashIndex %= MICRO;
+            key %= MICRO;
         }        
         return NULL;
     }
     // else if(key>311898 && key<=121330189) {
-    //     int hashIndex = key%SMALL;
-    //     // if (hashIndex == 43983){
-    //     //     printf("index: %d ",hashIndex);
+    //     int key = key%SMALL;
+    //     // if (key == 43983){
+    //     //     printf("index: %d ",key);
     //     //     printf("key: %ld\n",key);
     //     // }
-    //     while(smallArray[hashIndex] != NULL) {
+    //     while(smallArray[key] != NULL) {
     //         // printf("in here as well");
-    //         if(smallArray[hashIndex]->key == key)
-    //         return smallArray[hashIndex]; 
+    //         if(smallArray[key]->key == key)
+    //         return smallArray[key]; 
 			
     //         //go to next cell
-    //         ++hashIndex;
+    //         ++key;
                 
     //         //wrap around the table
-    //         hashIndex %= SMALL;
+    //         key %= SMALL;
     //     }
     //     return NULL;
     // }
     // else if(key>121330189 && key<=480745871) {
-    //     int hashIndex = key%MEDIUM;
-    //     while(mediumArray[hashIndex] != NULL) {
+    //     int key = key%MEDIUM;
+    //     while(mediumArray[key] != NULL) {
 	
-    //         if(mediumArray[hashIndex]->key == key)
-    //         return mediumArray[hashIndex]; 
+    //         if(mediumArray[key]->key == key)
+    //         return mediumArray[key]; 
 			
     //         //go to next cell
-    //         ++hashIndex;
+    //         ++key;
                 
     //         //wrap around the table
-    //         hashIndex %= MEDIUM;
+    //         key %= MEDIUM;
     //     }
     //     return NULL;
     // }
     // else {
     //     largearray++;
-    //     int hashIndex = key%LARGE;
-    //     while(largeArray[hashIndex] != NULL) {
+    //     int key = key%LARGE;
+    //     while(largeArray[key] != NULL) {
 	
-    //         if(largeArray[hashIndex]->key == key)
-    //         return largeArray[hashIndex]; 
+    //         if(largeArray[key]->key == key)
+    //         return largeArray[key]; 
 			
     //         //go to next cell
-    //         ++hashIndex;
+    //         ++key;
                 
     //         //wrap around the table
-    //         hashIndex %= LARGE;
+    //         key %= LARGE;
     //     }
     //     return NULL;
     // }
@@ -119,20 +115,17 @@ struct DataItem* pSearch(int hand[],int handlength) {
         key *= primeArray[hand[i]];
     }
 
-   
-   int hashIndex = key % MICRO;
-	
    //move in array until an empty 
-   while(PlayerArray[hashIndex] != NULL) {
+   while(PlayerArray[key] != NULL) {
 	
-      if(PlayerArray[hashIndex]->key == key)
-         return PlayerArray[hashIndex]; 
+      if(PlayerArray[key]->key == key)
+         return PlayerArray[key]; 
 			
       //go to next cell
-      ++hashIndex;
+      ++key;
 		
       //wrap around the table
-      hashIndex %= PLAYER_SIZE;
+      key %= PLAYER_SIZE;
    }        
 	
    return NULL;
@@ -149,57 +142,55 @@ void oppInsert(int hand[],int handlength,int data) {
         item->data = data;  
         item->key = key;
     if(key) {
-        
-        int hashIndex=key % MICRO;
-        while(microArray[hashIndex] != NULL && microArray[hashIndex]->key != -1) {
+        while(microArray[key] != NULL && microArray[key]->key != -1) {
             //go to next cell
-            ++hashIndex;
+            ++key;
             // collisions++;
             //wrap around the table
-            hashIndex %= MICRO;
+            key %= MICRO;
         }
-        microArray[hashIndex] = item;
+        microArray[key] = item;
 
     }
     // else if(key>311898 && key<=121330189) {
     //     // if(key == 317346)
     //     //     printf("\nhere");
-    //     int hashIndex=key % SMALL;
+    //     int key=key % SMALL;
     //     // if(key == 317346)
-    //     //     printf("\nhashindex another: %d ",hashIndex);
-    //     while(smallArray[hashIndex] != NULL && smallArray[hashIndex]->key != -1) {
+    //     //     printf("\nkey another: %d ",key);
+    //     while(smallArray[key] != NULL && smallArray[key]->key != -1) {
     //         //go to next cell
     //         // if(key == 317346)
-    //         // printf("\nInside the Hash Function another: %d ",hashIndex);
-    //         ++hashIndex;
+    //         // printf("\nInside the Hash Function another: %d ",key);
+    //         ++key;
     //         // collisions++;
     //         //wrap around the table
-    //         hashIndex %= SMALL;
+    //         key %= SMALL;
     //     }
-    //     smallArray[hashIndex] = item;
+    //     smallArray[key] = item;
     // }
     // else if(key>121330189 && key<=480745871) {
         
-    //     int hashIndex=key % MEDIUM;
-    //     while(mediumArray[hashIndex] != NULL && mediumArray[hashIndex]->key != -1) {
+    //     int key=key % MEDIUM;
+    //     while(mediumArray[key] != NULL && mediumArray[key]->key != -1) {
     //         //go to next cell
-    //         ++hashIndex;
+    //         ++key;
     //         // collisions++;
     //         //wrap around the table
-    //         hashIndex %= MEDIUM;
+    //         key %= MEDIUM;
     //     }
-    //     mediumArray[hashIndex] = item;
+    //     mediumArray[key] = item;
     // }
     // else {
-    //     int hashIndex=key % LARGE;
-    //     while(largeArray[hashIndex] != NULL && largeArray[hashIndex]->key != -1) {
+    //     int key=key % LARGE;
+    //     while(largeArray[key] != NULL && largeArray[key]->key != -1) {
     //         //go to next cell
-    //         ++hashIndex;
+    //         ++key;
     //         // collisions++;
     //         //wrap around the table
-    //         hashIndex %= LARGE;
+    //         key %= LARGE;
     //     }
-    //     largeArray[hashIndex] = item;
+    //     largeArray[key] = item;
     // }
 }
 void pInsert(int hand[],int handlength,int data) {
@@ -214,17 +205,14 @@ void pInsert(int hand[],int handlength,int data) {
         item->data = data;  
         item->key = key;
 
-        //get the hash 
-        long hashIndex = key % PLAYER_SIZE;
-
+        //get the hash
         //move in array until an empty or deleted cell
-        while(PlayerArray[hashIndex] != NULL && PlayerArray[hashIndex]->key != -1) {
+        while(PlayerArray[key] != NULL && PlayerArray[key]->key != -1) {
             //go to next cell
-            ++hashIndex;
+            ++key;
             // collisions++;
             //wrap around the table
-            hashIndex %= PLAYER_SIZE;
     }
         
-    PlayerArray[hashIndex] = item;
+    PlayerArray[key] = item;
 }
