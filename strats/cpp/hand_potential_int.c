@@ -6,6 +6,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include "newlookuptable.h"
+#include <time.h>
 
 #define DECK_SIZE 52
 
@@ -69,6 +70,8 @@ potentials potential2(int hole[2], int comm_cards[5]) {
     ourrank5 = rank5(hole,comm_cards);
     int i,j;
     int k;
+    clock_t t;
+    double time_taken;
     // for(i=0;i<deck_size;i++)
     //     printf("%d",deck[i]);
     // printf("\n decksize: %d",deck_size);
@@ -135,8 +138,7 @@ potentials potential2(int hole[2], int comm_cards[5]) {
                             else
                                 five_card_board[h] = remaining_cards[h-3];
                             }
-                        struct DataItem* pItem;
-                        pItem = pSearch(remaining_cards,2);
+                        struct DataItem* pItem = pSearch(remaining_cards,2);
                         if(pItem != NULL){
                             // printf("found something");
                             ourrank7 = pItem->data;
@@ -145,6 +147,7 @@ potentials potential2(int hole[2], int comm_cards[5]) {
                             ourrank7=rank7(hole,five_card_board);
                             pInsert(remaining_cards,2,ourrank7);
                         }
+                        
                         int opp4[4]={remaining_cards[0],remaining_cards[1],oppcards[0],oppcards[1]};
                         struct DataItem* oppItem;
                         oppItem = oppSearch(opp4,4);
@@ -181,9 +184,16 @@ void main() {
     int hole[2]={49,40};
     int comm_cards[5] = {6,8,38};
     // int ourrank=rank5(hole,comm_cards);
+    clock_t t;
+    t = clock();
     potentials pot = potential2(hole,comm_cards);
+    t = clock() - t;
+    double time_taken = ((double)t)/CLOCKS_PER_SEC;
+    printf("\n first function execution time: %f\n",time_taken);
     printf("ppot2: %f",pot.ppot);
     printf("npot2: %f",pot.npot);
+    printf("\nmicroarray: %d",microarray);
+    printf("\nlargearray: %d",largearray);
     // printf("collisions: %d",collisions);
     // printf("runs: %ld",runs); 
     // // printf("Our Rank: %d", ourrank);

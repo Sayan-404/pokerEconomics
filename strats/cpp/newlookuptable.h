@@ -6,6 +6,9 @@ struct DataItem {
     long key;
 };
 
+extern int microarray;
+extern int largearray;
+
 struct DataItem* oppSearch(int hand[], int handlength);
 struct DataItem* pSearch(int hand[], int handlength);
 void oppInsert(int hand[], int handlength, int data);
