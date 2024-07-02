@@ -10,7 +10,7 @@ from tqdm import tqdm
 rank = "23456789TJQKA"
 suit = "csdh"
 deck = [r+s for r in rank for s in suit]
-possible_combinations = list(combinations(deck, 7))
+possible_combinations = list(combinations(deck, 5))
 total_time = 0
 runs = 100
 for _ in tqdm(range(runs), desc="Processing..."):
@@ -21,7 +21,7 @@ for _ in tqdm(range(runs), desc="Processing..."):
     # _ = c_evaluate_cards(*t)
     # _ = potential(t_deck, t[:2], t[2:], {})
     # _ = simple_pot(t_deck, t[:2], t[2:], 2)
-    _ = equity(t[:2], t[2:])
+    # _ = equity(t[:2], t[2:])
     b = time.time()
     total_time += b-a
 print(f"Total time: {total_time}")
@@ -29,7 +29,8 @@ print(f"Average time for each process: {total_time/runs}")
 # pheval(python): .55 seconds
 # pheval(c): .27 seconds
 # base level potential optimisation (tuple and DP and python eval): 20688 seconds
-# base level potential optimisation (tuple and DP and c eval): 15700 seconds
+# base level potential (1 card look ahead) optimisation (tuple and DP and c eval): 15700 seconds
+# base level potential (2 card look ahead) optimisation (tuple and DP and c eval): 332638 seconds
 # simple potential 1 card look ahead (python eval): 29 seconds
 # simple potential 2 card look ahead (python eval): 730 seconds
 # simple potential 1 card look ahead (c eval): 14.4 seconds
