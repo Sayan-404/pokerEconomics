@@ -23,16 +23,10 @@ int primeArray[] = {
         233, 239
     };
 
-unsigned int hash(unsigned int x) {
-    x = ((x >> 16) ^ x) * 0x45d9f3b;
-    x = ((x >> 16) ^ x) * 0x45d9f3b;
-    x = (x >> 16) ^ x;
-    return x;
-}
-
 
 struct DataItem* PlayerArray[PLAYER_SIZE];
-struct DataItem* microArray = (struct Dataitem*)malloc(MICRO * sizeof(struct Dataitem*));
+// struct DataItem* microArray = (struct Dataitem*)malloc(MICRO * sizeof(struct Dataitem*));
+struct DataItem* microArray[MICRO];
 // struct DataItem* smallArray[SMALL];
 // struct DataItem* mediumArray[MEDIUM];
 // struct DataItem* largeArray[LARGE];
