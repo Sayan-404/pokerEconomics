@@ -138,23 +138,22 @@ potentials potential2(int hole[2], int comm_cards[5]) {
                             else
                                 five_card_board[h] = remaining_cards[h-3];
                             }
-                        struct DataItem* pItem = pSearch(remaining_cards,2);
-                        if(pItem != NULL){
+                        int pItem = oppSearch(remaining_cards,2);
+                        if(pItem != 0){
                             // printf("found something");
-                            ourrank7 = pItem->data;
+                            ourrank7 = pItem;
                         }
                         else {
                             ourrank7=rank7(hole,five_card_board);
-                            pInsert(remaining_cards,2,ourrank7);
+                            oppInsert(remaining_cards,2,ourrank7);
                         }
                         
                         int opp4[4]={remaining_cards[0],remaining_cards[1],oppcards[0],oppcards[1]};
-                        struct DataItem* oppItem;
-                        oppItem = oppSearch(opp4,4);
-                        if(oppItem != NULL)
+                        int oppItem = oppSearch(opp4,4);
+                        if(oppItem != 0)
                         {
                             // printf("found something");
-                            opprank=oppItem->data;
+                            opprank=oppItem;
                         }
                         else {
                             opprank=rank7(oppcards,five_card_board);
@@ -192,6 +191,7 @@ void main() {
     printf("\n first function execution time: %f\n",time_taken);
     printf("ppot2: %f",pot.ppot);
     printf("npot2: %f",pot.npot);
+
     // printf("\nmicroarray: %d",microarray);
     // printf("\nlargearray: %d",largearray);
     // printf("collisions: %d",collisions);
