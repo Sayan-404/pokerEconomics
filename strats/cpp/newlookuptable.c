@@ -5,12 +5,13 @@
 #include <stdint.h>
 
 #define PLAYER_SIZE 55687
-#define MICRO 265443576
+#define MICRO 2894777321
 
 // #define SMALL 149887
 // #define MEDIUM 149887
 // #define LARGE 307573
 
+int used=0;
 
 int primeArray[] = {
         2, 3, 5, 7, 11, 13, 17, 19, 23, 29,
@@ -23,13 +24,25 @@ int primeArray[] = {
 
 
 int PlayerArray[PLAYER_SIZE];
+
 // struct DataItem* microArray = (struct Dataitem*)malloc(MICRO * sizeof(struct Dataitem*));
 // struct DataItem* smallArray[SMALL];
 // struct DataItem* mediumArray[MEDIUM];
 // struct DataItem* largeArray[LARGE];
 int *microArray;
+
+void freeArray() {
+    free(microArray);
+}
+void assignArray() {
+    microArray =(int *)calloc(MICRO,sizeof(int));
+}
 int oppSearch(int hand[],int handlength) {
-    return 0;
+    // if(used == 0)
+    // {
+    //     microArray =(int *)calloc(MICRO,sizeof(int));
+    //     used++;
+    // }
     int i;
     long key=1;
     for(i=0;i<handlength;i++) {
