@@ -23,9 +23,9 @@ int used=0;
 //         233, 239
 //     };
 
-int compare(const void *a, const void *b) {
-    return (*(int*)a - *(int*)b);
-}
+// int compare(const void *a, const void *b) {
+//     return (*(int*)a - *(int*)b);
+// }
 
 int *PlayerArray;
 // struct DataItem* microArray = (struct Dataitem*)malloc(MICRO * sizeof(struct Dataitem*));
