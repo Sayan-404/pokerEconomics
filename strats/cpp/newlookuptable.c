@@ -5,7 +5,7 @@
 #include <stdint.h>
 
 #define PLAYER_SIZE 55687
-#define MICRO 2894777321
+// #define MICRO 2894777321
 
 // #define SMALL 149887
 // #define MEDIUM 149887
@@ -29,37 +29,37 @@ int *PlayerArray;
 // struct DataItem* smallArray[SMALL];
 // struct DataItem* mediumArray[MEDIUM];
 // struct DataItem* largeArray[LARGE];
-int *microArray;
+// int *microArray;
 
 void freeArray() {
-    free(microArray);
+    // free(microArray);
     free(PlayerArray);
 }
 void assignArray() {
-    microArray =(int *)calloc(MICRO,sizeof(int));
-    PlayerArray=(int *)calloc(MICRO,sizeof(int));
+    // microArray =(int *)calloc(MICRO,sizeof(int));
+    PlayerArray=(int *)calloc(PLAYER_SIZE,sizeof(int));
 
 }
-int oppSearch(int hand[],int handlength) {
-    // if(used == 0)
-    // {
-    //     microArray =(int *)calloc(MICRO,sizeof(int));
-    //     used++;
-    // }
-    int i;
-    long key=1;
-    for(i=0;i<handlength;i++) {
-        key *= primeArray[hand[i]];
-    }
-    // printf("%ld ",key);
-    if(microArray[key] != 0)
-    {
-        return microArray[key];
-    }
-    else {
-        return 0;
-    }
-}
+// int oppSearch(int hand[],int handlength) {
+//     // if(used == 0)
+//     // {
+//     //     microArray =(int *)calloc(MICRO,sizeof(int));
+//     //     used++;
+//     // }
+//     int i;
+//     long key=1;
+//     for(i=0;i<handlength;i++) {
+//         key *= primeArray[hand[i]];
+//     }
+//     // printf("%ld ",key);
+//     if(microArray[key] != 0)
+//     {
+//         return microArray[key];
+//     }
+//     else {
+//         return 0;
+//     }
+// }
 
 int pSearch(int hand[],int handlength) {
     int i;
@@ -73,15 +73,15 @@ int pSearch(int hand[],int handlength) {
         return 0;
 }
 
-void oppInsert(int hand[],int handlength,int data) {
-    int i;
-    long key=1;
+// void oppInsert(int hand[],int handlength,int data) {
+//     int i;
+//     long key=1;
 
-    for(i=0;i<handlength;i++) {
-            key *= primeArray[hand[i]];
-    }
-    microArray[key] = data;
-}
+//     for(i=0;i<handlength;i++) {
+//             key *= primeArray[hand[i]];
+//     }
+//     microArray[key] = data;
+// }
 void pInsert(int hand[],int handlength,int data) {
    int i;
     long key=1;

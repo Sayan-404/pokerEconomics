@@ -148,18 +148,18 @@ potentials potential2(int hole[2], int comm_cards[5]) {
                             pInsert(remaining_cards,2,ourrank7);
                         }
                         
-                        int opp4[4]={remaining_cards[0],remaining_cards[1],oppcards[0],oppcards[1]};
-                        int oppItem = oppSearch(opp4,4);
-                        if(oppItem != 0)
-                        {
-                            // printf("found something");
-                            opprank=oppItem;
-                        }
-                        else {
-                            opprank=rank7(oppcards,five_card_board);
-                            oppInsert(opp4,4,opprank);
-                        }
-                        // opprank=rank7(oppcards,five_card_board);
+                        // int opp4[4]={remaining_cards[0],remaining_cards[1],oppcards[0],oppcards[1]};
+                        // int oppItem = oppSearch(opp4,4);
+                        // if(oppItem != 0)
+                        // {
+                        //     // printf("found something");
+                        //     opprank=oppItem;
+                        // }
+                        // else {
+                        //     opprank=rank7(oppcards,five_card_board);
+                        //     oppInsert(opp4,4,opprank);
+                        // }
+                        opprank=rank7(oppcards,five_card_board);
                         // printf("ourrank: %f",ourrank7);
                         // printf("opprank: %f",opprank);
                         // exit(0);
