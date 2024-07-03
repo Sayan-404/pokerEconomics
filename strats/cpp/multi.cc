@@ -36,7 +36,7 @@ int main()
     std::cin >> totalCalls;
 
     std::vector<std::string> deck = create_deck();
-    std::vector<std::vector<std::string>> flopCombos = generateCombinations(deck, 5);
+    std::vector<std::vector<std::string>> flopCombos = generateCombinations(deck, 3);
 
     // Include only the totalCalls
     flopCombos = vectorSlice(flopCombos, 0, totalCalls);
