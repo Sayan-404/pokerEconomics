@@ -45,10 +45,6 @@ void remove_card(int *deck,int card, int* deck_size) {
     printf("Card %d not found in the deck.\n", card);
 }
 
-int compare(const void *a, const void *b) {
-    return (*(int*)a - *(int*)b);
-}
-
 int rank7(int hole[2], int comm_cards[3]) {
     int rank = evaluate_7cards(hole[0], hole[1], comm_cards[0], comm_cards[1], comm_cards[2], comm_cards[3], comm_cards[4]);
     return rank;
@@ -142,30 +138,30 @@ potentials potential2(int hole[2], int comm_cards[5]) {
                             else
                                 five_card_board[h] = remaining_cards[h-3];
                             }
-                        int pcards[4] = {hole[0],hole[1],remaining_cards[1],remaining_cards[2]};
-                        qsort(pcards,4,sizeof(int),compare);
-                        int pItem = pSearch(pcards,4);
+                        // int pcards[4] = {hole[0],hole[1],remaining_cards[1],remaining_cards[2]};
+                        // qsort(pcards,4,sizeof(int),compare);
+                        int pItem = pSearch(remaining_cards,2);
                         if(pItem != 0){
                             // printf("\n%d %d",remaining_cards[0],remaining_cards[1]);
                             ourrank7 = pItem;
                         }
                         else {
                             ourrank7=rank7(hole,five_card_board);
-                            pInsert(pcards,4,ourrank7);
+                            pInsert(remaining_cards,2,ourrank7);
                         }
-                        int opp4[4]={remaining_cards[0],remaining_cards[1],oppcards[0],oppcards[1]};
-                        qsort(opp4,4,sizeof(int),compare);
-                        int oppItem = pSearch(opp4,4);
-                        if(oppItem != 0)
-                        {
-                            // printf("found something");
-                            opprank=oppItem;
-                        }
-                        else {
-                            opprank=rank7(oppcards,five_card_board);
-                            pInsert(opp4,4,opprank);
-                        }
-                        // opprank=rank7(oppcards,five_card_board);
+                        // int opp4[4]={remaining_cards[0],remaining_cards[1],oppcards[0],oppcards[1]};
+                        // qsort(opp4,4,sizeof(int),compare);
+                        // int oppItem = pSearch(opp4,4);
+                        // if(oppItem != 0)
+                        // {
+                        //     // printf("found something");
+                        //     opprank=oppItem;
+                        // }
+                        // else {
+                        //     opprank=rank7(oppcards,five_card_board);
+                        //     pInsert(opp4,4,opprank);
+                        // }
+                        opprank=rank7(oppcards,five_card_board);
                         // printf("ourrank: %f",ourrank7);
                         // printf("opprank: %f",opprank);
                         // exit(0);

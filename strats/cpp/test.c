@@ -1,7 +1,7 @@
 #include<stdio.h>
-#include "newlookuptable.h"
-#include <phevaluator/phevaluator.h>
-#include <phevaluator/rank.h>
+// #include "newlookuptable.h"
+// #include <phevaluator/phevaluator.h>
+// #include <phevaluator/rank.h>
 #include <time.h>
 #include <stdlib.h>
 void create_deck(int *deck) {
@@ -32,9 +32,29 @@ void remove_card(int *deck,int card, int* deck_size) {
 void main() {
     int deck[52];
     int i;
-    for(i=0;i<52;i++)
-        printf("%d",deck[i]);
-    exit(1);
+
+    int n=5000000;
+    clock_t t;
+    t=clock();
+    int arr[n];
+    for(i=0;i<n;i++)
+        arr[i]=0;
+    t = clock() - t;
+    double time_taken = ((double)t)/CLOCKS_PER_SEC;
+    printf("time taken for loop: %f",time_taken);
+    t = clock();
+    int *ar = (int *)calloc(n,sizeof(int));
+    t = clock() - t;
+    time_taken = ((double)t)/CLOCKS_PER_SEC;
+    printf("time taken for calloc: %f",time_taken);
+    free(ar);
+
+
+
+
+    // for(i=0;i<52;i++)
+    //     printf("%d",deck[i]);
+    // exit(1);
     // create_deck(&deck[0]);
     // int cons[5] = {25,35,8,12,40};
     // int decksize=52;
