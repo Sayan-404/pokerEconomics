@@ -185,27 +185,28 @@ potentials potential2(int hole[2], int comm_cards[5]) {
     return p;        
 }
 
-void main() {
-    int hole[2]={49,40};
-    int comm_cards[5] = {6,8,38};
-    // int ourrank=rank5(hole,comm_cards);
-    // microArray =(int *)calloc(MICRO,sizeof(int));
-    assignArray();
-    clock_t t;
-    t = clock();
-    potentials pot = potential2(hole,comm_cards);
-    t = clock() - t;
-    double time_taken = ((double)t)/CLOCKS_PER_SEC;
-    printf("\n first function execution time: %f\n",time_taken);
-    printf("ppot2: %f",pot.ppot);
-    printf("npot2: %f",pot.npot);
-    freeArray();
-    // free(microArray);
-    // printf("\nmicroarray: %d",microarray);
-    // printf("\nlargearray: %d",largearray);
-    // printf("collisions: %d",collisions);
-    // printf("runs: %ld",runs); 
-    // // printf("Our Rank: %d", ourrank);
-}
+// int main() {
+//     int hole[2]={49,40};
+//     int comm_cards[5] = {6,8,38};
+//     // int ourrank=rank5(hole,comm_cards);
+//     // microArray =(int *)calloc(MICRO,sizeof(int));
+//     assignArray();
+//     clock_t t;
+//     t = clock();
+//     potentials pot = potential2(hole,comm_cards);
+//     t = clock() - t;
+//     double time_taken = ((double)t)/CLOCKS_PER_SEC;
+//     printf("\n first function execution time: %f\n",time_taken);
+//     printf("ppot2: %f",pot.ppot);
+//     printf("npot2: %f",pot.npot);
+//     freeArray();
+//     // free(microArray);
+//     // printf("\nmicroarray: %d",microarray);
+//     // printf("\nlargearray: %d",largearray);
+//     // printf("collisions: %d",collisions);
+//     // printf("runs: %ld",runs); 
+//     // // printf("Our Rank: %d", ourrank);
+//     return 0;
+// }
 
  
