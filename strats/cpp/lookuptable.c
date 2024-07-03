@@ -5,7 +5,7 @@
 #include <stdint.h>
 #include <time.h>
 
-#define PLAYER_SIZE 49485052
+#define PLAYER_SIZE 51504948
 // #define MICRO    2894777321
 
 // #define SMALL 149887
