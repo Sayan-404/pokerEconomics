@@ -54,8 +54,8 @@ if __name__ == "__main__":
     ranks = "23456789TJQKA"
     suits = "csdh"
     deck = [r+s for r in ranks for s in suits]
-    hole = ["Ad","Qc"]
-    comm_cards = ["3h","4c","Jh"]
+    hole = ["2c","2d"]
+    comm_cards = ["2h","2s","3c"]
     deck = [card for card in deck if card not in hole and card not in comm_cards]
     ret = potential(deck, hole, comm_cards)
     print(ret[:-1])

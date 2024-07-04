@@ -1,12 +1,11 @@
-#include <assert.h>
 #include <phevaluator/phevaluator.h>
 #include <phevaluator/rank.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-#include <lookuptable/lookuptable.h>
 #include <time.h>
+#include <simplified_hand_potential.h>
 
 #define DECK_SIZE 52
 
@@ -19,31 +18,31 @@ typedef struct {
     float npot;
 } potentials;
 
-void create_deck(int *deck) {
+// void create_deck(int *deck) {
 
-   int ranks[]={0,1,2,3,4,5,6,7,8,9,10,11,12};
-   int suits[]={0,1,2,3};
+//    int ranks[]={0,1,2,3,4,5,6,7,8,9,10,11,12};
+//    int suits[]={0,1,2,3};
 
-    int index = 0;
+//     int index = 0;
 
-    for (int i = 0; i < 13; i++) {
-        for (int j = 0; j < 4; j++) {
-            deck[index] = ranks[i] * 4 + suits[j];
-            index++;
-        }
-    }
-}
-void remove_card(int *deck,int card, int* deck_size) {
-    int i;
-    for (i = 0; i < *deck_size; i++) {
-        if(deck[i] == card) {
-            deck[i] = deck[*deck_size - 1];
-            (*deck_size)--;
-            return;
-        }
-    }
-    printf("Card %d not found in the deck.\n", card);
-}
+//     for (int i = 0; i < 13; i++) {
+//         for (int j = 0; j < 4; j++) {
+//             deck[index] = ranks[i] * 4 + suits[j];
+//             index++;
+//         }
+//     }
+// }
+// void remove_card(int *deck,int card, int* deck_size) {
+//     int i;
+//     for (i = 0; i < *deck_size; i++) {
+//         if(deck[i] == card) {
+//             deck[i] = deck[*deck_size - 1];
+//             (*deck_size)--;
+//             return;
+//         }
+//     }
+//     printf("Card %d not found in the deck.\n", card);
+// }
 
 int rank7(int hole[2], int comm_cards[3]) {
     int rank = evaluate_7cards(hole[0], hole[1], comm_cards[0], comm_cards[1], comm_cards[2], comm_cards[3], comm_cards[4]);
@@ -55,7 +54,7 @@ int rank5(int hole[2], int comm_cards[3]) {
 }
 
 // char* makedeck()
-potentials potential2(int hole[2], int comm_cards[5]) {
+potentials potential2(int hole[2], int comm_cards[3]) {
 
     float hp[3][3];
     float hp_total[3];
@@ -140,15 +139,16 @@ potentials potential2(int hole[2], int comm_cards[5]) {
                             }
                         // int pcards[4] = {hole[0],hole[1],remaining_cards[1],remaining_cards[2]};
                         // qsort(pcards,4,sizeof(int),compare);
-                        int pItem = pSearch(remaining_cards,2);
-                        if(pItem != 0){
-                            // printf("\n%d %d",remaining_cards[0],remaining_cards[1]);
-                            ourrank7 = pItem;
-                        }
-                        else {
-                            ourrank7=rank7(hole,five_card_board);
-                            pInsert(remaining_cards,2,ourrank7);
-                        }
+                        // int pItem = pSearch(remaining_cards,2);
+                        // if(pItem != 0){
+                        //     // printf("\n%d %d",remaining_cards[0],remaining_cards[1]);
+                        //     ourrank7 = pItem;
+                        // }
+                        // else {
+                        //     ourrank7=rank7(hole,five_card_board);
+                        //     pInsert(remaining_cards,2,ourrank7);
+                        // }
+                        ourrank7=rank7(hole,five_card_board);
                         // int opp4[4]={remaining_cards[0],remaining_cards[1],oppcards[0],oppcards[1]};
                         // qsort(opp4,4,sizeof(int),compare);
                         // int oppItem = pSearch(opp4,4);
@@ -176,17 +176,16 @@ potentials potential2(int hole[2], int comm_cards[5]) {
             }
     ppot2 = (hp[BEHIND][AHEAD] + hp[BEHIND][TIED]/2 + hp[TIED][AHEAD]/2) / (hp_total[BEHIND] + hp_total[TIED]/2);
     npot2 = (hp[AHEAD][BEHIND] + hp[AHEAD][TIED]/2 + hp[TIED][BEHIND]/2) / (hp_total[AHEAD] + hp_total[TIED]/2);
-
     potentials p = {ppot2, npot2};
     return p;        
 }
 
 // int main() {
-//     int hole[2]={49,40};
-//     int comm_cards[5] = {6,8,38};
+//     int hole[2]={0,1};
+//     int comm_cards[5] = {2,3,4};
 //     // int ourrank=rank5(hole,comm_cards);
 //     // microArray =(int *)calloc(MICRO,sizeof(int));
-//     assignArray();
+//     // assignArray();
 //     clock_t t;
 //     t = clock();
 //     potentials pot = potential2(hole,comm_cards);
@@ -195,7 +194,7 @@ potentials potential2(int hole[2], int comm_cards[5]) {
 //     printf("\n first function execution time: %f\n",time_taken);
 //     printf("ppot2: %f",pot.ppot);
 //     printf("npot2: %f",pot.npot);
-//     freeArray();
+//     // freeArray();
 //     // free(microArray);
 //     // printf("\nmicroarray: %d",microarray);
 //     // printf("\nlargearray: %d",largearray);

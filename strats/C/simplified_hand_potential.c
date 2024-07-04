@@ -5,9 +5,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include <time.h>
-#define AHEAD 1
-#define TIED 0
-#define BEHIND 2
+
 typedef struct {
     float ppot;
     float npot;
@@ -38,15 +36,15 @@ void remove_card(int *deck,int card, int* deck_size) {
     }
     printf("Card %d not found in the deck.\n", card);
 }
-int rank7(int hole[2], int comm_cards[3]) {
-    int rank = evaluate_7cards(hole[0], hole[1], comm_cards[0], comm_cards[1], comm_cards[2], comm_cards[3], comm_cards[4]);
-    return rank;
-}
-int rank5(int hole[2], int comm_cards[3]) {
-    int rank = evaluate_5cards(hole[0], hole[1], comm_cards[0], comm_cards[1], comm_cards[2]);
-    return rank;
-}
-potentials potential2(int hole[2], int comm_cards[3]) {
+// int rank7(int hole[2], int comm_cards[3]) {
+//     int rank = evaluate_7cards(hole[0], hole[1], comm_cards[0], comm_cards[1], comm_cards[2], comm_cards[3], comm_cards[4]);
+//     return rank;
+// }
+// int rank5(int hole[2], int comm_cards[3]) {
+//     int rank = evaluate_5cards(hole[0], hole[1], comm_cards[0], comm_cards[1], comm_cards[2]);
+//     return rank;
+// }
+potentials simple_potential2(int hole[2], int comm_cards[3]) {
     int ahead=0;
     int behind=0;
     int deck[52];
@@ -75,7 +73,10 @@ potentials potential2(int hole[2], int comm_cards[3]) {
     }
     int total = ahead+behind;
     total = total/2;
-    potentials pot = {ahead/total,behind/total};
+    float ppot = ahead/total;
+    float npot = behind/total;
+
+    potentials pot = {ppot,npot};
     // printf("ppot: %f",(float)ahead/total);
     // printf("npot: %f",(float)behind/total);
     // printf("ahead: %d",ahead);
@@ -84,18 +85,18 @@ potentials potential2(int hole[2], int comm_cards[3]) {
     return pot;
 }
 
-int main() {
-    int hole[2]={35,32};
-    int comm_cards[3] = {31,27,21};
-    clock_t t;
-    t = clock();
-    int i=0;
+// int main() {
+//     int hole[2]={0,32};
+//     int comm_cards[3] = {31,27,21};
+//     clock_t t;
+//     t = clock();
+//     int i=0;
     
-        // printf("\rIn progress %d", i/100);
-    potential2(hole,comm_cards);
-    t = clock() - t;
-    double time_taken = ((double)t)/CLOCKS_PER_SEC;
-    printf("\n first function execution time: %f\n",time_taken);
-    // printf("ppot2: %f",pot.ppot);
-    // printf("npot2: %f",pot.npot);
-}
+//         // printf("\rIn progress %d", i/100);
+//     potentials pot = potential2(hole,comm_cards);
+//     t = clock() - t;
+//     double time_taken = ((double)t)/CLOCKS_PER_SEC;
+//     printf("\n first function execution time: %f\n",time_taken);
+//     printf("ppot2: %f",pot.ppot);
+//     printf("npot2: %f",pot.npot);
+// }
