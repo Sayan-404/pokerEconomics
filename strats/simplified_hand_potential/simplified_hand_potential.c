@@ -47,8 +47,8 @@ int rank5(int hole[2], int comm_cards[3]) {
     return rank;
 }
 potentials potential2(int hole[2], int comm_cards[3]) {
-    int ahead=0;
-    int behind=0;
+    float ahead=0;
+    float behind=0;
     int deck[52];
     int decksize=52;
     int current_hand[5]={hole[0],hole[1],comm_cards[0],comm_cards[1],comm_cards[2]};
@@ -73,7 +73,7 @@ potentials potential2(int hole[2], int comm_cards[3]) {
                 behind++;
             }
     }
-    int total = ahead+behind;
+    float total = ahead+behind;
     total = total/2;
     potentials pot = {ahead/total,behind/total};
     // printf("ppot: %f",(float)ahead/total);
