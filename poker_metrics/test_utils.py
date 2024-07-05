@@ -2,7 +2,7 @@
 
 import unittest
 
-from utils import *
+from poker_metrics.utils import *
 
 test_state_0 = {
     "player": {

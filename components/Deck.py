@@ -1,5 +1,5 @@
 import random
-from Card import Card
+from components.Card import Card
 import time
 
 
@@ -24,7 +24,8 @@ class Deck:
         Create a new deck.
         """
         suits = ["h", "d", "c", "s"]
-        ranks = ["2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K", "A"]
+        ranks = ["2", "3", "4", "5", "6", "7",
+                 "8", "9", "T", "J", "Q", "K", "A"]
         self.cards = [Card(suit, rank) for suit in suits for rank in ranks]
 
     def shuffle(self):

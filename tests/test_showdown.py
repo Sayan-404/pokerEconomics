@@ -1,6 +1,6 @@
-from Deck import Deck
-from Player import Player
-from Showdown import Showdown
+from components.Deck import Deck
+from components.Player import Player
+from components.Showdown import Showdown
 import json
 
 deck = Deck()

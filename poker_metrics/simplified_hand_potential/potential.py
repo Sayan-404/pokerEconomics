@@ -1,7 +1,18 @@
 import ctypes
+import os
 
-# Load the shared library
-lib = ctypes.CDLL('./potential.so')
+import os
+
+# Get the absolute path to the current directory
+base_dir = os.path.dirname(os.path.abspath(__file__))
+libpheval_path = os.path.join(base_dir, 'build', 'libpheval.so.0.6.0')
+wrapper_path = os.path.join(base_dir, 'potential.so')
+
+# Preload libpheval.so.0.6.0
+libpheval = ctypes.CDLL(libpheval_path)
+
+# Load the wrapper shared library
+lib = ctypes.CDLL(wrapper_path)
 
 # Define the struct for potentials
 

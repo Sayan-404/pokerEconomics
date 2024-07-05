@@ -6,8 +6,8 @@ sys.path.append(os.getcwd())
 import unittest
 
 from Game import Game
-from Player import Player
-from Logger import Logger
+from components.Player import Player
+from components.Logger import Logger
 
 
 class TestGame(unittest.TestCase):

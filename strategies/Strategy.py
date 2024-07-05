@@ -1,5 +1,5 @@
-from .chen import chenScore, get_score
-from .utils import privateValue, ir, potentialPrivateValue, systemResponse, prodigalMove, frugalMove
+from ..poker_metrics.chen import chenScore, get_score
+from ..poker_metrics.utils import privateValue, ir, potentialPrivateValue, systemResponse, prodigalMove, frugalMove
 
 
 class Strategy:
@@ -193,7 +193,7 @@ class Strategy:
 
             showdownOdds = (self.callValue + 4*self.betAmt) / \
                 (self.pot + self.callValue + 8*self.betAmt)
-            
+
             if (ehs > showdownOdds):
                 positiveEhs = ehs + pv*potPV[1]
 
@@ -201,8 +201,6 @@ class Strategy:
                     return True
 
                 return None
-            
-
 
         if self.round == 2:
             # Signal on the turn

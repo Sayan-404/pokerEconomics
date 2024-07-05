@@ -2,9 +2,9 @@ import os, sys
 
 sys.path.append(os.getcwd())
 
-from testing.compare_test import compare_test
-from Player import Player
-from Logger import Logger
+from compare_test import compare_test
+from components.Player import Player
+from components.Logger import Logger
 from Game import Game
 import importlib
 import json

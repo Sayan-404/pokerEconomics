@@ -4,7 +4,7 @@
 
 from ..Strategy import Strategy
 
-from ..utils import prodigalMove
+from ...poker_metrics.utils import prodigalMove
 
 
 class Bluff(Strategy):

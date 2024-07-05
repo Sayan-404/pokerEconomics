@@ -1,5 +1,5 @@
 from .math_utils import create_probabilistic_score
-from .hand_potential import potential
+# from .hand_potential import potential
 import sys
 import os
 
@@ -163,8 +163,8 @@ def privateValue(hole_cards, community_cards=[]):
     return create_probabilistic_score(hole_cards, community_cards)
 
 
-def potentialPrivateValue(deck, hole_cards, community_cards, rank_data):
-    return potential(deck, hole_cards, community_cards, rank_data)
+# def potentialPrivateValue(deck, hole_cards, community_cards, rank_data):
+#     return potential(deck, hole_cards, community_cards, rank_data)
 
 
 def ir(holeCards):

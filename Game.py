@@ -1,10 +1,10 @@
-from Deck import Deck
-from Showdown import Showdown
+from components.Deck import Deck
+from components.Showdown import Showdown
 import sys
 import os
 from tqdm import tqdm
-from testing.system_checks import chainValidate
-from testing.system_checks import extractChain
+from tests.system_checks import chainValidate
+from tests.system_checks import extractChain
 import json
 import traceback
 

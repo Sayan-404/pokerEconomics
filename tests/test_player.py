@@ -4,7 +4,7 @@ import os
 sys.path.append(os.getcwd())
 
 import unittest
-from Player import Player
+from components.Player import Player
 
 
 class TestPlayer(unittest.TestCase):

@@ -6,7 +6,7 @@ import os, sys
 sys.path.append(os.getcwd())
 
 from tqdm import tqdm
-from strats.math_utils import scale, kde_plot
+from .math_utils import scale, kde_plot
 from itertools import combinations
 # IMPORTANT: the score in chen are not uniformly distributed, ie pairs of cards are not equally distributed for each given score range
 # therefore a mean understanding does not suffice and a mode understanding is necessary

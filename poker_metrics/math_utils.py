@@ -3,8 +3,8 @@ import seaborn as sns
 from itertools import combinations
 
 def create_probabilistic_score(hole_cards, community_cards=[]):
-    from strats import ph_score
-    from strats import chen
+    from . import ph_score
+    from . import chen
     hole_cards = set(hole_cards)
     community_cards = set(community_cards)
 
