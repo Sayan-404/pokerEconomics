@@ -1,7 +1,7 @@
 from poker_metrics.chen import get_score
 from poker_metrics.utils import (
     frugalMove, privateValue, prodigalMove, systemResponse)
-from poker_metrics.py_simplified_hand_potential import potential as potentialPrivateValue
+from poker_metrics.simple_hand_potential import potential as potentialPrivateValue
 
 
 class Strategy:
