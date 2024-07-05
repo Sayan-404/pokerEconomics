@@ -6,7 +6,7 @@ import random
 from ..Strategy import Strategy
 
 
-class PokerRandom(Strategy):
+class ChangingStyles(Strategy):
     def __init__(self, strategyName):
         super().__init__(strategyName)
         self.style = random.randrange(0, 2)
@@ -24,7 +24,7 @@ class PokerRandom(Strategy):
         return self.surrenderMove
 
 
-strategy = PokerRandom("PokerRandom")
+strategy = ChangingStyles("ChangingStyles")
 
 
 def decide(state):

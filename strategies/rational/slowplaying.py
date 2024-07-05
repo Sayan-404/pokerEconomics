@@ -29,3 +29,10 @@ class SlowPlaying(Strategy):
             return self.frugalMove
 
         return self.surrenderMove
+
+
+strategy = SlowPlaying("SlowPlaying")
+
+
+def decide(state):
+    return strategy.decide(state)
