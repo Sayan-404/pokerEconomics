@@ -8,7 +8,7 @@ class SlowPlaying(Strategy):
         self.weakHandRound = -1
 
     def decide(self, information):
-        self.initialise(information, 2)
+        self.initialise(information)
 
         # Initialises the weakHandRound memory for each hand
         if self.round == 0:
@@ -25,6 +25,7 @@ class SlowPlaying(Strategy):
                 return self.prodigalMove
 
         if (self.signal is None):
+            self.weakHandRound = -1
             return self.frugalMove
 
         return self.surrenderMove

@@ -50,6 +50,8 @@ class Game:
         self.test = test
         self.debug_data = []
         self.actionChain = list()
+        self.roundFirstAction = None
+        self.firstDeterminer = []
         # rounds are 0-indexed starting with pre-flop
         # counts the number of players currently in a game [later gets flushed]
         self.playing = len(players)
@@ -78,6 +80,24 @@ class Game:
         self, player_index, call_value=0
     ):  # 0 call values indicate no bets being placed before this
         player = self.players[player_index]
+
+        if not self.firstDeterminer:
+            # Pre-flop
+            # Player starting in the pre-flop in heads-up is the one to always start each betting round
+            self.roundFirstAction = True
+            self.firstDeterminer = [self.round, player_index]
+        else:
+            # When round greater than determiner then betting stage changed
+            if self.round > self.firstDeterminer[0]:
+                # Only the opening player can take the first action
+                if self.firstDeterminer[1] == player_index:
+                    self.roundFirstAction = True
+                    self.firstDeterminer = [self.round, player_index]
+
+                self.roundFirstAction = False
+            else:
+                self.roundFirstAction = False
+
         return {
             "player": player.package_state(),
             "call_value": call_value,
@@ -88,8 +108,7 @@ class Game:
             "round": self.round,
             "max_bet": self.get_max_bet(player_index),
             "blinds": self.blind,
-            "deck": [str(card) for card in self.deck.cards],
-            # there should be a position variable indicating the position of the player in the table
+            "roundFirstAction": self.roundFirstAction
         }
 
     def flush(self):
@@ -971,6 +990,9 @@ class Game:
         """
         Displays information after the end of hand.
         """
+
+        self.firstDeterminer = []
+        self.roundFirstAction = False
 
         print(f"\nWinner: {winner}")
         print("Hand Ended")
