@@ -15,6 +15,7 @@ class Strategy:
         self.playerBetAmt = -1
         self.pot = 0
         self.betAmt = 0
+        self.roundFirstAction = None
 
         self.signal = None
         self.prodigalMove = None
@@ -32,6 +33,8 @@ class Strategy:
             1: 0.25,
             2: 0.5
         }
+
+        self.roundFirstAction = information["roundFirstAction"]
 
         self.callValue = information["call_value"]
         self.adjustedCallValue = (

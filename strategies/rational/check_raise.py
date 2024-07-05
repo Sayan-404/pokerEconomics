@@ -1,9 +1,6 @@
 # In a single round, if taking the first action, check first
 # Only if it's known that opponent will call
 
-# TODO Fix the first action probability
-# TODO Maybe adjust to use self.roundFirstAction
-
 from ..Strategy import Strategy
 
 
@@ -20,7 +17,7 @@ class CheckRaise(Strategy):
         if self.signal is True:
             if self.round == 0:
                 # Opponent played the first action
-                if information["blinds"]["bb"]["player"] == information["player"]["id"]:
+                if not self.roundFirstAction:
                     if self.callValue != 0:
                         self.calculateProbability(opponentRaise=True)
                         return self.prodigalMove
@@ -33,7 +30,7 @@ class CheckRaise(Strategy):
                     return self.prodigalMove
 
                 # When player is the small blind and takes the first action
-                if information["call_value"] == int(information["blinds"]["sb"]["amt"]):
+                if self.roundFirstAction:
                     if self.probabilityOpponentRaise > 0.5:
                         return self.frugalMove
 
@@ -48,9 +45,9 @@ class CheckRaise(Strategy):
 
                 return self.prodigalMove
             else:
-                # Probability skewed as the it is not determined which is the first action of the round
-                self.calculateProbability()
-                return self.prodigalMove
+                if not self.roundFirstAction:
+                    self.calculateProbability()
+                    return self.prodigalMove
 
         if self.signal is None:
             return self.frugalMove

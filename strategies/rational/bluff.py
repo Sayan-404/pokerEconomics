@@ -1,7 +1,5 @@
 # Bluff if opponent has a higher probability of calling
 
-# TODO Implement roundFirstAction
-
 from poker_metrics.utils import prodigalMove
 from ..Strategy import Strategy
 
@@ -19,9 +17,11 @@ class Bluff(Strategy):
 
         if self.signal is True:
             if self.callValue == 0:
+                # Player raised previously and opponent called/checked
                 if self.raised:
                     self.calculateProbability(calls=True)
 
+                # Opponent did not called
                 self.calculateProbability()
 
             self.raised = True
@@ -30,7 +30,7 @@ class Bluff(Strategy):
         if self.signal is None:
             if self.roundFirstAction:
                 if self.probabilityOppCalls >= 0.55:
-                    self.raised = 1
+                    self.raised = True
                     return self.prodigalMove
             elif self.callValue == 0:
                 if self.raised:
@@ -39,11 +39,12 @@ class Bluff(Strategy):
                 self.calculateProbability()
 
                 if self.probabilityOppCalls >= 0.55:
-                    self.raised = 1
+                    self.raised = True
                     return self.prodigalMove
 
+            # Opponent raised instead of calling
             self.calculateProbability()
-            self.raised = 0
+            self.raised = False
             return self.frugalMove
 
         if self.probabilityOppCalls >= 0.55:
@@ -54,10 +55,10 @@ class Bluff(Strategy):
 
             # Raise aggressively to sway away the opponent
             # Theoretically, by changing their pot odds and changing their signal
-            self.raised = 1
+            self.raised = True
             return prodigalMove(information, betAmt=(self.betAmt + (0.2 * information["player"]["bankroll"])))
 
-        self.raised = 0
+        self.raised = False
         return self.surrenderMove
 
     def calculateProbability(self, calls=False):
