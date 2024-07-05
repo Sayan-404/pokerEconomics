@@ -23,7 +23,7 @@ def generate_round_robin_strategy_configs():
     strats = []
     types = ["action", "rational"]
     for ty in types:
-        files = os.listdir(f"strats/{ty}/")
+        files = os.listdir(f"strategies/{ty}/")
         for strat in files:
             x = re.search(".py$", strat)
             if x:
