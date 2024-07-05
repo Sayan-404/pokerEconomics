@@ -1,17 +1,19 @@
-import os, sys
+import os
+import sys
 
 sys.path.append(os.getcwd())
 
-from tests.compare_test import compare_test
-from components.Player import Player
-from components.Logger import Logger
-from Game import Game
 import importlib
 import json
 
+# from checks.compare_test import compare_test
+from components.Logger import Logger
+from components.Player import Player
+from Game import Game
+
 
 def get_player_decider(player):
-    module = importlib.import_module("strats.{}".format(player["strategy"]))
+    module = importlib.import_module("strategies.{}".format(player["strategy"]))
     return getattr(module, "decide")
 
 
@@ -62,6 +64,6 @@ if __name__ == "__main__":
     config = input("Enter name of config: ")
     game = initialise_run(config)
     game.play()
-    ch = input("Run compare test? (y/n): ")
-    if ch == "y" or ch == "yes":
-        compare_test(f"{game.logger.path}/games.csv")
+    # ch = input("Run compare test? (y/n): ")
+    # if ch == "y" or ch == "yes":
+    #     compare_test(f"{game.logger.path}/games.csv")

@@ -3,8 +3,9 @@
 # id and strategy names are kept the same
 # simulation = True
 import json
+import os
 import re
-import os, sys
+import sys
 
 sys.path.append(os.getcwd())
 

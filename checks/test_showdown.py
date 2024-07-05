@@ -1,7 +1,8 @@
+import json
+
 from components.Deck import Deck
 from components.Player import Player
 from components.Showdown import Showdown
-import json
 
 deck = Deck()
 deck.shuffle()

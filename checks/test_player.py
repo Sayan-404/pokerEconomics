@@ -1,9 +1,10 @@
-import sys
 import os
+import sys
 
 sys.path.append(os.getcwd())
 
 import unittest
+
 from components.Player import Player
 
 

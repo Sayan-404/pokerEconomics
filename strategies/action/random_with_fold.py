@@ -1,7 +1,8 @@
 # Motive: Random Moves
 
-from ...poker_metrics.utils import availableMoves
 import random
+
+from ...poker_metrics.utils import availableMoves
 
 
 def decide(state):

@@ -1,9 +1,11 @@
-import multiprocessing
-import time
-import os
-from engine import initialise_run
 import json
+import multiprocessing
+import os
 import subprocess
+import time
+
+from engine import initialise_run
+
 
 def worker(_):
     game = initialise_run("benchmark_config", benchmark=True)

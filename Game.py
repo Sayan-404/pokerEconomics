@@ -1,12 +1,13 @@
+import json
+import os
+import sys
+import traceback
+
+from tqdm import tqdm
+
+from checks.system_checks import chainValidate, extractChain
 from components.Deck import Deck
 from components.Showdown import Showdown
-import sys
-import os
-from tqdm import tqdm
-from tests.system_checks import chainValidate
-from tests.system_checks import extractChain
-import json
-import traceback
 
 
 # Disable print

@@ -1,4 +1,4 @@
-from evaluator.evaluate_cards import evaluate_cards
+from hand_evaluator.evaluate_cards import evaluate_cards
 
 
 class Showdown:

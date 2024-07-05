@@ -1,4 +1,5 @@
-from poker_metrics.simplified_hand_potential.potential import potential2 as potentialPrivateValue
+from poker_metrics.simplified_hand_potential.potential import \
+    potential2 as potentialPrivateValue
 
 print(potentialPrivateValue(("Ad", "As"), ("2d", "3s", "4s")))
 

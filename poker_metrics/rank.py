@@ -1,9 +1,11 @@
-import os, sys
+import os
+import sys
 
 sys.path.append(os.getcwd())
 
 # from phevaluator.evaluator import evaluate_cardss
-from evaluator.evaluate_cards import evaluate_cards as evaluate_cards
+from hand_evaluator.evaluate_cards import evaluate_cards as evaluate_cards
+
 
 def rank(cards, rank_data):
     cards = list(cards)

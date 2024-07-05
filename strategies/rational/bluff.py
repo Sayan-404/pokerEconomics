@@ -2,9 +2,8 @@
 
 # TODO Implement roundFirstAction
 
-from ..Strategy import Strategy
-
 from ...poker_metrics.utils import prodigalMove
+from ..Strategy import Strategy
 
 
 class Bluff(Strategy):

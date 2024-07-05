@@ -1,7 +1,8 @@
-from .math_utils import create_probabilistic_score
+import os
 # from .hand_potential import potential
 import sys
-import os
+
+from .math_utils import create_probabilistic_score
 
 sys.path.append(os.getcwd())
 

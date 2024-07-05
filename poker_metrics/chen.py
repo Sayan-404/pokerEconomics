@@ -1,13 +1,16 @@
 import math
+import os
 import statistics
-
-import os, sys
+import sys
 
 sys.path.append(os.getcwd())
 
-from tqdm import tqdm
-from .math_utils import scale, kde_plot
 from itertools import combinations
+
+from tqdm import tqdm
+
+from .math_utils import kde_plot, scale
+
 # IMPORTANT: the score in chen are not uniformly distributed, ie pairs of cards are not equally distributed for each given score range
 # therefore a mean understanding does not suffice and a mode understanding is necessary
 # run this file to see a distribution and infer strategies

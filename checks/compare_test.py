@@ -1,5 +1,6 @@
 import pandas as pd
 
+
 def print_coloured(text, color_code):
     print(f"\033[{color_code}m{text}\033[0m")
     

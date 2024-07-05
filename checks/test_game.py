@@ -1,13 +1,13 @@
-import sys
 import os
+import sys
 
 sys.path.append(os.getcwd())
 
 import unittest
 
-from Game import Game
-from components.Player import Player
 from components.Logger import Logger
+from components.Player import Player
+from Game import Game
 
 
 class TestGame(unittest.TestCase):

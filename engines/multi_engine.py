@@ -1,13 +1,12 @@
-import re
+import gc
 import os
+import re
 import sys
 import traceback
-import gc
-
 from multiprocessing import get_context
 
-from engine import initialise_run
 from aws import shutdownInstance
+from engine import initialise_run
 
 sys.path.append(os.getcwd())
 

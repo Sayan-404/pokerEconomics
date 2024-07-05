@@ -1,9 +1,11 @@
-import pandas as pd
-import matplotlib.pyplot as plt
-import numpy as np
-from scipy.interpolate import make_interp_spline
 import argparse
 import os
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+from scipy.interpolate import make_interp_spline
+
 
 def plot(file_path):
 

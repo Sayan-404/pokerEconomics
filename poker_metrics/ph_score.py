@@ -1,11 +1,13 @@
-import os, sys
+import os
+import sys
 
 sys.path.append(os.getcwd())
 
 
 from itertools import combinations
-from evaluator.evaluate_cards import evaluate_cards
-from strats.math_utils import scale, kde_plot, inverse_range
+
+from hand_evaluator.evaluate_cards import evaluate_cards
+from poker_metrics.math_utils import inverse_range, kde_plot, scale
 from tqdm import tqdm
 
 

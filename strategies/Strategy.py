@@ -1,5 +1,6 @@
 from ..poker_metrics.chen import chenScore, get_score
-from ..poker_metrics.utils import privateValue, ir, potentialPrivateValue, systemResponse, prodigalMove, frugalMove
+from ..poker_metrics.utils import (frugalMove, ir, potentialPrivateValue,
+                                   privateValue, prodigalMove, systemResponse)
 
 
 class Strategy:

@@ -1,10 +1,11 @@
-import matplotlib.pyplot as plt
-import seaborn as sns
 from itertools import combinations
 
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+
 def create_probabilistic_score(hole_cards, community_cards=[]):
-    from . import ph_score
-    from . import chen
+    from . import chen, ph_score
     hole_cards = set(hole_cards)
     community_cards = set(community_cards)
 

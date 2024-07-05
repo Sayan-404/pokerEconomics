@@ -9,14 +9,15 @@
 # 	- columns: bankroll at the end of the hand for each player, winner of the hand, round the hand ended on
 # 	- first row does not refer to any hand, it gives the: initial bankrolls of the players, null winner and -1 as hand ending round
 
-import os
-import datetime
-import time
-import json
-import builtins
+# import builtins
 import csv
-import uuid
+import datetime
 import hashlib
+import json
+import os
+import time
+import uuid
+
 
 class Logger:
     def __init__(self, log_hands = False, benchmark = False, strategies = [], number_of_hands = 0):

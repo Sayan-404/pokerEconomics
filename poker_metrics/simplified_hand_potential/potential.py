@@ -1,8 +1,6 @@
 import ctypes
 import os
 
-import os
-
 # Get the absolute path to the current directory
 base_dir = os.path.dirname(os.path.abspath(__file__))
 libpheval_path = os.path.join(base_dir, 'build', 'libpheval.so.0.6.0')

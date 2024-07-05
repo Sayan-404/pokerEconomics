@@ -1,6 +1,7 @@
 import random
-from components.Card import Card
 import time
+
+from components.Card import Card
 
 
 class Deck:
