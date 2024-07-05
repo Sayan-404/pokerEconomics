@@ -2,7 +2,7 @@
 
 # TODO Implement roundFirstAction
 
-from ...poker_metrics.utils import prodigalMove
+from poker_metrics.utils import prodigalMove
 from ..Strategy import Strategy
 
 

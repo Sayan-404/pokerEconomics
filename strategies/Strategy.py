@@ -1,6 +1,7 @@
-from ..poker_metrics.chen import chenScore, get_score
-from ..poker_metrics.utils import (frugalMove, ir, potentialPrivateValue,
-                                   privateValue, prodigalMove, systemResponse)
+from poker_metrics.chen import get_score
+from poker_metrics.utils import (
+    frugalMove, privateValue, prodigalMove, systemResponse)
+from poker_metrics.py_simplified_hand_potential import potential as potentialPrivateValue
 
 
 class Strategy:
@@ -91,73 +92,6 @@ class Strategy:
         raise NotImplementedError(
             f"The decide function is not implemented by {self.strategy}")
 
-    # def signalFn(self, tightness=2):
-    #     """
-    #         Analyses the information and gives signal.\n
-    #         Based on the logic given in page 12 of the thesis.\n
-    #         Returns: True, False, None
-    #     """
-
-    #     # For pre-flop
-    #     if self.round == 0:
-    #         # Gets the score by Chen's formula
-    #         score = chenScore(self.holeCards)
-
-    #         if self.callValue == 0:
-    #             # 4 was found to be the average score of all hands
-    #             # Rationale: A hand needs to be better than average
-    #             if score > 4:
-    #                 if score > 12:
-    #                     return True
-
-    #             return None
-
-    #         if self.callValue != 0:
-    #             # If score greater than or equal to 12 then raise/re-raise
-    #             # If score greater than or equal to 10 but less than 12 then call to raises
-    #             if score > 10:
-    #                 if score > 12:
-    #                     return True
-
-    #             return None
-
-    #     return None
-
-    # def signalFn(self, tightness=1):
-    #     """
-    #         Analyses the information and gives signal.\n
-    #         Based on the logic given in page 12 of the thesis.\n
-    #         Returns: True, False, None
-    #     """
-
-    #     # These values must be re-calculated statistically
-    #     defectionMin = 0.3
-    #     cooperationMin = 0.4
-
-    #     if tightness == 0:
-    #         defectionMin = 0.1
-    #         cooperationMin = 0.2
-
-    #     if tightness == 2:
-    #         defectionMin = 0.5
-    #         cooperationMin = 0.60
-
-    #     # This is direct implementation of the logic of Page 12 of the thesis
-    #     if self.potentialPrivateValue != 0:
-    #         if self.potentialPrivateValue[0] >= self.costToWinnings:
-    #             # Profitable scenario if one has the chance to beat at least defectionMin% of the hands
-    #             if (self.privateValue >= defectionMin):
-    #                 return True
-
-    #             return None
-    #         # Calculation based on NPOT to be added |>
-
-    #     # If there's a chance of beating at least cooperationMin% of hands then cooperate
-    #     if (self.privateValue >= cooperationMin):
-    #         return None
-
-    #     return False
-
     def signalFn(self, tightness=2):
         tightnessUpperRanges = [0.02, 0.04, 0.06, 0.08, 0.1]
         tightnessFactor = tightnessUpperRanges[tightness]
@@ -165,7 +99,7 @@ class Strategy:
         # For pre-flop
         if self.round == 0:
             # Gets the score by Chen's formula
-            score = chenScore(self.holeCards)
+            score = get_score(self.holeCards)
 
             if self.callValue == 0:
                 # 4 was found to be the average score of all hands
