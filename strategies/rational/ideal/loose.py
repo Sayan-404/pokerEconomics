@@ -6,7 +6,7 @@ class Ideal(Strategy):
         super().__init__(strategyName)
 
     def decide(self, information):
-        self.initialise(information, tightness=4)
+        self.initialise(information, tightness=-1)
 
         if (self.signal is True):
             return self.prodigalMove

@@ -1,5 +1,5 @@
 {
-    "log_hands": false,
+    "log_hands": true,
     "runs": 1000000,
     "simulation": true,
 	"player1": { "id": "Sayan", "bankroll": 100000, "strategy": "rational.changing_styles" },
