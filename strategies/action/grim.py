@@ -1,6 +1,6 @@
 # Motive: Cooperate until opponent/system cooperates. If opponent/system defects, always defect.
 
-from ...poker_metrics.utils import *
+from poker_metrics.utils import *
 
 
 def decide(state):

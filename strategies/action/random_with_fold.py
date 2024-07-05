@@ -2,7 +2,7 @@
 
 import random
 
-from ...poker_metrics.utils import availableMoves
+from poker_metrics.utils import availableMoves
 
 
 def decide(state):

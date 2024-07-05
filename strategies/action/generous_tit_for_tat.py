@@ -3,7 +3,7 @@
 
 import random
 
-from ...poker_metrics.utils import *
+from poker_metrics.utils import *
 
 
 def decide(state):

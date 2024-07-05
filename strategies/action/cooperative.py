@@ -1,4 +1,4 @@
-from ...poker_metrics.utils import frugalMove
+from poker_metrics.utils import frugalMove
 
 
 def decide(state):
