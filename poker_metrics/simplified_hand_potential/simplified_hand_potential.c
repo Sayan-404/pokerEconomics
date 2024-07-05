@@ -5,6 +5,8 @@
 #include <string.h>
 #include <stdbool.h>
 #include <time.h>
+#include <Python.h>
+
 #define AHEAD 1
 #define TIED 0
 #define BEHIND 2
@@ -82,6 +84,36 @@ potentials potential2(int hole[2], int comm_cards[3]) {
     // printf("behind: %d",behind);
     
     return pot;
+}
+
+static PyObject* potential2_wrapper(PyObject* self, PyObject* args) {
+    int hole[2];
+    int comm_cards[3];
+
+    if (!PyArg_ParseTuple(args, "(ii)(iii)", &hole[0], &hole[1], &comm_cards[0], &comm_cards[1], &comm_cards[2])) {
+        return NULL;
+    }
+
+    potentials result = potential2(hole, comm_cards);
+
+    return Py_BuildValue("(ff)", result.ppot, result.npot);
+}
+
+static PyMethodDef PotentialMethods[] = {
+    {"potential2", potential2_wrapper, METH_VARARGS, "Calculate poker potential."},
+    {NULL, NULL, 0, NULL}  // Sentinel
+};
+
+static struct PyModuleDef potentialmodule = {
+    PyModuleDef_HEAD_INIT,
+    "potential",
+    NULL,
+    -1,
+    PotentialMethods
+};
+
+PyMODINIT_FUNC PyInit_potential(void) {
+    return PyModule_Create(&potentialmodule);
 }
 
 int main() {

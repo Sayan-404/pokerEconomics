@@ -1,7 +1,7 @@
 from poker_metrics.chen import get_score
 from poker_metrics.utils import (
     frugalMove, privateValue, prodigalMove, systemResponse)
-from poker_metrics.py_simplified_hand_potential import potential as potentialPrivateValue
+from poker_metrics.simplified_hand_potential.potential import potential2 as potentialPrivateValue
 
 
 class Strategy:
@@ -182,6 +182,28 @@ class Strategy:
                     return None
 
         return self.surrenderMove
+
+    def cleanCards(cards):
+        # Define rank and suit mappings
+        rank_map = {
+            '2': 0, '3': 1, '4': 2, '5': 3, '6': 4, '7': 5,
+            '8': 6, '9': 7, 'T': 8, 'J': 9, 'Q': 10, 'K': 11, 'A': 12
+        }
+        suit_map = {
+            'c': 0, 'd': 1, 'h': 2, 's': 3
+        }
+
+        return_arr = []
+
+        for card in cards:
+            # Extract rank and suit from the card string
+            rank = card[0]
+            suit = card[1]
+            # Calculate numeric representation
+            rank_value = rank_map[rank]
+            suit_value = suit_map[suit]
+            numeric_value = rank_value * 4 + suit_value
+        return numeric_value
 
     def __str__(self):
         return f"{self.strategy}"
