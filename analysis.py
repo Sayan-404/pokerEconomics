@@ -8,44 +8,63 @@ from scipy.interpolate import make_interp_spline
 
 
 def plot(file_path):
+    # Check for the data directory
+    data_path = os.path.join(file_path, 'data')
+    if not os.path.isdir(data_path):
+        print(f"No data directory found in {file_path}")
+        return
 
-    # Load the CSV data
-    df = pd.read_csv(f"{file_path}games.csv")
+    # Iterate over all directories in the data directory
+    for subdir in os.listdir(data_path):
+        subdir_path = os.path.join(data_path, subdir)
+        if os.path.isdir(subdir_path):
+            csv_file = os.path.join(subdir_path, 'games.csv')
+            if not os.path.isfile(csv_file):
+                print(f"No games.csv found in {subdir_path}")
+                continue
 
-    # Interpolate data to create smooth curves
-    x = df["hand_no"]
-    x_new = np.linspace(
-        x.min(), x.max(), 10000
-    )  # Increase the number of points for smoothness
+            try:
+                # Load the CSV data
+                df = pd.read_csv(csv_file)
 
-    players = [name for index, name in enumerate(df.columns) if 0 < index < len(df.columns) - 2]
+                # Interpolate data to create smooth curves
+                x = df["hand_no"]
+                x_new = np.linspace(
+                    x.min(), x.max(), 10000
+                )  # Increase the number of points for smoothness
 
-    # Create smooth curves for Sayan and Sourjya
-    spl_sayan = make_interp_spline(x, df[players[0]], k=3)
-    spl_sourjya = make_interp_spline(x, df[players[1]], k=3)
+                players = [name for index, name in enumerate(
+                    df.columns) if 0 < index < len(df.columns) - 2]
 
-    y_sayan_smooth = spl_sayan(x_new)
-    y_sourjya_smooth = spl_sourjya(x_new)
+                # Create smooth curves for Sayan and Sourjya
+                spl_sayan = make_interp_spline(x, df[players[0]], k=3)
+                spl_sourjya = make_interp_spline(x, df[players[1]], k=3)
 
-    # Plot the smooth curves
-    plt.figure(figsize=(10, 5))
-    plt.plot(x_new, y_sayan_smooth, label=players[0])
-    plt.plot(x_new, y_sourjya_smooth, label=players[1])
-    plt.title("Scores Over Rounds")
-    plt.xlabel("Hand Number")
-    plt.ylabel("Scores")
-    plt.legend()
-    plt.grid(True)
-    plt.savefig(f"{file_path}analysis.png")
+                y_sayan_smooth = spl_sayan(x_new)
+                y_sourjya_smooth = spl_sourjya(x_new)
 
-    # Optionally, show the plot
-    plt.show()
+                # Plot the smooth curves
+                plt.figure(figsize=(10, 5))
+                plt.plot(x_new, y_sayan_smooth, label=players[0])
+                plt.plot(x_new, y_sourjya_smooth, label=players[1])
+                plt.title("Scores Over Rounds")
+                plt.xlabel("Hand Number")
+                plt.ylabel("Scores")
+                plt.legend()
+                plt.grid(True)
+                plt.savefig(f"{subdir_path}analysis.png")
+
+                # # Optionally, show the plot
+                # plt.show()
+            except:
+                continue
+
 
 def show_hand(file_path):
     if not os.path.isfile(f"{file_path}hand_0.json"):
         print("hands are not logged (hand_0 not found)")
         return
-    while(1):
+    while (1):
         hand = input("enter hand number (-1 to exit): ")
         if hand == "-1":
             break
@@ -55,6 +74,7 @@ def show_hand(file_path):
             continue
         with open(hand) as f:
             print(f.read())
+
 
 # Set up command line argument parsing
 parser = argparse.ArgumentParser(description="Analyser")

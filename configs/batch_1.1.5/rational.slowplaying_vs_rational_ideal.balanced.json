@@ -8,9 +8,9 @@
         "strategy": "rational.slowplaying"
     },
     "player2": {
-        "id": "rational/ideal.balanced",
+        "id": "rational.ideal.balanced",
         "bankroll": 100000000000,
-        "strategy": "rational/ideal.balanced"
+        "strategy": "rational.ideal.balanced"
     },
     "seed": null
 }
