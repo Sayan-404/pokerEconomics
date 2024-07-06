@@ -9,19 +9,22 @@ import sys
 
 sys.path.append(os.getcwd())
 
+
 def create_single_config():
     filename = input("Enter config name: ")
     filename = f"configs/{filename}.json"
     runs = int(input("Enter number of runs: "))
-    log_hands = True if input("Enter y to log individual hand data: ") == "y" else False
+    log_hands = True if input(
+        "Enter y to log individual hand data: ") == "y" else False
     strat1 = input("Enter strategy(type.name) for player 1: ")
     strat2 = input("Enter strategy(type.name) for player 2: ")
     seed = input("Enter seed if present: ")
     create_config_file(filename, log_hands, runs, strat1, strat2, seed)
 
+
 def generate_round_robin_strategy_configs():
     strats = []
-    types = ["action", "rational"]
+    types = ["action", "rational", "rational/ideal"]
     for ty in types:
         files = os.listdir(f"strategies/{ty}/")
         for strat in files:
@@ -29,7 +32,7 @@ def generate_round_robin_strategy_configs():
             if x:
                 y = f"{ty}.{x.string.split('.')[0]}"
                 strats.append(y)
-    enum_strats = {i:strats[i] for i in range(len(strats))}
+    enum_strats = {i: strats[i] for i in range(len(strats))}
     print("Enter the numbers (separated by spaces) corresponding to the strategies according to the list below: ")
     for key in enum_strats:
         print(f"{key}: {enum_strats[key]}")
@@ -42,7 +45,8 @@ def generate_round_robin_strategy_configs():
         else:
             strats.append(enum_strats[key])
 
-    log_hands = True if input("Enter y to log individual hands: ") == "y" else False
+    log_hands = True if input(
+        "Enter y to log individual hands: ") == "y" else False
     runs = int(input("Enter number of runs: "))
     seed = input("Enter seed if present: ")
     bankroll = input("Enter bankroll (-1 for default of 1000000000): ")
@@ -51,7 +55,10 @@ def generate_round_robin_strategy_configs():
         for j in range(i+1, len(strats)):
             s1 = strats[i]
             s2 = strats[j]
-            create_config_file(f"configs/{s1}_vs_{s2}", log_hands, bankroll, runs, s1, s2, seed)
+            # Replace / with _
+            filename = f"configs/{s1.replace('/', '_')}_vs_{s2.replace('/', '_')}"
+            create_config_file(
+                filename, log_hands, bankroll, runs, s1, s2, seed)
 
 
 def create_config_file(filename, log_hands, bankroll, runs, strat1, strat2, seed=None):
@@ -65,8 +72,10 @@ def create_config_file(filename, log_hands, bankroll, runs, strat1, strat2, seed
             "seed": seed if seed else None
         }, f, indent=4)
 
+
 if __name__ == "__main__":
-    ch = input("Enter 1 to generate single config and 2 to generate configs for multiple strategy pairs: ")
+    ch = input(
+        "Enter 1 to generate single config and 2 to generate configs for multiple strategy pairs: ")
     if ch == "1":
         create_single_config()
     elif ch == "2":
