@@ -1,6 +1,5 @@
-from poker_metrics.chen import get_score
 from poker_metrics.utils import (
-    frugalMove, privateValue, prodigalMove, systemResponse)
+    frugalMove, privateValue, prodigalMove, systemResponse, ir)
 from poker_metrics.simple_hand_potential import potential as potentialPrivateValue
 
 
@@ -69,26 +68,34 @@ class Strategy:
 
         # For pre-flop
         if self.round == 0:
-            # Gets the score by Chen's formula
-            score = get_score(self.holeCards) + (tightnessFactor*(-10))
+            incomeRate = ir(self.holeCards)
+            incomeRate += ((-1)*tightnessFactor)*incomeRate
 
-            if self.callValue == 0:
-                # 4 was found to be the average score of all hands
-                # Rationale: A hand needs to be better than average
-                if score > 4:
-                    if score > 12:
-                        return True
-
-                    return None
-
-            if self.callValue != 0:
-                # If score greater than or equal to 12 then raise/re-raise
-                # If score greater than or equal to 10 but less than 12 then call to raises
-                if score > 10:
-                    if score > 12:
-                        return True
+            if incomeRate > 0.33:
+                if incomeRate > 0.88:
+                    return True
 
                 return None
+            # # Gets the score by Chen's formula
+            # score = get_score(self.holeCards) + (tightnessFactor*(-10))
+
+            # if self.callValue == 0:
+            #     # 4 was found to be the average score of all hands
+            #     # Rationale: A hand needs to be better than average
+            #     if score > 4:
+            #         if score > 12:
+            #             return True
+
+            #         return None
+
+            # if self.callValue != 0:
+            #     # If score greater than or equal to 12 then raise/re-raise
+            #     # If score greater than or equal to 10 but less than 12 then call to raises
+            #     if score > 10:
+            #         if score > 12:
+            #             return True
+
+            #     return None
 
         if self.round == 1:
             # Signal on the flop

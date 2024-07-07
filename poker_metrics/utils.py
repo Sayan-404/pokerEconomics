@@ -1,10 +1,10 @@
 import os
-# from .hand_potential import potential
 import sys
 
-from .math_utils import create_probabilistic_score
-
 sys.path.append(os.getcwd())
+
+# from .hand_potential import potential
+from .math_utils import create_probabilistic_score, scale
 
 # Include utilities for developing strategies
 
@@ -175,4 +175,6 @@ def ir(holeCards):
     first = cardTypes.index(holeCards[0][0])
     second = cardTypes.index(holeCards[1][0])
 
-    return IR2[first][second]
+    scaledIr = scale(IR2[first][second], -351, 704, 0, 1)
+
+    return scaledIr
