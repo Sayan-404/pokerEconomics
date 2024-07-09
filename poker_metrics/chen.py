@@ -1,4 +1,4 @@
-from .math_utils import kde_plot, scale
+from math_utils import kde_plot, scale
 from tqdm import tqdm
 from itertools import combinations
 import math
