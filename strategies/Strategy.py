@@ -1,5 +1,5 @@
 from poker_metrics.utils import (
-    frugalMove, privateValue, prodigalMove, systemResponse, ir)
+    frugalMove, privateValue, prodigalMove, ir)
 from poker_metrics.simple_hand_potential import potential as potentialPrivateValue
 
 
@@ -20,6 +20,9 @@ class Strategy:
         self.prodigalMove = None
         self.frugalMove = None
         self.surrenderMove = ("f", -1)
+
+        self.ehs = None
+        self.showdownOdds = None
 
     def initialise(self, information, tightness=0):
         """
@@ -71,81 +74,53 @@ class Strategy:
             incomeRate = ir(self.holeCards)
             incomeRate += ((-1)*tightnessFactor)*incomeRate
 
-            if incomeRate > 0.33:
-                if incomeRate > 0.88:
-                    return True
+            return incomeRate
 
-                return None
-            # # Gets the score by Chen's formula
-            # score = get_score(self.holeCards) + (tightnessFactor*(-10))
-
-            # if self.callValue == 0:
-            #     # 4 was found to be the average score of all hands
-            #     # Rationale: A hand needs to be better than average
-            #     if score > 4:
-            #         if score > 12:
-            #             return True
-
-            #         return None
-
-            # if self.callValue != 0:
-            #     # If score greater than or equal to 12 then raise/re-raise
-            #     # If score greater than or equal to 10 but less than 12 then call to raises
-            #     if score > 10:
-            #         if score > 12:
-            #             return True
-
-            #     return None
-
+        # Signal on the flop
         if self.round == 1:
-            # Signal on the flop
-            pv = privateValue(self.holeCards, self.communityCards)
-            potPV = potentialPrivateValue(self.holeCards, self.communityCards)
-
-            ehs = pv + (1 - pv)*potPV[0] - pv*potPV[1]
-
-            showdownOdds = (self.adjustedCallValue + (4*self.adjustedBetAmt)) / \
-                (self.pot + self.adjustedCallValue + (8*self.adjustedBetAmt))
-
-            if (ehs > showdownOdds):
-                positiveEhs = ehs + pv*potPV[1]
-
-                if (positiveEhs >= showdownOdds):
-                    return True
-
-                return None
-
-        if self.round == 2:
-            # Signal on the turn
             pv = privateValue(self.holeCards, self.communityCards)
             potPV = potentialPrivateValue(self.holeCards, self.communityCards)
 
             # Calculating Effective hand strength' with thesis formula (6.4) on page 37
-            ehs = pv + (1 - pv)*potPV[0] - pv*potPV[1]
+            self.ehs = pv + (1 - pv)*potPV[0] - pv*potPV[1]
 
             # Calculated with formula 6.7 on page 40 of thesis
-            showdownOdds = (self.adjustedCallValue + self.adjustedBetAmt) / \
+            self.showdownOdds = (self.adjustedCallValue + (4*self.adjustedBetAmt)) / \
+                (self.pot + self.adjustedCallValue + (8*self.adjustedBetAmt))
+
+            positiveEhs = self.ehs + pv*potPV[1]
+
+            return (self.ehs - self.showdownOdds), (positiveEhs - self.showdownOdds)
+
+        # Signal on the turn
+        if self.round == 2:
+            pv = privateValue(self.holeCards, self.communityCards)
+            potPV = potentialPrivateValue(self.holeCards, self.communityCards)
+
+            # Calculating Effective hand strength' with thesis formula (6.4) on page 37
+            self.ehs = pv + (1 - pv)*potPV[0] - pv*potPV[1]
+
+            if (self.ehs == 1.0):
+                print(self.ehs)
+                print(pv)
+                print(potPV)
+                print()
+                exit()
+
+            # Calculated with formula 6.7 on page 40 of thesis
+            self.showdownOdds = (self.adjustedCallValue + self.adjustedBetAmt) / \
                 (self.pot + self.adjustedCallValue + (2*self.adjustedBetAmt))
 
-            if (ehs > showdownOdds):
-                positiveEhs = ehs + pv*potPV[1]
+            positiveEhs = self.ehs + pv*potPV[1]
 
-                if (positiveEhs >= showdownOdds):
-                    return True
+            return (self.ehs - self.showdownOdds), (positiveEhs - self.showdownOdds)
 
-                return None
-
+        # Signal on the river
         if self.round == 3:
-            # Signal on the river
             pv = privateValue(self.holeCards, self.communityCards)
+            pv += ((-1)*tightnessFactor)*pv
 
-            if (pv > (0.55 + tightnessFactor)):
-                return True
-
-            if ((pv > (0.3 + tightnessFactor)) and (pv < (0.55 + tightnessFactor))):
-                return None
-
-        return self.surrenderMove
+            return pv
 
     def __str__(self):
         return f"{self.strategy}"

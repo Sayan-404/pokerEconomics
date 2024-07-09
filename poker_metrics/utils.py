@@ -1,4 +1,4 @@
-from math_utils import create_probabilistic_score, scale
+from .math_utils import create_probabilistic_score, scale
 import os
 import sys
 

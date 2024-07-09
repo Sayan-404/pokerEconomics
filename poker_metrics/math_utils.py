@@ -5,7 +5,7 @@ import seaborn as sns
 
 
 def create_probabilistic_score(hole_cards, community_cards=[]):
-    import chen, ph_score
+    from . import chen, ph_score
     hole_cards = set(hole_cards)
     community_cards = set(community_cards)
 

@@ -12,20 +12,36 @@ class ChangingStyles(Strategy):
         self.style = random.randrange(0, 2)
 
     def decide(self, information):
-        self.style = random.randrange(0, 2)
-        self.initialise(information, 0)
+        self.initialise(information, -2)
 
-        if (self.signal is True) or (self.signal is None):
-            if self.style == 1:
-                return self.prodigalMove
+        if self.round == 0:
+            if self.signal < -0.8:
+                return self.surrenderMove
 
-            return self.frugalMove
+            return random.choice([self.frugalMove, self.prodigalMove])
 
-        return self.surrenderMove
+        if self.round == 1 or self.round == 2:
+            if self.signal[0] <= -0.5:
+                return self.surrenderMove
+
+            return random.choice([self.frugalMove, self.prodigalMove])
+
+        if self.round == 3:
+            if self.signal <= 0.25:
+                return self.surrenderMove
+
+            return random.choice([self.frugalMove, self.prodigalMove])
 
 
 strategy = ChangingStyles("ChangingStyles")
 
 
 def decide(state):
-    return strategy.decide(state)
+    result = strategy.decide(state)
+
+    # if strategy.round == 1 or strategy.round == 2:
+    #     if (strategy.)S
+    #     raise Exception(
+    #         f"{strategy.round} {strategy.ehs} {strategy.showdownOdds} {result}")
+
+    return result
