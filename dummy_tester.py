@@ -1,9 +1,7 @@
 from phevaluator.evaluator import evaluate_cards
 from hand_evaluator.evaluate_cards import evaluate_cards as c_evaluate_cards
-# from strats.hand_potential import potential
-# from strats.simplified_hand_potential import potential as simple_pot
-# from strats.hand_equity import equity
 from poker_metrics.utils import privateValue
+from poker_metrics.simple_hand_potential import potential
 from itertools import combinations
 import random
 import time
@@ -20,10 +18,10 @@ for _ in tqdm(range(runs), desc="Processing..."):
     a = time.time()
     # _ = evaluate_cards(*t)
     # _ = c_evaluate_cards(*t)
-    # _ = potential(t_deck, t[:2], t[2:], {})
+    _ = potential(t_deck, t[:2], t[2:], 2)
     # _ = simple_pot(t_deck, t[:2], t[2:], 2)
     # _ = equity(t[:2], t[2:])
-    _ = privateValue(t[:2], t[2:])
+    # _ = privateValue(t[:2], t[2:])
     b = time.time()
     total_time += b-a
 print(f"Total time: {total_time}")
@@ -33,10 +31,8 @@ print(f"Average time for each process: {total_time/runs}")
 # base level potential optimisation (tuple and DP and python eval): 20688 seconds
 # base level potential (1 card look ahead) optimisation (tuple and DP and c eval): 15700 seconds
 # base level potential (2 card look ahead) optimisation (tuple and DP and c eval): 332638 seconds
-# simple potential 1 card look ahead (python eval): 29 seconds
-# simple potential 2 card look ahead (python eval): 730 seconds
-# simple potential 1 card look ahead (c eval): 14.4 seconds
-# simple potential 2 card look ahead (c eval): 362 seconds
+# simple potential 1 card look ahead (c eval): 15.5 seconds
+# simple potential 2 card look ahead (c eval): 39700 seconds
 # hand equity (flop): 5227 seconds
 # hand equity (turn): 235 seconds
 # hand equity (river): 0.399 seconds

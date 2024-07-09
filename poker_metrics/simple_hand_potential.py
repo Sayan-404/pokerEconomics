@@ -3,7 +3,7 @@ import sys
 from itertools import combinations
 
 sys.path.append(os.getcwd())
-from utils import get_rank_category
+from .utils import get_rank_category
 
 # from phevaluator.evaluator import evaluate_cards
 
@@ -11,7 +11,8 @@ def potential(deck, hole_cards, community_cards, type_lookahead = 1):
     # 1 type_lookahead is 1 card look ahead
     # 2 type_lookahead is 2 card look ahead only applicable for flop
     # this function should only be used post flop
-    
+    hole_cards = list(hole_cards)
+    community_cards = list(community_cards)
     current_hand = hole_cards + community_cards
     current_rank_category = get_rank_category(current_hand)
     ahead = 0

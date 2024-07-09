@@ -3,6 +3,7 @@ import sys
 
 sys.path.append(os.getcwd())
 from .math_utils import create_probabilistic_score, scale
+from hand_evaluator.evaluate_cards import evaluate_cards
 
 # from .hand_potential import potential
 
@@ -208,4 +209,4 @@ if __name__ == "__main__":
     comm_cards = ["9c", "9d", "9h"]
     hole = ["Ad", "9s"]
     hand = hole + comm_cards
-    print(get_rank_category(hole, comm_cards))
+    print(get_rank_category(hand))
