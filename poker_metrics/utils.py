@@ -3,6 +3,7 @@ import os
 import sys
 
 sys.path.append(os.getcwd())
+from hand_evaluator.evaluate_cards import evaluate_cards
 
 # from .hand_potential import potential
 
@@ -168,6 +169,27 @@ def privateValue(hole_cards, community_cards=[]):
 #     return potential(deck, hole_cards, community_cards, rank_data)
 
 
+def get_rank_category(hand):
+    rank = evaluate_cards(*hand)
+    if (rank > 6185):
+        return 8
+    if (rank > 3325):
+        return 7
+    if (rank > 2467):
+        return 6
+    if (rank > 1609):
+        return 5
+    if (rank > 1599):
+        return 4;
+    if (rank > 322):
+        return 3
+    if (rank > 166):
+        return 2
+    if (rank > 10):
+        return 1
+    else:
+        return 0
+
 def ir(holeCards):
     # Lowest: -351
     # Highest: 704
@@ -178,3 +200,13 @@ def ir(holeCards):
     scaledIr = scale(IR2[first][second], -351, 704, -1, 1)
 
     return scaledIr
+
+
+if __name__ == "__main__":
+    rank = "23456789TJQKA"
+    suit = "csdh"
+    deck = [r+s for r in rank for s in suit]
+    comm_cards = ["9c", "9d", "9h"]
+    hole = ["Ad", "9s"]
+    hand = hole + comm_cards
+    print(get_rank_category(hole, comm_cards))
