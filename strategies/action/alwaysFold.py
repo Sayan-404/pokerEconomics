@@ -1,2 +1,4 @@
+# Motive: Always fold
+
 def decide(state):
-    return "f", -1;
+    return "f", -1

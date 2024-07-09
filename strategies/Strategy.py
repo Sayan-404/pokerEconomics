@@ -5,18 +5,33 @@ from poker_metrics.simple_hand_potential import potential as potentialPrivateVal
 
 class Strategy:
     def __init__(self, strategyName):
+        """
+            Initialises all the required variables for easy access by children classes.
+        """
         self.strategy = strategyName
 
         self.holeCards = []
         self.communityCards = []
+
+        # Initialised to -1 for distinction
         self.round = -1
         self.callValue = -1
+
+        # This is the total amount that the player has bet in a give hand (pre-flop to present round)
         self.playerBetAmt = -1
+
         self.pot = 0
+
+        # This is the additional amount that the player will bet/raise
         self.betAmt = 0
+
+        # This variable is True if the current action is the round's first action
         self.roundFirstAction = None
 
         self.signal = None
+
+        # Prodigal means bet/raise
+        # Frugal means call/check
         self.prodigalMove = None
         self.frugalMove = None
         self.surrenderMove = ("f", -1)

@@ -1,4 +1,3 @@
-from math_utils import kde_plot, scale
 from tqdm import tqdm
 from itertools import combinations
 import math
@@ -7,6 +6,8 @@ import statistics
 import sys
 
 sys.path.append(os.getcwd())
+
+from .math_utils import kde_plot, scale
 
 
 # IMPORTANT: the score in chen are not uniformly distributed, ie pairs of cards are not equally distributed for each given score range

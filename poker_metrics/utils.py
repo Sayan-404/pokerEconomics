@@ -1,9 +1,8 @@
-from math_utils import create_probabilistic_score, scale
 import os
 import sys
 
 sys.path.append(os.getcwd())
-from hand_evaluator.evaluate_cards import evaluate_cards
+from .math_utils import create_probabilistic_score, scale
 
 # from .hand_potential import potential
 
