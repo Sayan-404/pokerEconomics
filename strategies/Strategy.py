@@ -33,26 +33,19 @@ class Strategy:
 
 
         # Metrics for decision making and placing bets
-        self.privateValue = -1  # x
-        self.handEquity = -1    # y
-        self.potOdds = -1       # z
-        self.determiner = -1    # t
+        self.x_privateValue = -1  # x
+        self.y_handEquity = -1    # y
+        self.z_potOdds = -1       # z
+        self.t_determiner = -1    # t
         self.range = ()         # A tuple containing the lower and upper limit of the range
         self.monetaryRange = -1 # monetary_range
         self.strength = -1      # x or y depending on the situation
         self.potShare = -1      # Share of pot of a specific player
 
-    def initialise(self, information, tightness=0):
+    def initialise(self, information):
         """
             Takes the information state and initialises all the variables before making an action.
         """
-        tightnessRanges = {
-            -2: -0.5,
-            -1: -0.25,
-            0: 0,
-            1: 0.25,
-            2: 0.5
-        }
 
         self.roundFirstAction = information["roundFirstAction"]
 
@@ -79,28 +72,27 @@ class Strategy:
         self.strength = -1
 
         if self.round != 0:
-            self.privateValue = privateValue(self.holeCards, self.communityCards)
+            self.x_privateValue = privateValue(self.holeCards, self.communityCards)
         else:
-            self.privateValue = ir(self.holeCards)
+            self.x_privateValue = ir(self.holeCards)
 
 
         if self.round in [0, 3]:
-            self.strength = self.privateValue
+            self.strength = self.x_privateValue
         else:
             lookahead = 1 if self.round == 2 else 2
-            self.handEquity = potential(self.holeCards, self.communityCards, lookahead)
-            self.strength = self.handEquity[0]
-            # raise Exception(f"{self.strength} {self.handEquity} {self.holeCards} {self.communityCards}")
-
+            self.y_handEquity = potential(self.holeCards, self.communityCards, lookahead)
+            self.strength = self.y_handEquity[0]
+            
         if self.callValue > 0:
-            self.potOdds = (self.callValue/(self.pot + self.callValue))
-            self.determiner = self.strength - self.potOdds
-            self.range = (self.potOdds, self.strength)
+            self.z_potOdds = (self.callValue/(self.pot + self.callValue))
+            self.t_determiner = self.strength - self.z_potOdds
+            self.range = (self.z_potOdds, self.strength)
         else:
             # When call value is 0 determine rationality with pot share
-            self.potOdds = -1
+            self.z_potOdds = -1
             self.potShare = self.playerBetAmt/self.pot
-            self.determiner = self.strength - self.potShare
+            self.t_determiner = self.strength - self.potShare
             self.range = (0, self.strength)
 
     def strategicMove(self, r, information):

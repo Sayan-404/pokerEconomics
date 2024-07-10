@@ -16,13 +16,13 @@ class ChangingStyles(Strategy):
 
         r = None
 
-        if self.determiner > 0:
+        if self.t_determiner > 0:
             r = random.uniform(self.range[0], self.range[1])
 
             if random.choice([True, False]):
                 r = self.range[0]
         
-        if self.determiner < 0:
+        if self.t_determiner < 0:
             if self.strength > 0.85 and self.round in [2, 3]:
                 r = random.uniform(self.range[0], 1.5)
             else:

@@ -6,18 +6,18 @@ class Ideal(Strategy):
         super().__init__(strategyName)
 
     def decide(self, information):
-        self.initialise(information, tightness=0)
+        self.initialise(information)
 
         r = -1
 
-        if self.determiner >= 0:
+        if self.t_determiner >= 0:
             # In the money
-            if self.privateValue >= 0.75:
+            if self.x_privateValue >= 0.75:
                 r = max(self.range)
             else:
                 r = min(self.range)
-        elif self.determiner < 0:
-            if self.privateValue >= 0.9 and self.round in [2, 3]:
+        elif self.t_determiner < 0:
+            if self.x_privateValue >= 0.9 and self.round in [2, 3]:
                 r = 1.25
             else:
                 r = min(self.range)
