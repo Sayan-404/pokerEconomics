@@ -31,14 +31,13 @@ class Strategy:
 
         self.signal = None
 
-
         # Metrics for decision making and placing bets
         self.x_privateValue = -1  # x
         self.y_handEquity = -1    # y
         self.z_potOdds = -1       # z
         self.t_determiner = -1    # t
         self.range = ()         # A tuple containing the lower and upper limit of the range
-        self.monetaryRange = -1 # monetary_range
+        self.monetaryRange = -1  # monetary_range
         self.strength = -1      # x or y depending on the situation
         self.potShare = -1      # Share of pot of a specific player
 
@@ -77,9 +76,10 @@ class Strategy:
             self.strength = self.x_privateValue
         else:
             lookahead = 1 if self.round == 2 else 2
-            self.y_handEquity = potential(self.holeCards, self.communityCards, lookahead)
+            self.y_handEquity = potential(
+                self.holeCards, self.communityCards, lookahead)
             self.strength = self.y_handEquity[0]
-            
+
         if self.callValue > 0:
             self.z_potOdds = (self.callValue/(self.pot + self.callValue))
             self.t_determiner = self.strength - self.z_potOdds
@@ -90,21 +90,6 @@ class Strategy:
             self.potShare = self.playerBetAmt/self.pot
             self.t_determiner = self.strength - self.potShare
             self.range = (0, self.strength)
-
-    def strategicMove(self, r, information):
-        move = None
-
-        self.monetaryRange = math.floor((r*self.pot)/(1 - r))
-
-        if self.monetaryRange == self.callValue:
-            move = frugalMove(information)
-        elif self.monetaryRange > self.callValue:
-            move = prodigalMove(information, (self.monetaryRange - self.callValue))
-        else:
-            move = ("f", -1)
-
-        return move
-        
 
     def __str__(self):
         return f"{self.strategy}"
