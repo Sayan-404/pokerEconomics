@@ -1,8 +1,10 @@
 import os
 import sys
 
+from itertools import combinations
+
 sys.path.append(os.getcwd())
-from poker_metrics.math_utils import create_probabilistic_score, scale
+from poker_metrics.math_utils import create_probabilistic_score
 from hand_evaluator.evaluate_cards import evaluate_cards
 
 # from .hand_potential import potential
@@ -162,11 +164,10 @@ def canDefect(state):
 
 def privateValue(hole_cards, community_cards=[]):
     # returns a probability of roughly how good the hand is compared to other possible hands
+    if community_cards == []:
+        return ir_based_score(hole_cards)
+
     return create_probabilistic_score(hole_cards, community_cards)
-
-
-# def potentialPrivateValue(deck, hole_cards, community_cards, rank_data):
-#     return potential(deck, hole_cards, community_cards, rank_data)
 
 
 def get_rank_category(hand):
@@ -197,16 +198,37 @@ def ir(holeCards):
     first = cardTypes.index(holeCards[0][0])
     second = cardTypes.index(holeCards[1][0])
 
-    scaledIr = scale(IR2[first][second], -351, 704, 0, 1)
+    scaledIr = IR2[first][second], -351, 704, 0, 1
 
     return scaledIr
 
+def ir_based_score(hole_cards):
+    own_score = ir(hole_cards)
+
+    ranks = "23456789TJQKA"
+    suits = "scdh"
+    deck = set([r+s for r in ranks for s in suits])
+
+    # Removing player's card from deck
+    deck = deck - set(hole_cards)
+    possible_opponent_cards = list(combinations(deck, 2))
+
+    behind = 0
+    total = 0
+
+    for cards in possible_opponent_cards:
+        if ir(cards) < own_score:
+            behind += 1
+
+        total += 1
+
+    return behind/total
 
 if __name__ == "__main__":
-    rank = "23456789TJQKA"
-    suit = "csdh"
-    deck = [r+s for r in rank for s in suit]
-    comm_cards = ["9c", "9d", "9h"]
-    hole = ["Ad", "9s"]
-    hand = hole + comm_cards
-    print(get_rank_category(hand))
+    # rank = "23456789TJQKA"
+    # suit = "csdh"
+    # deck = [r+s for r in rank for s in suit]
+    # comm_cards = ["9c", "9d", "9h"]
+    hole = ["2s", "Ad"]
+    # hand = hole + comm_cards
+    print(ir_based_score(hole))

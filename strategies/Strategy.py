@@ -71,11 +71,7 @@ class Strategy:
     def reason(self):
         self.strength = -1
 
-        if self.round != 0:
-            self.x_privateValue = privateValue(self.holeCards, self.communityCards)
-        else:
-            self.x_privateValue = ir(self.holeCards)
-
+        self.x_privateValue = privateValue(self.holeCards, self.communityCards)
 
         if self.round in [0, 3]:
             self.strength = self.x_privateValue
