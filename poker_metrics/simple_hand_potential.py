@@ -3,18 +3,25 @@ import sys
 from itertools import combinations
 
 sys.path.append(os.getcwd())
-from .utils import get_rank_category
+from poker_metrics.utils import get_rank_category
 
 # from phevaluator.evaluator import evaluate_cards
 
-def potential(deck, hole_cards, community_cards, type_lookahead = 1):
+def potential(hole_cards, community_cards, type_lookahead = 1):
     # 1 type_lookahead is 1 card look ahead
     # 2 type_lookahead is 2 card look ahead only applicable for flop
     # this function should only be used post flop
+    rank = "23456789TJQKA"
+    suit = "csdh"
+    deck = [r+s for r in rank for s in suit]
+
     hole_cards = list(hole_cards)
     community_cards = list(community_cards)
-    current_hand = hole_cards + community_cards
-    current_rank_category = get_rank_category(current_hand)
+    hand = hole_cards + community_cards
+
+    deck = [card for card in deck if card not in hand]
+
+    current_rank_category = get_rank_category(hand)
     ahead = 0
     inconsequential = 0
     possible_combinations = list(combinations(deck, type_lookahead))
@@ -29,11 +36,8 @@ def potential(deck, hole_cards, community_cards, type_lookahead = 1):
     return ahead/total, inconsequential/total
 
 if __name__ == "__main__":
-    rank = "23456789TJQKA"
-    suit = "csdh"
-    deck = [r+s for r in rank for s in suit]
-    comm_cards = ["Ks", "Qs", "Tc"]
-    hole = ["Jh", "Th"]
-    hand = hole + comm_cards
-    _deck = [card for card in deck if card not in hand]
-    print(potential(_deck, hole, comm_cards, 2))
+
+    comm_cards = ['Jh', 'Ah', 'Js']
+    hole = ['5d', 'Kd']
+
+    print(potential(hole, comm_cards, 2))

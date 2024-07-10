@@ -14,23 +14,24 @@ class ChangingStyles(Strategy):
     def decide(self, information):
         self.initialise(information, -2)
 
-        if self.round == 0:
-            if self.signal < -0.8:
-                return self.surrenderMove
+        r = None
 
-            return random.choice([self.frugalMove, self.prodigalMove])
+        if self.determiner > 0:
+            r = random.uniform(self.range[0], self.range[1])
 
-        if self.round == 1 or self.round == 2:
-            if self.signal[0] <= -0.5:
-                return self.surrenderMove
+            if random.choice([True, False]):
+                r = self.range[0]
+        
+        if self.determiner < 0:
+            if self.strength > 0.85 and self.round in [2, 3]:
+                r = random.uniform(self.range[0], 1.5)
+            else:
+                r = self.range[0]
 
-            return random.choice([self.frugalMove, self.prodigalMove])
-
-        if self.round == 3:
-            if self.signal <= 0.25:
-                return self.surrenderMove
-
-            return random.choice([self.frugalMove, self.prodigalMove])
+        if r:
+            return self.strategicMove(r, information)
+        
+        return "f", -1
 
 
 strategy = ChangingStyles("ChangingStyles")

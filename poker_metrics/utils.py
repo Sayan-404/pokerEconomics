@@ -2,7 +2,7 @@ import os
 import sys
 
 sys.path.append(os.getcwd())
-from .math_utils import create_probabilistic_score, scale
+from poker_metrics.math_utils import create_probabilistic_score, scale
 from hand_evaluator.evaluate_cards import evaluate_cards
 
 # from .hand_potential import potential
@@ -197,7 +197,7 @@ def ir(holeCards):
     first = cardTypes.index(holeCards[0][0])
     second = cardTypes.index(holeCards[1][0])
 
-    scaledIr = scale(IR2[first][second], -351, 704, -1, 1)
+    scaledIr = scale(IR2[first][second], -351, 704, 0, 1)
 
     return scaledIr
 

@@ -10,10 +10,6 @@ import matplotlib.pyplot as plt
 from scipy.stats import gaussian_kde
 import matplotlib
 
-# Use PyQt5 backend for interactive mode
-matplotlib.use('Qt5Agg')
-
-
 def irStats():
     ranks = "23456789TJQKA"
     suits = "scdh"

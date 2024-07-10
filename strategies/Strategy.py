@@ -1,6 +1,7 @@
-from poker_metrics.utils import (
-    frugalMove, privateValue, prodigalMove, ir)
-from poker_metrics.simple_hand_potential import potential as potentialPrivateValue
+from poker_metrics.utils import frugalMove, privateValue, prodigalMove, ir
+from poker_metrics.simple_hand_potential import potential
+
+import math
 
 
 class Strategy:
@@ -30,14 +31,16 @@ class Strategy:
 
         self.signal = None
 
-        # Prodigal means bet/raise
-        # Frugal means call/check
-        self.prodigalMove = None
-        self.frugalMove = None
-        self.surrenderMove = ("f", -1)
 
-        self.ehs = None
-        self.showdownOdds = None
+        # Metrics for decision making and placing bets
+        self.privateValue = -1  # x
+        self.handEquity = -1    # y
+        self.potOdds = -1       # z
+        self.determiner = -1    # t
+        self.range = ()         # A tuple containing the lower and upper limit of the range
+        self.monetaryRange = -1 # monetary_range
+        self.strength = -1      # x or y depending on the situation
+        self.potShare = -1      # Share of pot of a specific player
 
     def initialise(self, information, tightness=0):
         """
@@ -54,88 +57,66 @@ class Strategy:
         self.roundFirstAction = information["roundFirstAction"]
 
         self.callValue = information["call_value"]
-        self.adjustedCallValue = (
-            self.callValue * tightnessRanges[tightness]) + self.callValue
-
-        if self.adjustedCallValue < 0:
-            self.adjustedCallValue = 0
 
         self.playerBetAmt = information["player"]["betamt"]
         self.pot = information["pot"]
 
         self.betAmt = 10
-        self.adjustedBetAmt = (
-            (self.betAmt * tightnessRanges[tightness]) + self.betAmt) if self.callValue != 0 else self.betAmt
 
         self.holeCards = information["player"]["hand"]
         self.communityCards = information["community_cards"]
 
         self.round = information["round"]
 
-        self.signal = self.signalFn(tightnessRanges[tightness])
-
-        self.prodigalMove = prodigalMove(information, betAmt=self.betAmt)
-        self.frugalMove = frugalMove(information)
+        self.reason()
 
     def decide(self, information):
         # This function should be `initialised` so that it can use class variables
         raise NotImplementedError(
             f"The decide function is not implemented by {self.strategy}")
 
-    def signalFn(self, tightnessFactor):
+    def reason(self):
+        self.strength = -1
 
-        # For pre-flop
-        if self.round == 0:
-            incomeRate = ir(self.holeCards)
-            incomeRate += ((-1)*tightnessFactor)*incomeRate
+        if self.round != 0:
+            self.privateValue = privateValue(self.holeCards, self.communityCards)
+        else:
+            self.privateValue = ir(self.holeCards)
 
-            return incomeRate
 
-        # Signal on the flop
-        if self.round == 1:
-            pv = privateValue(self.holeCards, self.communityCards)
-            potPV = potentialPrivateValue(self.holeCards, self.communityCards)
+        if self.round in [0, 3]:
+            self.strength = self.privateValue
+        else:
+            lookahead = 1 if self.round == 2 else 2
+            self.handEquity = potential(self.holeCards, self.communityCards, lookahead)
+            self.strength = self.handEquity[0]
+            # raise Exception(f"{self.strength} {self.handEquity} {self.holeCards} {self.communityCards}")
 
-            # Calculating Effective hand strength' with thesis formula (6.4) on page 37
-            self.ehs = pv + (1 - pv)*potPV[0] - pv*potPV[1]
+        if self.callValue > 0:
+            self.potOdds = (self.callValue/(self.pot + self.callValue))
+            self.determiner = self.strength - self.potOdds
+            self.range = (self.potOdds, self.strength)
+        else:
+            # When call value is 0 determine rationality with pot share
+            self.potOdds = -1
+            self.potShare = self.playerBetAmt/self.pot
+            self.determiner = self.strength - self.potShare
+            self.range = (0, self.strength)
 
-            # Calculated with formula 6.7 on page 40 of thesis
-            self.showdownOdds = (self.adjustedCallValue + (4*self.adjustedBetAmt)) / \
-                (self.pot + self.adjustedCallValue + (8*self.adjustedBetAmt))
+    def strategicMove(self, r, information):
+        move = None
 
-            positiveEhs = self.ehs + pv*potPV[1]
+        self.monetaryRange = math.floor((r*self.pot)/(1 - r))
 
-            return (self.ehs - self.showdownOdds), (positiveEhs - self.showdownOdds)
+        if self.monetaryRange == self.callValue:
+            move = frugalMove(information)
+        elif self.monetaryRange > self.callValue:
+            move = prodigalMove(information, (self.monetaryRange - self.callValue))
+        else:
+            move = ("f", -1)
 
-        # Signal on the turn
-        if self.round == 2:
-            pv = privateValue(self.holeCards, self.communityCards)
-            potPV = potentialPrivateValue(self.holeCards, self.communityCards)
-
-            # Calculating Effective hand strength' with thesis formula (6.4) on page 37
-            self.ehs = pv + (1 - pv)*potPV[0] - pv*potPV[1]
-
-            if (self.ehs == 1.0):
-                print(self.ehs)
-                print(pv)
-                print(potPV)
-                print()
-                exit()
-
-            # Calculated with formula 6.7 on page 40 of thesis
-            self.showdownOdds = (self.adjustedCallValue + self.adjustedBetAmt) / \
-                (self.pot + self.adjustedCallValue + (2*self.adjustedBetAmt))
-
-            positiveEhs = self.ehs + pv*potPV[1]
-
-            return (self.ehs - self.showdownOdds), (positiveEhs - self.showdownOdds)
-
-        # Signal on the river
-        if self.round == 3:
-            pv = privateValue(self.holeCards, self.communityCards)
-            pv += ((-1)*tightnessFactor)*pv
-
-            return pv
+        return move
+        
 
     def __str__(self):
         return f"{self.strategy}"
