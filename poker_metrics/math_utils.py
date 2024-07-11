@@ -1,4 +1,5 @@
 from itertools import combinations
+from scipy.special import lambertw
 from scipy.stats import truncnorm, norm
 
 import matplotlib.pyplot as plt
@@ -59,34 +60,58 @@ def kde_plot(scores):
     plt.show()
 
 
-def odds(lower_limit, upper_limit, mean, std=0.5):
+def odds(lower_limit, upper_limit, pot_odds, hand_strength, left_shift, r_shift):
+    if lower_limit < 0:
+        lower_limit = 0
+
+    sigma = upper_limit/3
+    mean =pot_odds + (hand_strength*r_shift) - ((1 - hand_strength)*left_shift)
 
     lower_limit_trunc, upper_limit_trunc = (
-        lower_limit - mean)/std, (upper_limit - mean)/std
+        lower_limit - mean)/sigma, (upper_limit - mean)/sigma
 
-    dist = truncnorm(lower_limit_trunc, upper_limit_trunc, loc=mean, scale=std)
+    dist = truncnorm(lower_limit_trunc, upper_limit_trunc, loc=mean, scale=sigma)
 
-    # return dist.rvs()
+    return dist.rvs()
 
-    # Plot the PDF of the truncated normal distribution
-    x = np.linspace(lower_limit, upper_limit, 1000)
-    pdf = dist.pdf(x)
-    plt.plot(x, pdf, 'r-', lw=2, label='PDF of truncated normal distribution')
+    # # Plot the PDF of the truncated normal distribution
+    # x = np.linspace(lower_limit, upper_limit, 1000)
+    # pdf = dist.pdf(x)
+    # plt.plot(x, pdf, 'r-', lw=2, label='PDF of truncated normal distribution')
 
-    # Add labels and title
-    plt.xlabel('Value')
-    plt.ylabel('Probability Density')
-    plt.title('Truncated Normal Distribution')
-    plt.legend(loc='best')
+    # ymin, ymax = plt.ylim()
 
-    print(dist.rvs())
+    # plt.vlines(pot_odds, ymin, ymax, colors='b', linestyles='--', label=f'Pot Odds {pot_odds}')
+    # plt.text(pot_odds, ymin, f' Pot Odds ({pot_odds})', color='b', verticalalignment='top')
 
-    # Show the plot
-    plt.show()
+    # plt.vlines(lower_limit, ymin, ymax, colors='b', linestyles='--', label=f'Lower Limit {lower_limit}')
+    # plt.text(lower_limit, ymin, f' Lower Limit ({lower_limit})', color='b', verticalalignment='center')
+
+    # plt.vlines(upper_limit, ymin, ymax, colors='b', linestyles='--', label=f'Upper Limit {upper_limit}')
+    # plt.text(upper_limit, ymin, f' Upper Limit ({upper_limit})', color='b', verticalalignment='bottom')
+
+    # # plt.vlines(sigma, ymin, ymax, colors='b', linestyles='--', label=f'Sigma {sigma}')
+    # # plt.text(sigma, ymin, f' Sigma ({sigma})', color='b', verticalalignment='bottom')
+
+    # plt.vlines(mean, ymin, ymax, colors='b', linestyles='--', label=f'Mean {mean}')
+    # plt.text(mean, ymin, f' Mean ({mean})', color='b', verticalalignment='baseline')
+
+    # # Add labels and title
+    # plt.xlabel('Value')
+    # plt.ylabel('Probability Density')
+    # plt.title('Truncated Normal Distribution')
+    # plt.legend(loc='best')
+
+    # print(dist.rvs())
+
+    # # Show the plot
+    # plt.show()
 
 
 if __name__ == "__main__":
-    odds(0, 5, 0, 0.575)
+    # odds(0, 2, 0, 1)
+    # odds(0, 2, 0, 0.5)
+    odds(0, 1, 0, 0.4, 2, 0)
     # odds(0, 5, 0, 0.6)
     # odds(0, 5, 0, 0.675)
     # odds(0, 5, 0, 0.65)

@@ -13,3 +13,4 @@ build/
 wrapper.so
 potential.so
 libpheval.so.0.6.0
+pyrightconfig.json

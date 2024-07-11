@@ -1,5 +1,4 @@
-from poker_metrics.utils import frugalMove, privateValue, prodigalMove, ir
-from poker_metrics.simple_hand_potential import potential
+from poker_metrics import frugalMove, privateValue, prodigalMove, ir, odds, potential
 
 import math
 
@@ -37,9 +36,11 @@ class Strategy:
         self.z_potOdds = -1       # z
         self.t_determiner = -1    # t
         self.range = ()         # A tuple containing the lower and upper limit of the range
-        self.monetaryRange = -1  # monetary_range
+        self.monetaryValue = -1  # monetary_range
         self.strength = -1      # x or y depending on the situation
         self.potShare = -1      # Share of pot of a specific player
+        self.r_shift = 0
+        self.l_shift = 0
 
     def initialise(self, information):
         """
@@ -90,6 +91,9 @@ class Strategy:
             self.potShare = self.playerBetAmt/self.pot
             self.t_determiner = self.strength - self.potShare
             self.range = (0, self.strength)
+
+    def getOdds(self, lower_limit, upper_limit):
+        return odds(lower_limit, upper_limit, self.z_potOdds, self.x_privateValue, self.l_shift, self.r_shift)
 
     def __str__(self):
         return f"{self.strategy}"
