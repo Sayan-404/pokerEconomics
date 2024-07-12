@@ -28,7 +28,7 @@ class Strategy:
         # This variable is True if the current action is the round's first action
         self.roundFirstAction = None
 
-        self.signal = None
+        self.bigBlind = 0
 
         # Metrics for decision making and placing bets
         self.x_privateValue = -1  # x
@@ -60,8 +60,10 @@ class Strategy:
         self.communityCards = information["community_cards"]
 
         self.round = information["round"]
+        self.bigBlind = information["blinds"]["bb"]["amt"]
 
         self.reason()
+        self.setBet()
 
     def decide(self, information):
         # This function should be `initialised` so that it can use class variables
@@ -92,8 +94,15 @@ class Strategy:
             self.t_determiner = self.strength - self.potShare
             self.range = (0, self.strength)
 
-    def getOdds(self, lower_limit, upper_limit):
-        return odds(lower_limit, upper_limit, self.z_potOdds, self.x_privateValue, self.l_shift, self.r_shift)
+    def getOdds(self):
+        l_shift_adjusted = (self.strength/3)*self.l_shift
+        r_shift_adjusted = (self.strength/3)*self.r_shift
+        return odds(self.z_potOdds, self.strength, self.x_privateValue, l_shift_adjusted, r_shift_adjusted)
+
+    def setBet(self):
+        r = self.getOdds()
+        bet = ((r*self.pot)/(1-r))
+        self.betAmt = round(bet/self.bigBlind) * self.bigBlind
 
     def __str__(self):
         return f"{self.strategy}"

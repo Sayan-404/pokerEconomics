@@ -60,17 +60,18 @@ def kde_plot(scores):
     plt.show()
 
 
-def odds(lower_limit, upper_limit, pot_odds, hand_strength, left_shift, r_shift):
+def odds(lower_limit, upper_limit, hand_strength, left_shift, r_shift):
+    pot_odds = lower_limit
+
     if lower_limit < 0:
         lower_limit = 0
 
     sigma = upper_limit/3
-    mean =pot_odds + (hand_strength*r_shift) - ((1 - hand_strength)*left_shift)
+    mean = pot_odds + (hand_strength*r_shift) - (hand_strength*left_shift)
 
-    lower_limit_trunc, upper_limit_trunc = (
-        lower_limit - mean)/sigma, (upper_limit - mean)/sigma
-
-    dist = truncnorm(lower_limit_trunc, upper_limit_trunc, loc=mean, scale=sigma)
+    t_lower = (lower_limit - mean) / sigma
+    t_upper = (upper_limit - mean) / sigma
+    dist = truncnorm(t_lower, t_upper, loc=mean, scale=sigma)
 
     return dist.rvs()
 
@@ -81,20 +82,28 @@ def odds(lower_limit, upper_limit, pot_odds, hand_strength, left_shift, r_shift)
 
     # ymin, ymax = plt.ylim()
 
-    # plt.vlines(pot_odds, ymin, ymax, colors='b', linestyles='--', label=f'Pot Odds {pot_odds}')
-    # plt.text(pot_odds, ymin, f' Pot Odds ({pot_odds})', color='b', verticalalignment='top')
+    # plt.vlines(pot_odds, ymin, ymax, colors='b',
+    #            linestyles='--', label=f'Pot Odds {pot_odds}')
+    # plt.text(pot_odds, ymin,
+    #          f' Pot Odds ({pot_odds})', color='b', verticalalignment='top')
 
-    # plt.vlines(lower_limit, ymin, ymax, colors='b', linestyles='--', label=f'Lower Limit {lower_limit}')
-    # plt.text(lower_limit, ymin, f' Lower Limit ({lower_limit})', color='b', verticalalignment='center')
+    # plt.vlines(lower_limit, ymin, ymax, colors='b',
+    #            linestyles='--', label=f'Lower Limit {lower_limit}')
+    # plt.text(lower_limit, ymin,
+    #          f' Lower Limit ({lower_limit})', color='b', verticalalignment='center')
 
-    # plt.vlines(upper_limit, ymin, ymax, colors='b', linestyles='--', label=f'Upper Limit {upper_limit}')
-    # plt.text(upper_limit, ymin, f' Upper Limit ({upper_limit})', color='b', verticalalignment='bottom')
+    # plt.vlines(upper_limit, ymin, ymax, colors='b',
+    #            linestyles='--', label=f'Upper Limit {upper_limit}')
+    # plt.text(upper_limit, ymin,
+    #          f' Upper Limit ({upper_limit})', color='b', verticalalignment='bottom')
 
     # # plt.vlines(sigma, ymin, ymax, colors='b', linestyles='--', label=f'Sigma {sigma}')
     # # plt.text(sigma, ymin, f' Sigma ({sigma})', color='b', verticalalignment='bottom')
 
-    # plt.vlines(mean, ymin, ymax, colors='b', linestyles='--', label=f'Mean {mean}')
-    # plt.text(mean, ymin, f' Mean ({mean})', color='b', verticalalignment='baseline')
+    # plt.vlines(mean, ymin, ymax, colors='b',
+    #            linestyles='--', label=f'Mean {mean}')
+    # plt.text(mean, ymin, f' Mean ({mean})',
+    #          color='b', verticalalignment='baseline')
 
     # # Add labels and title
     # plt.xlabel('Value')
@@ -111,7 +120,7 @@ def odds(lower_limit, upper_limit, pot_odds, hand_strength, left_shift, r_shift)
 if __name__ == "__main__":
     # odds(0, 2, 0, 1)
     # odds(0, 2, 0, 0.5)
-    odds(0, 1, 0, 0.4, 2, 0)
+    odds(0, 1, 0.5, 0, 0.5)
     # odds(0, 5, 0, 0.6)
     # odds(0, 5, 0, 0.675)
     # odds(0, 5, 0, 0.65)

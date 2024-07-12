@@ -1,5 +1,6 @@
 from phevaluator.evaluator import evaluate_cards
 from hand_evaluator.evaluate_cards import evaluate_cards as c_evaluate_cards
+from poker_metrics import odds
 from poker_metrics.utils import privateValue
 from poker_metrics.simple_hand_potential import potential
 from itertools import combinations
@@ -11,14 +12,15 @@ suit = "csdh"
 deck = [r+s for r in rank for s in suit]
 possible_combinations = list(combinations(deck, 5))
 total_time = 0
-runs = 100
+runs = 100000
 for _ in tqdm(range(runs), desc="Processing..."):
     t = possible_combinations[random.randint(0, len(possible_combinations)-1)]
     t_deck = [card for card in deck if card not in t]
     a = time.time()
+    _ = odds(0.3, 0.7, 0.6, 0, 0.2)
     # _ = evaluate_cards(*t)
     # _ = c_evaluate_cards(*t)
-    _ = potential(t_deck, t[:2], t[2:], 2)
+    # _ = potential(t_deck, t[:2], t[2:], 2)
     # _ = simple_pot(t_deck, t[:2], t[2:], 2)
     # _ = equity(t[:2], t[2:])
     # _ = privateValue(t[:2], t[2:])
@@ -36,3 +38,5 @@ print(f"Average time for each process: {total_time/runs}")
 # hand equity (flop): 5227 seconds
 # hand equity (turn): 235 seconds
 # hand equity (river): 0.399 seconds
+# Odds Total time: 57.63293266296387
+# Odds Average time for each process: 0.0005763293266296387

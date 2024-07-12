@@ -1,4 +1,5 @@
 from ...Strategy import Strategy
+from poker_metrics import *
 
 
 class Ideal(Strategy):
@@ -8,24 +9,18 @@ class Ideal(Strategy):
     def decide(self, information):
         self.initialise(information)
 
-        r = -1
+        move = ("f", -1)
 
-        if self.t_determiner >= 0:
+        if self.t_determiner > 0:
             # In the money
-            if self.x_privateValue >= 0.75:
-                r = max(self.range)
+            if self.betAmt != 0:
+                move = prodigalMove(information, betAmt=(self.betAmt - self.callValue))
             else:
-                r = min(self.range)
-        elif self.t_determiner < 0:
-            if self.x_privateValue >= 0.9 and self.round in [2, 3]:
-                r = 1.25
-            else:
-                r = min(self.range)
-
-        move = self.strategicMove(r, information)
-
-        # if move[0] == "r":
-        #     raise Exception(f"{self.__dict__}")
+                move = frugalMove(information)
+        if self.t_determiner <= 0:
+            # Out of money
+            if self.x_privateValue > 0.55:
+                move = frugalMove(information)
 
         return move
 
