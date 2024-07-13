@@ -60,23 +60,25 @@ def kde_plot(scores):
     plt.show()
 
 
-def odds(lower_limit, upper_limit, hand_strength, left_shift, r_shift):
+def odds(lower_limit, upper_limit, hand_strength, risk, left_shift, r_shift):
     pot_odds = lower_limit
 
     if lower_limit < 0:
         lower_limit = 0
 
     sigma = upper_limit/3
-    mean = pot_odds + (hand_strength*r_shift) - (hand_strength*left_shift)
+    mean = pot_odds + (hand_strength*r_shift*sigma) - (hand_strength*left_shift*sigma)
+
+    adjusted_upper = (sigma*risk) + upper_limit
 
     t_lower = (lower_limit - mean) / sigma
-    t_upper = (upper_limit - mean) / sigma
+    t_upper = (adjusted_upper - mean) / sigma
     dist = truncnorm(t_lower, t_upper, loc=mean, scale=sigma)
 
     return dist.rvs()
 
     # # Plot the PDF of the truncated normal distribution
-    # x = np.linspace(lower_limit, upper_limit, 1000)
+    # x = np.linspace(lower_limit, adjusted_upper, 1000)
     # pdf = dist.pdf(x)
     # plt.plot(x, pdf, 'r-', lw=2, label='PDF of truncated normal distribution')
 
@@ -120,7 +122,7 @@ def odds(lower_limit, upper_limit, hand_strength, left_shift, r_shift):
 if __name__ == "__main__":
     # odds(0, 2, 0, 1)
     # odds(0, 2, 0, 0.5)
-    odds(0, 1, 0.5, 0, 0.5)
+    odds(0.8, 1, 0.8, 2, 0, 0)
     # odds(0, 5, 0, 0.6)
     # odds(0, 5, 0, 0.675)
     # odds(0, 5, 0, 0.65)

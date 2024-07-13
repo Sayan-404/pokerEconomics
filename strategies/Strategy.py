@@ -41,8 +41,11 @@ class Strategy:
         self.monetaryValue = -1  # monetary_range
         self.strength = -1      # x or y depending on the situation
         self.potShare = -1      # Share of pot of a specific player
+
         self.r_shift = 0
         self.l_shift = 0
+        self.risk = 0
+
 
     def initialise(self, information):
         """
@@ -80,6 +83,14 @@ class Strategy:
 
         self.z_potOdds = (self.callValue/(self.pot + self.callValue))
         self.t_determiner = self.strength - self.z_potOdds
+
+    def setBet(self):
+        r = 0
+        if self.round in [1, 2]:
+            if self.z_potOdds < self.y_handEquity:
+                r = odds(self.z_potOdds, self.y_handEquity, self.x_privateValue, self.risk, self.l_shift, self.r_shift)
+                self.betAmt = self.toBlinds((r*self.pot)/(1 - r))
+
 
     def setInitialPot(self):
         # Only applicable for heads-up
