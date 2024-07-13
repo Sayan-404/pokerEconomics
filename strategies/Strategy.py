@@ -70,7 +70,16 @@ class Strategy:
             f"The decide function is not implemented by {self.strategy}")
 
     def reason(self):
-        pass
+        self.x_privateValue = privateValue(self.holeCards, self.communityCards)
+
+        if round in [0, 3]:
+            self.strength = self.x_privateValue
+        else:
+            self.y_handEquity = potential(self.holeCards, self.communityCards)[0]
+            self.strength = self.y_handEquity
+
+        self.z_potOdds = (self.callValue/(self.pot + self.callValue))
+        self.t_determiner = self.strength - self.z_potOdds
 
     def setInitialPot(self):
         # Only applicable for heads-up
@@ -81,6 +90,12 @@ class Strategy:
             self.initialPot = self.pot - self.callValue
 
         self.prevActionRound = self.round
+
+    def toBlinds(self, amt):
+        """
+            Convert the monetary value to nearest big blind multiple.
+        """
+        return round(amt/self.bigBlind) * self.bigBlind
 
     def __str__(self):
         return f"{self.strategy}"
