@@ -21,6 +21,7 @@ class Strategy:
         self.playerBetAmt = -1
 
         self.pot = 0
+        self.initialPot = 0     # Required for limiting pot
 
         # This is the additional amount that the player will bet/raise
         self.betAmt = 0
@@ -54,7 +55,13 @@ class Strategy:
         self.playerBetAmt = information["player"]["betamt"]
         self.pot = information["pot"]
 
-        self.betAmt = 10
+        if self.roundFirstAction:
+            if round == 0:
+                self.initialPot = 3
+            else:
+                self.initialPot = self.pot
+        else:
+            self.initialPot = self.pot - self.callValue
 
         self.holeCards = information["player"]["hand"]
         self.communityCards = information["community_cards"]
@@ -83,26 +90,36 @@ class Strategy:
                 self.holeCards, self.communityCards, lookahead)
             self.strength = self.y_handEquity[0]
 
-        if self.callValue > 0:
-            self.z_potOdds = (self.callValue/(self.pot + self.callValue))
-            self.t_determiner = self.strength - self.z_potOdds
-            self.range = (self.z_potOdds, self.strength)
-        else:
-            # When call value is 0 determine rationality with pot share
-            self.z_potOdds = -1
-            self.potShare = self.playerBetAmt/self.pot
-            self.t_determiner = self.strength - self.potShare
-            self.range = (0, self.strength)
+        self.z_potOdds = (self.callValue/(self.pot + self.callValue))
+        self.t_determiner = self.strength - self.z_potOdds
+        self.range = (self.z_potOdds, self.strength)
+
 
     def getOdds(self):
         l_shift_adjusted = (self.strength/3)*self.l_shift
         r_shift_adjusted = (self.strength/3)*self.r_shift
-        return odds(self.z_potOdds, self.strength, self.x_privateValue, l_shift_adjusted, r_shift_adjusted)
+
+        try:
+            if self.z_potOdds < self.strength:
+                return odds(self.z_potOdds, self.strength, self.x_privateValue, l_shift_adjusted, r_shift_adjusted)
+            else:
+                return odds(self.strength, self.z_potOdds, self.x_privateValue, l_shift_adjusted, r_shift_adjusted)
+        except:
+            pass
+            raise Exception(f"{self.round} {self.holeCards if self.holeCards else []} {self.communityCards if self.communityCards else []} {self.callValue} {self.z_potOdds} {self.strength} {self.x_privateValue} {l_shift_adjusted} {r_shift_adjusted}")
 
     def setBet(self):
         r = self.getOdds()
-        bet = ((r*self.pot)/(1-r))
-        self.betAmt = round(bet/self.bigBlind) * self.bigBlind
+        bet = round(((r*self.pot)/(1-r))/self.bigBlind) * self.bigBlind
+
+        if bet > (3*self.initialPot):
+            if self.callValue == 0:
+                self.betAmt = 0
+            else:
+                if (self.callValue + self.pot) == (3*self.initialPot):
+                    self.betAmt = 0
+
+                self.betAmt = round((3*self.initialPot)/self.bigBlind) * self.bigBlind
 
     def __str__(self):
         return f"{self.strategy}"
