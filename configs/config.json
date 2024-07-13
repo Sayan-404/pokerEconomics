@@ -5,12 +5,12 @@
   "player1": {
     "id": "Sayan",
     "bankroll": 1000000000,
-    "strategy": "rational.ideal.balanced"
+    "strategy": "action.random_no_fold"
   },
   "player2": {
     "id": "Sourjya",
     "bankroll": 1000000000,
-    "strategy": "rational.ideal.balanced"
+    "strategy": "action.tit_for_tat"
   },
   "seed": 1720797175.921588
 }

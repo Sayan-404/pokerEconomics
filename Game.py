@@ -6,6 +6,7 @@ import traceback
 from tqdm import tqdm
 
 from checks.system_checks import chainValidate, extractChain
+from components import Player
 from components.Deck import Deck
 from components.Showdown import Showdown
 
@@ -52,6 +53,7 @@ class Game:
         self.actionChain = list()
         self.roundFirstAction = None
         self.firstDeterminer = []
+        self.stats = {}
         # rounds are 0-indexed starting with pre-flop
         # counts the number of players currently in a game [later gets flushed]
         self.playing = len(players)
@@ -358,9 +360,26 @@ class Game:
 
             # If simulation then get the action from the decide function (strategy)
             if self.simul:
+                # Ensure player stats are initialized
+                if f"{player.id}" not in self.stats:
+                    self.stats[f"{player.id}"] = {"prodigals": 0, "frugals": 0}
+
                 action, bet = player.decide(
                     self.package_state(player_index, call_value=callsize)
                 )
+
+                if action in ["b", "r"]:
+                    if "prodigals" in self.stats[f"{player.id}"]:
+                        self.stats[f"{player.id}"]["prodigals"] += 1
+                    else:
+                        self.stats[f"{player.id}"]["prodigals"] = 1
+
+                if action in ["c", "ch"]:
+                    if "frugals" in self.stats[f"{player.id}"]:
+                        self.stats[f"{player.id}"]["frugals"] += 1
+                    else:
+                        self.stats[f"{player.id}"]["frugals"] = 1
+
                 print(action)
             else:
                 action = input()  # Else take input from cli
@@ -997,15 +1016,18 @@ class Game:
         print(f"\nWinner: {winner}")
         print("Hand Ended")
         bankrolls = {player.id: player.bankroll for player in self.players}
+        af = {player.id: (self.stats[player.id]["prodigals"]/self.stats[player.id]["frugals"] if self.stats[player.id]["frugals"] != 0 else -1) for player in self.players}
 
         # Sorting is important since order changes after every round but logger should have consistently ordered columns in the csv
         bankrolls = dict(sorted(bankrolls.items()))
+        af = dict(sorted(af.items()))
 
         log_data = {
             "hand_no": self.hand_number,
             "winner": winner,
             "round": self.round,
             "bankrolls": [],
+            "af": []
         }
 
         self.logger.current_hand_data["gameover"] = {
@@ -1018,6 +1040,9 @@ class Game:
         for id in bankrolls:
             print(f"{id} stack: {bankrolls[id]}")
             log_data["bankrolls"].append(bankrolls[id])
+
+        for id in af:
+            log_data["af"].append(af[id])
 
         self.logger.log_result(log_data)
 

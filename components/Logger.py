@@ -60,7 +60,7 @@ class Logger:
             "gameover": {
                 "winner" : "",
                 "round" : 0,
-                "bankrolls": {}  
+                "bankrolls": {}
             }
         }
         self.games_file = open(f"{self.path}/games.csv", "a")
@@ -70,7 +70,7 @@ class Logger:
         self.config_file.close()
         self.games_file.close()
         self.hand_file.close()
-    
+
     def handle_hand_file(self, i):
         self.hand_file.close()
         if not self.log_hands:
@@ -103,7 +103,7 @@ class Logger:
             "gameover": {
                 "winner" : "",
                 "round" : 0,
-                "bankrolls": {}  
+                "bankrolls": {}
             }
         }
         self.hand_file = open(f"{self.path}/hand_{i}.json", "a")
@@ -137,7 +137,7 @@ class Logger:
         json.dump(config_data, self.config_file, indent=4)
         # initiating games csv
         writer = csv.writer(self.games_file)
-        row = ["hand_no"] + [p.package_state()["id"]+"("+p.package_state()["strategy"]+")" for p in players] + ["winner", "ending_round"]
+        row = ["hand_no"] + [p.package_state()["id"]+"("+p.package_state()["strategy"]+")" for p in players] + [p.package_state()["id"]+"(AF)" for p in players] + ["winner", "ending_round"]
         writer.writerow(row)
         row = [0] + [p.package_state()["bankroll"] for p in players] + ["", -1]
         writer.writerow(row)
@@ -148,8 +148,8 @@ class Logger:
         if self.hand_file.closed:
             return
         json.dump(self.current_hand_data, self.hand_file, indent=4)
-        
+
     def log_result(self, data):
         writer = csv.writer(self.games_file)
-        row = [data["hand_no"] + 1]  + [p for p in data["bankrolls"]] + [data["winner"], data["round"]]
+        row = [data["hand_no"] + 1]  + [p for p in data["bankrolls"]] + [p for p in data["af"]] + [data["winner"], data["round"]]
         writer.writerow(row)
