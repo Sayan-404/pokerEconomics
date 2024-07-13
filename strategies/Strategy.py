@@ -15,6 +15,7 @@ class Strategy:
 
         # Initialised to -1 for distinction
         self.round = -1
+        self.prevActionRound = -1
         self.callValue = -1
 
         # This is the total amount that the player has bet in a give hand (pre-flop to present round)
@@ -48,29 +49,20 @@ class Strategy:
             Takes the information state and initialises all the variables before making an action.
         """
 
-        self.roundFirstAction = information["roundFirstAction"]
-
-        self.callValue = information["call_value"]
-
-        self.playerBetAmt = information["player"]["betamt"]
-        self.pot = information["pot"]
-
-        if self.roundFirstAction:
-            if round == 0:
-                self.initialPot = 3
-            else:
-                self.initialPot = self.pot
-        else:
-            self.initialPot = self.pot - self.callValue
-
         self.holeCards = information["player"]["hand"]
         self.communityCards = information["community_cards"]
 
         self.round = information["round"]
         self.bigBlind = information["blinds"]["bb"]["amt"]
 
+        self.callValue = information["call_value"]
+
+        self.playerBetAmt = information["player"]["betamt"]
+        self.pot = information["pot"]
+
+        self.setInitialPot()
+
         self.reason()
-        self.setBet()
 
     def decide(self, information):
         # This function should be `initialised` so that it can use class variables
@@ -78,48 +70,17 @@ class Strategy:
             f"The decide function is not implemented by {self.strategy}")
 
     def reason(self):
-        self.strength = -1
+        pass
 
-        self.x_privateValue = privateValue(self.holeCards, self.communityCards)
+    def setInitialPot(self):
+        # Only applicable for heads-up
+        if (self.round == 0) and (self.prevActionRound == -1):
+            self.initialPot = self.pot
 
-        if self.round in [0, 3]:
-            self.strength = self.x_privateValue
-        else:
-            lookahead = 1 if self.round == 2 else 2
-            self.y_handEquity = potential(
-                self.holeCards, self.communityCards, lookahead)
-            self.strength = self.y_handEquity[0]
+        elif self.prevActionRound < self.round:
+            self.initialPot = self.pot - self.callValue
 
-        self.z_potOdds = (self.callValue/(self.pot + self.callValue))
-        self.t_determiner = self.strength - self.z_potOdds
-        self.range = (self.z_potOdds, self.strength)
-
-
-    def getOdds(self):
-        l_shift_adjusted = (self.strength/3)*self.l_shift
-        r_shift_adjusted = (self.strength/3)*self.r_shift
-
-        try:
-            if self.z_potOdds < self.strength:
-                return odds(self.z_potOdds, self.strength, self.x_privateValue, l_shift_adjusted, r_shift_adjusted)
-            else:
-                return odds(self.strength, self.z_potOdds, self.x_privateValue, l_shift_adjusted, r_shift_adjusted)
-        except:
-            pass
-            raise Exception(f"{self.round} {self.holeCards if self.holeCards else []} {self.communityCards if self.communityCards else []} {self.callValue} {self.z_potOdds} {self.strength} {self.x_privateValue} {l_shift_adjusted} {r_shift_adjusted}")
-
-    def setBet(self):
-        r = self.getOdds()
-        bet = round(((r*self.pot)/(1-r))/self.bigBlind) * self.bigBlind
-
-        if bet > (3*self.initialPot):
-            if self.callValue == 0:
-                self.betAmt = 0
-            else:
-                if (self.callValue + self.pot) == (3*self.initialPot):
-                    self.betAmt = 0
-
-                self.betAmt = round((3*self.initialPot)/self.bigBlind) * self.bigBlind
+        self.prevActionRound = self.round
 
     def __str__(self):
         return f"{self.strategy}"
