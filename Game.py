@@ -1018,8 +1018,19 @@ class Game:
         print(f"\nWinner: {winner}")
         print("Hand Ended")
         bankrolls = {player.id: player.bankroll for player in self.players}
-        af = {player.id: ((round(self.stats[player.id]["prodigals"]/(self.stats[player.id]
-                          ["prodigals"] + self.stats[player.id]["frugals"]), 5), round(self.stats[player.id]["frugals"]/(self.stats[player.id]["prodigals"] + self.stats[player.id]["frugals"]), 5))) for player in self.players}
+        af = {}
+
+        for player in self.players:
+            total_moves = self.stats[player.id]["frugals"] + \
+                self.stats[player.id]["prodigals"]
+            prodigalness = 0
+            frugalness = 0
+
+            if total_moves > 0:
+                prodigalness = self.stats[player.id]["prodigals"]/total_moves
+                frugalness = self.stats[player.id]["frugals"]/total_moves
+
+            af[player.id] = (prodigalness, frugalness)
 
         # Sorting is important since order changes after every round but logger should have consistently ordered columns in the csv
         bankrolls = dict(sorted(bankrolls.items()))

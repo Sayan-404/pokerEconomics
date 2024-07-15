@@ -5,11 +5,11 @@ import random
 
 
 class Strategy:
-    def __init__(self, strategyName):
+    def __init__(self):
         """
             Initialises all the required variables for easy access by children classes.
         """
-        self.strategy = strategyName
+        self.strategy = ""
         self.seed = None
 
         self.information = {}
@@ -42,7 +42,6 @@ class Strategy:
         self.z_potOdds = -1       # z
         self.t_determiner = -1    # t
         self.range = ()             # A tuple containing the lower and upper limit of the range
-        self.monetaryValue = -1     # monetary_range
         self.strength = -1          # x or y depending on the situation
         self.potShare = -1          # Share of pot of a specific player
 
@@ -80,6 +79,9 @@ class Strategy:
         self.setBet()
         self.limiter()
         self.setMove()
+
+        if (self.betAmt > 3*self.initialPot):
+            raise Exception(f"{self.betAmt} {self.initialPot}")
 
     def decide(self, information):
         # This function should be `initialised` so that it can use class variables
@@ -146,7 +148,8 @@ class Strategy:
                 self.information, betAmt=(self.betAmt - self.callValue))
         elif self.betAmt < self.callValue:
             # This scenario should not happen so raise an exception
-            raise Exception("Bet amt can't be less")
+            raise Exception(
+                f"Bet amt can't be less {self.betAmt} >! {self.callValue}")
         else:
             raise Exception(f"Invalid bet amount: {self.betAmt}")
 
@@ -160,6 +163,7 @@ class Strategy:
         elif self.prevActionRound < self.round:
             self.initialPot = self.pot - self.callValue
 
+        self.initialPot = self.toBlinds(self.initialPot)
         self.prevActionRound = self.round
 
     def limiter(self):
@@ -169,7 +173,14 @@ class Strategy:
             # Ignore limit when explicitly check or fold
             pass
         else:
-            return self.toBlinds(3*self.initialPot if self.betAmt > 3*self.initialPot else self.betAmt)
+            total_player_bet = self.betAmt + self.playerBetAmt
+
+            if total_player_bet >= (3*self.initialPot):
+                excess = (3*self.initialPot) - total_player_bet
+                self.betAmt = self.betAmt + excess
+
+                if (self.pot + self.betAmt) >= (3*self.initialPot):
+                    excess = (3*self.initialPot) - (self.pot + self.betAmt)
 
     def toBlinds(self, amt):
         """Convert the monetary value to nearest big blind multiple"""

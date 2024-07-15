@@ -1,11 +1,10 @@
 from ..Strategy import Strategy
 
 
-class Bluff(Strategy):
-    def __init__(self, strategyName):
-        super().__init__(strategyName)
-        self.r_shift = 5
-        self.risk = 1.5
+class ChildStrategy(Strategy):
+    def __init__(self):
+        super().__init__()
+        self.bluff = True
 
     def decide(self, information):
         self.initialise(information)
@@ -13,7 +12,7 @@ class Bluff(Strategy):
         return self.move
 
 
-strategy = Bluff("Bluff")
+strategy = ChildStrategy()
 
 
 def decide(state):

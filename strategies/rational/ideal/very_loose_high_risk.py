@@ -1,18 +1,13 @@
-from ..Strategy import Strategy
-
-import random
+from ...Strategy import Strategy
 
 
 class ChildStrategy(Strategy):
     def __init__(self):
         super().__init__()
+        self.r_shift = 1
+        self.risk = 1
 
     def decide(self, information):
-        self.l_shift = random.uniform(0, 1)
-        self.r_shift = random.uniform(0, 1)
-        self.risk = random.uniform(0.2, 1)
-        self.bluff = random.choice([True, False])
-
         self.initialise(information)
 
         return self.move

@@ -1,10 +1,10 @@
 from ...Strategy import Strategy
 
 
-class Ideal(Strategy):
-    def __init__(self, strategyName):
-        super().__init__(strategyName)
-        self.r_shift = 8
+class ChildStrategy(Strategy):
+    def __init__(self):
+        super().__init__()
+        self.r_shift = 1
 
     def decide(self, information):
         self.initialise(information)
@@ -12,7 +12,7 @@ class Ideal(Strategy):
         return self.move
 
 
-strategy = Ideal("Ideal")
+strategy = ChildStrategy()
 
 
 def decide(state):

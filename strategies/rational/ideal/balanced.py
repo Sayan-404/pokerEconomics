@@ -1,9 +1,9 @@
 from ...Strategy import Strategy
 
 
-class Ideal(Strategy):
-    def __init__(self, strategyName):
-        super().__init__(strategyName)
+class ChildStrategy(Strategy):
+    def __init__(self):
+        super().__init__()
 
     def decide(self, information):
         self.initialise(information)
@@ -11,7 +11,7 @@ class Ideal(Strategy):
         return self.move
 
 
-strategy = Ideal("Ideal")
+strategy = ChildStrategy()
 
 
 def decide(state):
