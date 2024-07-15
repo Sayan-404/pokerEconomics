@@ -5,7 +5,7 @@ from poker_metrics import *
 class Ideal(Strategy):
     def __init__(self, strategyName):
         super().__init__(strategyName)
-        self.l_shift = 5
+        self.l_shift = 2
 
     def decide(self, information):
         self.initialise(information)

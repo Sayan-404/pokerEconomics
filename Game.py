@@ -34,6 +34,7 @@ class Game:
         config={},
         test=False,
     ):
+        self.seed = seed
         self.id = id
         self.config = config
         self.deck = deck(seed)
@@ -110,7 +111,8 @@ class Game:
             "round": self.round,
             "max_bet": self.get_max_bet(player_index),
             "blinds": self.blind,
-            "roundFirstAction": self.roundFirstAction
+            "roundFirstAction": self.roundFirstAction,
+            "seed": self.seed
         }
 
     def flush(self):
@@ -1016,7 +1018,8 @@ class Game:
         print(f"\nWinner: {winner}")
         print("Hand Ended")
         bankrolls = {player.id: player.bankroll for player in self.players}
-        af = {player.id: (self.stats[player.id]["prodigals"]/self.stats[player.id]["frugals"] if self.stats[player.id]["frugals"] != 0 else -1) for player in self.players}
+        af = {player.id: ((round(self.stats[player.id]["prodigals"]/(self.stats[player.id]
+                          ["prodigals"] + self.stats[player.id]["frugals"]), 5), round(self.stats[player.id]["frugals"]/(self.stats[player.id]["prodigals"] + self.stats[player.id]["frugals"]), 5))) for player in self.players}
 
         # Sorting is important since order changes after every round but logger should have consistently ordered columns in the csv
         bankrolls = dict(sorted(bankrolls.items()))

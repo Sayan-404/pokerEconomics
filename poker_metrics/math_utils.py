@@ -60,7 +60,10 @@ def kde_plot(scores):
     plt.show()
 
 
-def odds(lower_limit, upper_limit, hand_strength, risk, left_shift, r_shift):
+def odds(lower_limit, upper_limit, hand_strength, risk, left_shift, r_shift, seed=None):
+    if seed:
+        np.random.seed(seed)
+
     pot_odds = lower_limit
 
     if lower_limit < 0:
@@ -68,7 +71,7 @@ def odds(lower_limit, upper_limit, hand_strength, risk, left_shift, r_shift):
 
     adjusted_upper = risk + upper_limit
 
-    sigma = adjusted_upper/3
+    sigma = upper_limit/3
     mean = pot_odds + hand_strength*(r_shift - left_shift)
 
     t_lower = (lower_limit - mean) / sigma
@@ -76,6 +79,13 @@ def odds(lower_limit, upper_limit, hand_strength, risk, left_shift, r_shift):
     dist = truncnorm(t_lower, t_upper, loc=mean, scale=sigma)
 
     return dist.rvs()
+
+    # with open("temp.txt", "a") as fobj:
+    #     fobj.write(f"Pot Odds: {pot_odds}\n")
+    #     fobj.write(f"r: {r}\n")
+    #     fobj.write(f"y': {adjusted_upper}\n")
+    #     fobj.write(f"y/x: {upper_limit}\n")
+    #     fobj.write("\n\n\n")
 
     # # Plot the PDF of the truncated normal distribution
     # x = np.linspace(lower_limit, adjusted_upper, 1000)

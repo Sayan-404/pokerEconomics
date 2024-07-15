@@ -4,17 +4,12 @@ from ...Strategy import Strategy
 class Ideal(Strategy):
     def __init__(self, strategyName):
         super().__init__(strategyName)
+        self.l_shift = 8
 
     def decide(self, information):
-        self.initialise(information, tightness=2)
+        self.initialise(information)
 
-        if (self.signal is True):
-            return self.prodigalMove
-
-        if (self.signal is None):
-            return self.frugalMove
-
-        return self.surrenderMove
+        return self.move
 
 
 strategy = Ideal("Ideal")
