@@ -1,0 +1,16 @@
+{
+    "log_hands": false,
+    "runs": 100000,
+    "simulation": true,
+    "player1": {
+        "id": "rational/ideal.balanced",
+        "bankroll": 10000000000000000,
+        "strategy": "rational/ideal.balanced"
+    },
+    "player2": {
+        "id": "rational/ideal.balanced_low_risk",
+        "bankroll": 10000000000000000,
+        "strategy": "rational/ideal.balanced_low_risk"
+    },
+    "seed": null
+}
