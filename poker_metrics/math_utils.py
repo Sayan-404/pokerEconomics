@@ -64,12 +64,12 @@ def odds(lower_limit, upper_limit, hand_strength, risk, left_shift, r_shift):
     pot_odds = lower_limit
 
     if lower_limit < 0:
-        lower_limit = 0
+        pot_odds = 0
 
-    sigma = upper_limit/3
-    mean = pot_odds + (hand_strength*r_shift*sigma) - (hand_strength*left_shift*sigma)
+    adjusted_upper = risk + upper_limit
 
-    adjusted_upper = (sigma*risk) + upper_limit
+    sigma = adjusted_upper/3
+    mean = pot_odds + hand_strength*(r_shift - left_shift)
 
     t_lower = (lower_limit - mean) / sigma
     t_upper = (adjusted_upper - mean) / sigma

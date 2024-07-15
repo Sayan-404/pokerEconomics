@@ -1,20 +1,19 @@
 from ...Strategy import Strategy
+from poker_metrics import *
 
 
 class Ideal(Strategy):
     def __init__(self, strategyName):
         super().__init__(strategyName)
+        self.l_shift = 5
 
     def decide(self, information):
-        self.initialise(information, tightness=1)
+        self.initialise(information)
 
-        if (self.signal is True):
-            return self.prodigalMove
+        # if self.move[0] == "b":
+        #     raise Exception(f"{self.round} {self.move} {self.holeCards} {self.callValue} {self.pot} {self.y_handEquity} {self.information} ")
 
-        if (self.signal is None):
-            return self.frugalMove
-
-        return self.surrenderMove
+        return self.move
 
 
 strategy = Ideal("Ideal")

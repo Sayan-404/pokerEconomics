@@ -39,6 +39,6 @@ if __name__ == "__main__":
 
 
     comm_cards = ['8d', '6d', '9c', '7s']
-    hole = ['Td', '4c'] 
+    hole = ['Td', '4d'] 
 
     print(potential(hole, comm_cards, 1))

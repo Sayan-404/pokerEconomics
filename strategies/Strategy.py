@@ -10,6 +10,8 @@ class Strategy:
         """
         self.strategy = strategyName
 
+        self.information = {}
+
         self.holeCards = []
         self.communityCards = []
 
@@ -46,11 +48,14 @@ class Strategy:
         self.l_shift = 0
         self.risk = 0
 
+        self.move = ()
 
     def initialise(self, information):
         """
             Takes the information state and initialises all the variables before making an action.
         """
+
+        self.information = information
 
         self.holeCards = information["player"]["hand"]
         self.communityCards = information["community_cards"]
@@ -66,6 +71,9 @@ class Strategy:
         self.setInitialPot()
 
         self.reason()
+        self.setBet()
+        self.limiter()
+        self.setMove()
 
     def decide(self, information):
         # This function should be `initialised` so that it can use class variables
@@ -75,22 +83,58 @@ class Strategy:
     def reason(self):
         self.x_privateValue = privateValue(self.holeCards, self.communityCards)
 
-        if round in [0, 3]:
-            self.strength = self.x_privateValue
-        else:
-            self.y_handEquity = potential(self.holeCards, self.communityCards)[0]
-            self.strength = self.y_handEquity
+        try:
+            if self.round == 0 or self.round == 3:
+                self.strength = self.x_privateValue
+            else:
+                self.y_handEquity = potential(
+                    self.holeCards, self.communityCards)[0]
+                self.strength = self.y_handEquity
+        except:
+            raise Exception(
+                f"{self.round} {self.holeCards} {self.communityCards}")
 
         self.z_potOdds = (self.callValue/(self.pot + self.callValue))
         self.t_determiner = self.strength - self.z_potOdds
+        self.t2_determiner = (self.strength + self.risk) - self.z_potOdds
 
     def setBet(self):
-        r = 0
-        if self.round in [1, 2]:
-            if self.z_potOdds < self.y_handEquity:
-                r = odds(self.z_potOdds, self.y_handEquity, self.x_privateValue, self.risk, self.l_shift, self.r_shift)
-                self.betAmt = self.toBlinds((r*self.pot)/(1 - r))
+        if self.t_determiner > 0:
+            r = odds(self.z_potOdds, self.strength, self.x_privateValue,
+                     self.risk, self.l_shift, self.r_shift)
+            self.betAmt = self.toBlinds(math.floor((r*self.pot)/(1 - r)))
+        elif self.t_determiner <= 0:
+            if self.t2_determiner > 0:
+                r = odds(self.z_potOdds, self.strength, self.x_privateValue,
+                         self.risk, self.l_shift, self.r_shift)
+                self.betAmt = self.toBlinds(math.floor((r*self.pot)/(1 - r)))
+            else:
+                if self.callValue == 0:
+                    # Explicitly check
+                    self.betAmt = -1
+                else:
+                    # Explicitly fold
+                    self.betAmt = -2
 
+    def setMove(self):
+        if self.betAmt == -1:
+            # raise Exception(f"Working -1")
+            self.move = ("ch", -1)
+        elif self.betAmt == -2:
+            # raise Exception(f"Working -2")
+            self.move = ("f", -1)
+        elif self.betAmt == 0 or self.betAmt == self.callValue:
+            # raise Exception(f"Working 0")
+            self.move = frugalMove(self.information)
+        elif self.betAmt > self.callValue:
+            # raise Exception(f"Working pr")
+            self.move = prodigalMove(
+                self.information, betAmt=(self.betAmt - self.callValue))
+        elif self.betAmt < self.callValue:
+            # TODO This scenario should be handled by the odds function - modify
+            self.move = ("f", -1)
+        else:
+            raise Exception(f"Invalid bet amount: {self.betAmt}")
 
     def setInitialPot(self):
         # Only applicable for heads-up
@@ -101,6 +145,19 @@ class Strategy:
             self.initialPot = self.pot - self.callValue
 
         self.prevActionRound = self.round
+
+    def limiter(self):
+        if (self.callValue + self.betAmt + self.playerBetAmt) >= (3*self.initialPot):
+            if (self.playerBetAmt + self.callValue) == (3*self.initialPot):
+                self.betAmt = 0
+            elif (self.playerBetAmt + self.callValue) > (3*self.initialPot):
+                if self.callValue == 0:
+                    self.betAmt = -1
+                else:
+                    self.betAmt = -2
+            elif (self.playerBetAmt + self.callValue) < (3*self.initialPot):
+                excess = self.pot - (self.playerBetAmt + self.callValue)
+                self.betAmt = self.toBlinds(excess)
 
     def toBlinds(self, amt):
         """

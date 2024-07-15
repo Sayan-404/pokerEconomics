@@ -9,20 +9,10 @@ class Ideal(Strategy):
     def decide(self, information):
         self.initialise(information)
 
-        move = ("f", -1)
+        # if self.move[0] == "b":
+        #     raise Exception(f"{self.round} {self.move} {self.holeCards} {self.callValue} {self.pot} {self.y_handEquity} {self.information} ")
 
-        if self.t_determiner > 0:
-            # In the money
-            if self.betAmt != 0:
-                move = prodigalMove(information, betAmt=(self.betAmt - self.callValue))
-            else:
-                move = frugalMove(information)
-        if self.t_determiner <= 0:
-            # Out of money
-            if self.x_privateValue > 0.55:
-                move = frugalMove(information)
-
-        return move
+        return self.move
 
 
 strategy = Ideal("Ideal")
