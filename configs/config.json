@@ -10,7 +10,6 @@
   "player2": {
     "id": "Sourjya",
     "bankroll": 1000000000,
-    "strategy": "rational.ideal.very_loose"
-  },
-  "seed": 1721044371.3902023
+    "strategy": "rational.ideal.balanced"
+  }
 }

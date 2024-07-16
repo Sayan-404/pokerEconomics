@@ -12,6 +12,8 @@ class Strategy:
         self.strategy = ""
         self.seed = None
 
+        self.hand = 0
+
         self.information = {}
 
         self.holeCards = []
@@ -80,8 +82,51 @@ class Strategy:
         self.limiter()
         self.setMove()
 
+        match self.round:
+            case 0:
+                if self.initialPot > 4:
+                    raise Exception(
+                        f"Maximum pot exceeded in round {self.round} {self.betAmt} {self.callValue} {self.initialPot} {self.playerBetAmt} {self.bigBlind} {self.prevActionRound}")
+            case 1:
+                if self.initialPot > 24:
+                    raise Exception(
+                        f"Maximum pot exceeded in round {self.round}")
+            case 2:
+                if self.initialPot > 168:
+                    raise Exception(
+                        f"Maximum pot exceeded in round {self.round}")
+            case 3:
+                if self.initialPot > 1176:
+                    raise Exception(
+                        f"Maximum pot exceeded in round {self.round}")
+
+        newPot = self.pot + \
+            self.betAmt if self.betAmt not in [-1, -2] else self.pot
+        match self.round:
+            case 0:
+                if newPot > 24:
+                    raise Exception(
+                        f"Maximum pot exceeded in round {self.round} {self.betAmt} {self.callValue} {self.initialPot} {self.playerBetAmt} {self.bigBlind} {self.prevActionRound}")
+            case 1:
+                if newPot > 168:
+                    raise Exception(
+                        f"Maximum pot exceeded in round {self.round}")
+            case 2:
+                if newPot > 1176:
+                    raise Exception(
+                        f"Maximum pot exceeded in round {self.round}")
+            case 3:
+                if newPot > 8232:
+                    raise Exception(
+                        f"Maximum pot exceeded in round {self.round}")
+
+        if (self.prevActionRound == 3) and (self.round == 0):
+            self.hand += 1
+
         if (self.betAmt > 3*self.initialPot):
             raise Exception(f"{self.betAmt} {self.initialPot}")
+
+        self.prevActionRound = self.round
 
     def decide(self, information):
         # This function should be `initialised` so that it can use class variables
@@ -117,7 +162,9 @@ class Strategy:
 
             r = odds(self.z_potOdds, self.strength, self.x_privateValue,
                      self.risk, self.l_shift, self.r_shift, seed=self.seed)
-            self.betAmt = math.floor((r*self.pot)/(1 - r))
+            monValue = math.floor((r*self.pot)/(1 - r))
+            # self.betAmt = self.limiter(monValue)
+            self.betAmt = monValue
 
         elif self.t2_determiner <= 0:
             # When t' <= 0 then strategy is out of money
@@ -146,6 +193,7 @@ class Strategy:
             # Prodigal move when bet amount is more than call value
             self.move = prodigalMove(
                 self.information, betAmt=(self.betAmt - self.callValue))
+            # self.move = frugalMove(self.information)
         elif self.betAmt < self.callValue:
             # This scenario should not happen so raise an exception
             raise Exception(
@@ -157,14 +205,13 @@ class Strategy:
         """Sets initial pot as round's first pot value"""
 
         # Only applicable for heads-up
-        if (self.round == 0) and (self.prevActionRound == -1):
-            self.initialPot = self.pot
+        if (self.round == 0) and ((self.prevActionRound != 0)):
+            self.initialPot = self.bigBlind + (self.bigBlind/2)
 
         elif self.prevActionRound < self.round:
             self.initialPot = self.pot - self.callValue
 
         self.initialPot = self.toBlinds(self.initialPot)
-        self.prevActionRound = self.round
 
     def limiter(self):
         """Limit the bet amount to 3 times initial pot"""
@@ -173,14 +220,17 @@ class Strategy:
             # Ignore limit when explicitly check or fold
             pass
         else:
-            total_player_bet = self.betAmt + self.playerBetAmt
+            limit = 3*self.initialPot
+            tcb = self.betAmt + self.playerBetAmt
 
-            if total_player_bet >= (3*self.initialPot):
-                excess = (3*self.initialPot) - total_player_bet
-                self.betAmt = self.betAmt + excess
+            if tcb > limit:
+                req = self.callValue + self.playerBetAmt
 
-                if (self.pot + self.betAmt) >= (3*self.initialPot):
-                    excess = (3*self.initialPot) - (self.pot + self.betAmt)
+                if req > limit:
+                    raise Exception(
+                        "Required amount to stay in game cannot be greater than limit.")
+
+                self.betAmt = limit - self.playerBetAmt
 
     def toBlinds(self, amt):
         """Convert the monetary value to nearest big blind multiple"""
