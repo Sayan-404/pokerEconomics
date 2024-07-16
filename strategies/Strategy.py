@@ -12,8 +12,6 @@ class Strategy:
         self.strategy = ""
         self.seed = None
 
-        self.hand = 0
-
         self.information = {}
 
         self.holeCards = []
@@ -82,47 +80,6 @@ class Strategy:
         self.limiter()
         self.setMove()
 
-        match self.round:
-            case 0:
-                if self.initialPot > 4:
-                    raise Exception(
-                        f"Maximum pot exceeded in round {self.round} {self.betAmt} {self.callValue} {self.initialPot} {self.playerBetAmt} {self.bigBlind} {self.prevActionRound}")
-            case 1:
-                if self.initialPot > 24:
-                    raise Exception(
-                        f"Maximum pot exceeded in round {self.round}")
-            case 2:
-                if self.initialPot > 168:
-                    raise Exception(
-                        f"Maximum pot exceeded in round {self.round}")
-            case 3:
-                if self.initialPot > 1176:
-                    raise Exception(
-                        f"Maximum pot exceeded in round {self.round}")
-
-        newPot = self.pot + \
-            self.betAmt if self.betAmt not in [-1, -2] else self.pot
-        match self.round:
-            case 0:
-                if newPot > 24:
-                    raise Exception(
-                        f"Maximum pot exceeded in round {self.round} {self.betAmt} {self.callValue} {self.initialPot} {self.playerBetAmt} {self.bigBlind} {self.prevActionRound}")
-            case 1:
-                if newPot > 168:
-                    raise Exception(
-                        f"Maximum pot exceeded in round {self.round}")
-            case 2:
-                if newPot > 1176:
-                    raise Exception(
-                        f"Maximum pot exceeded in round {self.round}")
-            case 3:
-                if newPot > 8232:
-                    raise Exception(
-                        f"Maximum pot exceeded in round {self.round}")
-
-        if (self.prevActionRound == 3) and (self.round == 0):
-            self.hand += 1
-
         if (self.betAmt > 3*self.initialPot):
             raise Exception(f"{self.betAmt} {self.initialPot}")
 
@@ -160,11 +117,14 @@ class Strategy:
             # Get odds from the odds function and then derive the bet amount
             # The odd is decided randomly from player's playing range
 
-            r = odds(self.z_potOdds, self.strength, self.x_privateValue,
-                     self.risk, self.l_shift, self.r_shift, seed=self.seed)
-            monValue = math.floor((r*self.pot)/(1 - r))
+            self.r = odds(self.z_potOdds, self.strength, self.x_privateValue,
+                          self.risk, self.l_shift, self.r_shift, seed=self.seed)
+
+            # TODO verify theoretically whether absolute value will be considered or not
+            # self.monValue = abs(math.floor((self.r*self.pot)/(1 - self.r)))
+            self.monValue = math.floor((self.r*self.pot)/(1 - self.r))
             # self.betAmt = self.limiter(monValue)
-            self.betAmt = monValue
+            self.betAmt = self.monValue
 
         elif self.t2_determiner <= 0:
             # When t' <= 0 then strategy is out of money

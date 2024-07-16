@@ -71,7 +71,8 @@ def odds(lower_limit, upper_limit, hand_strength, risk, left_shift, r_shift, see
 
     adjusted_upper = risk + upper_limit
 
-    sigma = upper_limit/3
+    # TODO consider how the usage of upper_limit will be handled in sigma
+    sigma = adjusted_upper/3
     mean = pot_odds + hand_strength*(r_shift - left_shift)
 
     t_lower = (lower_limit - mean) / sigma
