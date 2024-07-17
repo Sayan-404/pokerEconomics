@@ -64,6 +64,7 @@ def odds(lower_limit, upper_limit, hand_strength, risk, left_shift, r_shift, see
     if seed:
         np.random.seed(seed)
 
+    # Pot limit can never be less than 0 theoretically
     if lower_limit < 0:
         raise Exception("Lower limit can never be less than 0.")
 
@@ -74,8 +75,10 @@ def odds(lower_limit, upper_limit, hand_strength, risk, left_shift, r_shift, see
     t_upper = (upper_limit - mean) / sigma
     dist = truncnorm(t_lower, t_upper, loc=mean, scale=sigma)
 
+    # Comment the return while viewing the distribution
     return dist.rvs()
 
+    # Uncomment the following to view the distribution
     # with open("temp.txt", "a") as fobj:
     #     fobj.write(f"Pot Odds: {pot_odds}\n")
     #     fobj.write(f"r: {r}\n")
@@ -126,9 +129,4 @@ def odds(lower_limit, upper_limit, hand_strength, risk, left_shift, r_shift, see
 
 
 if __name__ == "__main__":
-    # odds(0, 2, 0, 1)
-    # odds(0, 2, 0, 0.5)
     odds(0.8, 1, 0.8, 2, 0, 0)
-    # odds(0, 5, 0, 0.6)
-    # odds(0, 5, 0, 0.675)
-    # odds(0, 5, 0, 0.65)

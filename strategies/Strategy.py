@@ -78,6 +78,7 @@ class Strategy:
         self.reason()
         self.setBet()
         self.limiter()
+        self.toBlinds()
         self.setMove()
 
         if (self.betAmt > 3*self.initialPot):
@@ -121,10 +122,10 @@ class Strategy:
             # If strength is 1 then instead of collapsing, return the strength
             ul2 = (self.strength/(1 - self.strength)) + \
                 self.risk if self.strength != 1 else self.strength
-            r = odds(ll, ul2, self.x_privateValue, self.risk,
-                     self.l_shift, self.r_shift, self.seed)
+            self.r = odds(ll, ul2, self.x_privateValue, self.risk,
+                          self.l_shift, self.r_shift, self.seed)
 
-            self.monValue = self.pot*r
+            self.monValue = round(self.pot*self.r)
             self.betAmt = self.monValue
 
         elif self.t2_determiner <= 0:
@@ -154,7 +155,7 @@ class Strategy:
         elif self.betAmt < self.callValue:
             # This scenario should not happen so raise an exception
             raise Exception(
-                f"Bet amt can't be less {self.betAmt} >! {self.callValue}")
+                f"Bet amount can't be less: {self.betAmt} >! {self.callValue}")
 
         else:
             raise Exception(f"Invalid bet amount: {self.betAmt}")
@@ -167,9 +168,10 @@ class Strategy:
             self.initialPot = self.bigBlind + (self.bigBlind/2)
 
         elif self.prevActionRound < self.round:
-            self.initialPot = self.pot - self.callValue
+            initialPot = (self.pot - self.callValue)
 
-        self.initialPot = self.toBlinds(self.initialPot)
+            # Converting to blinds
+            self.initialPot = round(initialPot/self.bigBlind) * self.bigBlind
 
     def limiter(self):
         """Limit the bet amount to 3 times initial pot"""
@@ -185,15 +187,25 @@ class Strategy:
                 req = self.callValue + self.playerBetAmt
 
                 if req > limit:
-                    raise Exception(
-                        "Required amount to stay in game cannot be greater than limit.")
+                    # Limit passed
+                    # Forcefully call
+                    self.betAmt = 0
 
-                self.betAmt = limit - self.playerBetAmt
+                    # raise Exception(
+                    #     "Required amount to stay in game cannot be greater than limit.")
+                else:
+                    self.betAmt = limit - self.playerBetAmt
 
-    def toBlinds(self, amt):
+    def toBlinds(self, amt=-1):
         """Convert the monetary value to nearest big blind multiple"""
-
-        return round(amt/self.bigBlind) * self.bigBlind
+        if self.betAmt == -1:
+            # Explicitly check/fold scenario
+            # pass
+            pass
+        else:
+            bet = self.betAmt - self.callValue
+            bet = round(bet/self.bigBlind) * self.bigBlind
+            self.betAmt = bet + self.callValue
 
     def bluffer(self):
         # Inverses a strategy's hand strength to turn weak hand to strong
