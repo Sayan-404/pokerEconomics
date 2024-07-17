@@ -128,14 +128,8 @@ class Strategy:
 
         elif self.t2_determiner <= 0:
             # When t' <= 0 then strategy is out of money
-
-            if self.callValue == 0:
-                # Explicitly check
-                self.betAmt = -1
-
-            else:
-                # Explicitly fold
-                self.betAmt = -2
+            # Explicitly check/fold
+            self.betAmt = -1
 
     def setMove(self):
         """Sets an appropriate move based on bet amount"""
