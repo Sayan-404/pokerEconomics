@@ -117,13 +117,14 @@ class Strategy:
             # Get odds from the odds function and then derive the bet amount
             # The odd is decided randomly from player's playing range
 
-            self.r = odds(self.z_potOdds, self.strength, self.x_privateValue,
-                          self.risk, self.l_shift, self.r_shift, seed=self.seed)
+            ll = self.z_potOdds/(1 - self.z_potOdds)
+            # If strength is 1 then instead of collapsing, return the strength
+            ul2 = (self.strength/(1 - self.strength)) + \
+                self.risk if self.strength != 1 else self.strength
+            r = odds(ll, ul2, self.x_privateValue, self.risk,
+                     self.l_shift, self.r_shift, self.seed)
 
-            # TODO verify theoretically whether absolute value will be considered or not
-            # self.monValue = abs(math.floor((self.r*self.pot)/(1 - self.r)))
-            self.monValue = round((self.r*self.pot)/(1 - self.r))
-            # self.betAmt = self.limiter(monValue)
+            self.monValue = self.pot*r
             self.betAmt = self.monValue
 
         elif self.t2_determiner <= 0:

@@ -64,19 +64,14 @@ def odds(lower_limit, upper_limit, hand_strength, risk, left_shift, r_shift, see
     if seed:
         np.random.seed(seed)
 
-    pot_odds = lower_limit
-
     if lower_limit < 0:
-        pot_odds = 0
+        raise Exception("Lower limit can never be less than 0.")
 
-    adjusted_upper = risk + upper_limit
-
-    # TODO consider how the usage of upper_limit will be handled in sigma
-    sigma = adjusted_upper/3
-    mean = pot_odds + hand_strength*(r_shift - left_shift)
+    sigma = upper_limit/3
+    mean = lower_limit + hand_strength*(r_shift - left_shift)
 
     t_lower = (lower_limit - mean) / sigma
-    t_upper = (adjusted_upper - mean) / sigma
+    t_upper = (upper_limit - mean) / sigma
     dist = truncnorm(t_lower, t_upper, loc=mean, scale=sigma)
 
     return dist.rvs()
