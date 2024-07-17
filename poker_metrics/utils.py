@@ -198,7 +198,7 @@ def ir(holeCards):
     first = cardTypes.index(holeCards[0][0])
     second = cardTypes.index(holeCards[1][0])
 
-    scaledIr = IR2[first][second], -351, 704, 0, 1
+    scaledIr = IR2[first][second]
 
     return scaledIr
 

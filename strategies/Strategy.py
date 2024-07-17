@@ -9,7 +9,6 @@ class Strategy:
         """
             Initialises all the required variables for easy access by children classes.
         """
-        self.strategy = ""
         self.seed = None
 
         self.information = {}
@@ -31,9 +30,6 @@ class Strategy:
         # This is the additional amount that the player will bet/raise
         self.betAmt = 0
 
-        # This variable is True if the current action is the round's first action
-        self.roundFirstAction = None
-
         self.bigBlind = 0
 
         # Metrics for decision making and placing bets
@@ -41,9 +37,7 @@ class Strategy:
         self.y_handEquity = -1    # y
         self.z_potOdds = -1       # z
         self.t_determiner = -1    # t
-        self.range = ()             # A tuple containing the lower and upper limit of the range
         self.strength = -1          # x or y depending on the situation
-        self.potShare = -1          # Share of pot of a specific player
 
         self.r_shift = 0            # A number defining the "prodigalness" of a strategy
         self.l_shift = 0            # A number defining the "frugalness" of a strategy
@@ -98,39 +92,41 @@ class Strategy:
         if self.bluff:
             self.bluffer()
 
-        if self.round == 0 or self.round == 3:
-            self.strength = self.x_privateValue
-        else:
-            self.y_handEquity = potential(
-                self.holeCards, self.communityCards)[0]
-            self.strength = self.y_handEquity
+        self.y_handEquity = potential(self.holeCards, self.communityCards)[0] if self.round in [1, 2] else None
+        self.strength = self.x_privateValue if self.round in [0, 3] else self.y_handEquity
 
         self.z_potOdds = (self.callValue/(self.pot + self.callValue))
-        self.t_determiner = self.strength - self.z_potOdds
-        self.t2_determiner = (self.strength + self.risk) - self.z_potOdds
+
+        self.ll = self.z_potOdds/(1 - self.z_potOdds)
+        # If strength is 1 then instead of collapsing, return the strength
+        self.ul2 = (self.strength/(1 - self.strength)) + \
+            self.risk if self.strength != 1 else self.strength
+
+        self.t_determiner = self.ul2 - self.ll
 
     def setBet(self):
         """Decides bet based on the mathematical logic"""
 
-        if self.t2_determiner > 0:
+        if self.t_determiner > 0:
             # When t' > 0 then strategy is in the money
 
             # Get odds from the odds function and then derive the bet amount
             # The odd is decided randomly from player's playing range
 
-            ll = self.z_potOdds/(1 - self.z_potOdds)
-            # If strength is 1 then instead of collapsing, return the strength
-            ul2 = (self.strength/(1 - self.strength)) + \
-                self.risk if self.strength != 1 else self.strength
-            self.r = odds(ll, ul2, self.x_privateValue, self.risk,
+            self.r = odds(self.ll, self.ul2, self.x_privateValue, self.risk,
                           self.l_shift, self.r_shift, self.seed)
 
             self.monValue = round(self.pot*self.r)
             self.betAmt = self.monValue
 
-        elif self.t2_determiner <= 0:
+        elif self.t_determiner == 0:
+            # When t' == 0 then strategy is in balanced position
+            # Only Call/Check (return 0 as bet amount)
+            self.betAmt = 0
+
+        elif self.t_determiner <= 0:
             # When t' <= 0 then strategy is out of money
-            # Explicitly check/fold
+            # Explicitly check/fold (return -1 as bet amount)
             self.betAmt = -1
 
     def setMove(self):
@@ -165,7 +161,8 @@ class Strategy:
 
         # Only applicable for heads-up
         if (self.round == 0) and ((self.prevActionRound != 0)):
-            self.initialPot = self.bigBlind + (self.bigBlind/2)
+            initialPot = self.bigBlind + (self.bigBlind/2)
+            self.initialPot = round(initialPot/self.bigBlind) * self.bigBlind
 
         elif self.prevActionRound < self.round:
             initialPot = (self.pot - self.callValue)
@@ -191,16 +188,13 @@ class Strategy:
                     # Forcefully call
                     self.betAmt = 0
 
-                    # raise Exception(
-                    #     "Required amount to stay in game cannot be greater than limit.")
                 else:
                     self.betAmt = limit - self.playerBetAmt
 
     def toBlinds(self, amt=-1):
         """Convert the monetary value to nearest big blind multiple"""
-        if self.betAmt == -1:
-            # Explicitly check/fold scenario
-            # pass
+        if self.betAmt in [-1, 0]:
+            # Explicitly check/fold or call scenario
             pass
         else:
             bet = self.betAmt - self.callValue
