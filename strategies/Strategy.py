@@ -122,7 +122,7 @@ class Strategy:
 
             # TODO verify theoretically whether absolute value will be considered or not
             # self.monValue = abs(math.floor((self.r*self.pot)/(1 - self.r)))
-            self.monValue = math.floor((self.r*self.pot)/(1 - self.r))
+            self.monValue = round((self.r*self.pot)/(1 - self.r))
             # self.betAmt = self.limiter(monValue)
             self.betAmt = self.monValue
 
@@ -141,23 +141,26 @@ class Strategy:
         """Sets an appropriate move based on bet amount"""
 
         if self.betAmt == -1:
-            # Check when explicitly -1
-            self.move = ("ch", -1)
-        elif self.betAmt == -2:
-            # Fold when explicitly -2
-            self.move = ("f", -1)
+            # Check/Fold when explicitly -1
+            if self.callValue == 0:
+                self.move = ("ch", -1)
+            else:
+                self.move = ("f", -1)
+
         elif self.betAmt == 0 or self.betAmt == self.callValue:
             # Frugal move when bet amount is explicitly 0 or call value
             self.move = frugalMove(self.information)
+
         elif self.betAmt > self.callValue:
             # Prodigal move when bet amount is more than call value
             self.move = prodigalMove(
                 self.information, betAmt=(self.betAmt - self.callValue))
-            # self.move = frugalMove(self.information)
+
         elif self.betAmt < self.callValue:
             # This scenario should not happen so raise an exception
             raise Exception(
                 f"Bet amt can't be less {self.betAmt} >! {self.callValue}")
+
         else:
             raise Exception(f"Invalid bet amount: {self.betAmt}")
 
@@ -176,7 +179,7 @@ class Strategy:
     def limiter(self):
         """Limit the bet amount to 3 times initial pot"""
 
-        if self.betAmt == -1 or self.betAmt == -2:
+        if self.betAmt == -1:
             # Ignore limit when explicitly check or fold
             pass
         else:
