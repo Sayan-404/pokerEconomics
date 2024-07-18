@@ -9,5 +9,5 @@
 - [x] final code review
 - [ ] documentation (comments and other documentation for strategies)
 - [x] change preflop betting
-- [ ] integrate risk into mean shifting
-- [ ] observe river
+- [x] integrate risk into mean shifting
+- [x] observe river
