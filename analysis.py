@@ -35,7 +35,8 @@ def plot(file_path):
 
                 players = [name for index, name in enumerate(
                     df.columns) if 0 < index < len(df.columns) - 2]
-
+                for i in range(2):
+                    df[players[i]] -= df[players[i]][0]
                 # Create smooth curves for Sayan and Sourjya
                 spl_sayan = make_interp_spline(x, df[players[0]], k=3)
                 spl_sourjya = make_interp_spline(x, df[players[1]], k=3)
