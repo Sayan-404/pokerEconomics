@@ -8,6 +8,6 @@
 - [ ] finalise all parameters (for strategies and others)
 - [x] final code review
 - [ ] documentation (comments and other documentation for strategies)
-- [ ] change preflop betting
+- [x] change preflop betting
 - [ ] integrate risk into mean shifting
 - [ ] observe river

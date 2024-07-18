@@ -1,16 +1,16 @@
 {
-  "log_hands": true,
+  "log_hands": false,
   "runs": 30000,
   "simulation": true,
   "player1": {
     "id": "Sayan",
     "bankroll": 1000000000,
-    "strategy": "rational.ideal.very_loose_high_risk"
+    "strategy": "rational.bluff"
   },
   "player2": {
     "id": "Sourjya",
     "bankroll": 1000000000,
-    "strategy": "rational.ideal.very_loose_high_risk"
+    "strategy": "rational.ideal.balanced"
   },
   "seed": null
 }

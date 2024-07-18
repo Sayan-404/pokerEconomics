@@ -69,7 +69,7 @@ def odds(lower_limit, upper_limit, hand_strength, risk, left_shift, r_shift, see
         raise Exception("Lower limit can never be less than 0.")
 
     sigma = upper_limit/3
-    mean = lower_limit + hand_strength*(r_shift - left_shift)
+    mean = lower_limit + hand_strength*(r_shift + risk - left_shift)
 
     t_lower = (lower_limit - mean) / sigma
     t_upper = (upper_limit - mean) / sigma

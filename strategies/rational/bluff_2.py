@@ -5,7 +5,7 @@ class ChildStrategy(Strategy):
     def __init__(self):
         super().__init__()
         self.r_shift = 1
-        self.risk = 1
+        self.risk = 0.7
         self.bluff = True
 
     def decide(self, information):

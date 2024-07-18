@@ -32,15 +32,20 @@ class Strategy:
         self.bigBlind = 0
 
         # Metrics for decision making and placing bets
-        self.hs = -1                
-        self.sp = -1                
-        self.po = -1                
-        self.t_determiner = -1      
+        self.hs = -1
+        self.sp = -1
+        self.po = -1
+        self.t_determiner = -1
         self.effectivePotential = -1          # hs or sp depending on the situation
 
-        self.r_shift = 0                      # A number defining the "prodigalness" of a strategy
-        self.l_shift = 0                      # A number defining the "frugalness" of a strategy
-        self.risk = 0                         # A number defining the risk capacity of a strategy
+        # A number defining the "prodigalness" of a strategy
+        self.r_shift = 0
+
+        # A number defining the "frugalness" of a strategy
+        self.l_shift = 0
+
+        # A number defining the risk capacity of a strategy
+        self.risk = 0
 
         self.bluff = False                    # If true then bluff
 
@@ -69,7 +74,11 @@ class Strategy:
         self.pot = information["pot"]
 
         self.setInitialPot()
-        # self.limit = 3*self.initialPot
+
+        # if self.round == 0:
+        #     self.limit = 0.5*self.initialPot
+        # else:
+        #     self.limit = 100000
 
         self.reason()
         self.setBet()
@@ -94,7 +103,8 @@ class Strategy:
         if self.bluff:
             self.bluffer()
 
-        self.sp = potential(self.holeCards, self.communityCards)[0] if self.round in [1, 2] else None
+        self.sp = potential(self.holeCards, self.communityCards)[
+            0] if self.round in [1, 2] else None
         self.effectivePotential = self.hs if self.round in [0, 3] else self.sp
 
         self.po = (self.callValue/(self.pot + self.callValue))

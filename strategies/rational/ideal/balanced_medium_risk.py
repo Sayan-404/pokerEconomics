@@ -4,7 +4,7 @@ from ...Strategy import Strategy
 class ChildStrategy(Strategy):
     def __init__(self):
         super().__init__()
-        self.risk = 0.6
+        self.risk = 0.3
 
     def decide(self, information):
         self.initialise(information)
