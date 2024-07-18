@@ -11,3 +11,4 @@
 - [x] change preflop betting
 - [x] integrate risk into mean shifting
 - [x] observe river
+- [ ] create optimal shuffles for fair evaluation
