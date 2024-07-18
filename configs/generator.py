@@ -6,6 +6,7 @@ import json
 import os
 import re
 import sys
+import time
 
 sys.path.append(os.getcwd())
 
@@ -49,6 +50,8 @@ def generate_round_robin_strategy_configs():
         "Enter y to log individual hands: ") == "y" else False
     runs = int(input("Enter number of runs: "))
     seed = input("Enter seed if present: ")
+    if not seed:
+        seed = time.time()
     bankroll = input("Enter bankroll (-1 for default of 1000000000): ")
     bankroll = bankroll if bankroll != -1 else 1000000000
     for i in range(len(strats)):
