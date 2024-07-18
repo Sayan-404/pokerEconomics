@@ -12,3 +12,4 @@
 - [x] integrate risk into mean shifting
 - [x] observe river
 - [ ] create optimal shuffles for fair evaluation
+- [ ] parameter evaluation demo
