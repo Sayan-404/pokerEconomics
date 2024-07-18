@@ -65,6 +65,7 @@ class Logger:
         }
         self.games_file = open(f"{self.path}/games.csv", "a")
         self.log_hands = log_hands
+        self.total_num_hands = number_of_hands
 
     def close_files(self):
         self.config_file.close()
@@ -151,5 +152,13 @@ class Logger:
 
     def log_result(self, data):
         writer = csv.writer(self.games_file)
-        row = [data["hand_no"] + 1]  + [p for p in data["bankrolls"]] + [p for p in data["af"]] + [data["winner"], data["round"]]
+
+        af = []
+
+        if int(data["hand_no"]) == (self.total_num_hands - 1):
+            af = [p for p in data["af"]]
+        else:
+            af = ["", ""]
+
+        row = [data["hand_no"] + 1]  + [p for p in data["bankrolls"]] + [p for p in af] + [data["winner"], data["round"]]
         writer.writerow(row)

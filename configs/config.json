@@ -1,6 +1,6 @@
 {
-  "log_hands": true,
-  "runs": 30000,
+  "log_hands": false,
+  "runs": 10,
   "simulation": true,
   "player1": {
     "id": "Sayan",
