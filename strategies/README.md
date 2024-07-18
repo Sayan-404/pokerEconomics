@@ -111,3 +111,37 @@ This strategy has the following characteristics given that it has an exceptional
 1. Plays the first round where the emergence of an exceptional hand occurred very weakly (check/call only).
 2. If the hand is still exception in the next round (which it should be most of times), it plays according to the ideal behaviour (whish is to raise/bet) with the option to bet a bit aggresively.
 3. Else it plays according to the ideal behaviour.
+
+## Parameters
+### non-bluffing strategies
+
+| Name | r_shift | l_shift | risk |
+| ---- | ---- | ---- | ---- |
+| balanced | 0 | 0 | 0 |
+| balanced_low_risk | 0 | 0 | 0.2 |
+| balanced_medium_risk | 0 | 0 | 0.6 |
+| belanced_high_risk | 0 | 0 | 1 |
+| loose | 0.5 | 0 | 0 |
+| loose_low_risk | 0.5 | 0 | 0.2 |
+| loose_medium_risk | 0.5 | 0 | 0.6 |
+| loose_high_risk | 0.5 | 0 | 1 |
+| tight | 0 | 0.5 | 0 |
+| tight_low_risk | 0 | 0.5 | 0.2 |
+| tight_medium_risk | 0 | 0.5 | 0.6 |
+| tight_high_risk | 0 | 0.5 | 1 |
+| very_loose | 1 | 0 | 0 |
+| very_loose_low_risk | 1 | 0 | 0.2 |
+| very_loose_medium_risk | 1 | 0 | 0.6 |
+| very_loose_high_risk | 1 | 0 | 1 |
+| very_tight | 0 | 1 | 0 |
+| very_tight_low_risk | 0 | 1 | 0.2 |
+| very_tight_medium_risk | 0 | 1 | 0.6 |
+| very_tight_high_risk | 0 | 1 | 1 |
+
+### bluffing strategies (bluff == True)
+
+| Name | r_shift | l_shift | risk |
+| ---- | ---- | ---- | ---- |
+| bluff | 0 | 0 | 0 |
+| bluff_1 | 0.5 | 0 | 0.5 |
+| bluff_2 | 1 | 0 | 1 |
