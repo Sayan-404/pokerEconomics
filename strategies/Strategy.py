@@ -12,6 +12,10 @@ class Strategy:
         # If eval True then strategy is being used for automated data generation
         self.eval = False
 
+        # Variables for initial limit
+        self.iniLimit = False
+        self.iniLimitMultiplier = 0
+
         self.seed = None
 
         self.information = {}
@@ -78,10 +82,11 @@ class Strategy:
 
         self.setInitialPot()
 
-        # if self.round == 0:
-        #     self.limit = 0.5*self.initialPot
-        # else:
-        #     self.limit = 100000
+        if self.iniLimit:
+            if self.round == 0:
+                self.limit = self.iniLimitMultiplier*self.initialPot
+            else:
+                self.limit = 100000
 
         self.reason()
         self.setBet()
