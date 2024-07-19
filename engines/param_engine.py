@@ -6,6 +6,8 @@ sys.path.append(os.getcwd())
 import importlib
 import json
 
+from multiprocessing import Pool
+
 # from checks.compare_test import compare_test
 from components.Logger import Logger
 from components.Player import Player
@@ -13,7 +15,7 @@ from Game import Game
 
 from strategies.Strategy import Strategy
 
-def initialise_run(id=0, benchmark=False, test=False):
+def initialise_run(obsVar, value, id=0, benchmark=False, test=False):
     data = {}
 
     # Create a fully balanced strategy for comparison
@@ -23,15 +25,18 @@ def initialise_run(id=0, benchmark=False, test=False):
     test_strat = Strategy()
     test_strat.eval = True
 
-    def test_decide(info):
-        return test_strat.decide(info)
-
-    def base_decide(info):
-        return balanced_strat.decide(info)
+    if obsVar == "r_shift":
+        test_strat.r_shift = value
+    elif obsVar == "l_shift":
+        test_strat.l_shift = value
+    elif obsVar == "risk":
+        test_strat.risk = value
+    else:
+        raise Exception("Invalid parameter given for evaluation.")
 
     # Create players
     player1 = Player("base", 100000000, "base", getattr(balanced_strat, "decide"))
-    player2 = Player("test", 100000000, "test", getattr(test_strat, "decide"))
+    player2 = Player(f"{obsVar}_{value}", 100000000, "test", getattr(test_strat, "decide"))
     
     players = [player1, player2]
 
@@ -41,23 +46,74 @@ def initialise_run(id=0, benchmark=False, test=False):
 
     num = 100
     logger = Logger(log_hands=False, benchmark=benchmark, strategies=[player.strategy_name for player in players], number_of_hands=num)
-    game = Game(
-        players,
-        logger,
-        number_of_hands=num,
-        simul=True,
-        seed=seed,
-        id=id,
-        config=data,
-        test=test,
-    )
+
+    retries = 0
+    while True:
+        try:
+            game = Game(
+                players,
+                logger,
+                number_of_hands=num,
+                simul=True,
+                seed=seed,
+                id=id,
+                config=data,
+                test=False,
+            )
+            break
+        except:
+            retries += 1
+            print("An error occurred while creating the Game object. Retrying...")
+
+            if retries == 5:
+                print("Simulation failed.")
+                break
     return game
 
+def run_game(data):
+    obs_var, c_val = data
+    retries = 0
+    while True:
+        try:
+            game = initialise_run(obs_var, c_val)
+            game.play()
+            break
+        except:
+            retries += 1
+            print("An error occurred while executing game.play(). Retrying...")
+            
+            if retries == 5:
+                print("Simulation failed.")
+                break
 
 if __name__ == "__main__":
-    # config = input("Enter name of config: ")
-    game = initialise_run()
-    game.play()
-    # ch = input("Run compare test? (y/n): ")
-    # if ch == "y" or ch == "yes":
-    #     compare_test(f"{game.logger.path}/games.csv")
+    obs_var = input("Enter variable under observation (1: r_shift; 2: l_shift; 3: risk, 4: limit): ")
+    min_range = float(input("Enter minimum value to observe: "))
+    max_range = float(input("Enter maximum value to observe: "))
+    step = float(input("Enter the step value: "))
+
+    match obs_var:
+        case "1":
+            obs_var = "r_shift"
+        case "2":
+            obs_var = "l_shift"
+        case "3":
+            obs_var = "risk"
+        case "4":
+            obs_var = "limit"
+        case _:
+            print("Invalid variable given. Exiting...")
+            exit()
+
+    params = []
+
+    c_val = min_range
+    while c_val < max_range:
+        value = c_val + step
+        params.append([obs_var, c_val])
+        c_val = value
+
+    with Pool(len(params)) as p:
+        p.map(run_game, params)
+
+    print("Eval Completed")
