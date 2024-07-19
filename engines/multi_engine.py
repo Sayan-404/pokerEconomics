@@ -17,7 +17,7 @@ def init_pool(configs):
     shared_configs = configs
 
 
-def run_game(data):
+def game_runner(data):
     """
     Worker processes for multiprocessing.
     """
@@ -27,24 +27,14 @@ def run_game(data):
     del game
     gc.collect()
 
-def run_configs(configs):
-    payload = list(enumerate(configs))
-    num_processes = min(len(configs), os.cpu_count() or 1)
+def run(payload, runner, configs={}):
+    num_processes = min(len(payload), os.cpu_count() or 1)
     ctx = get_context("spawn")
-    with ctx.Pool(processes=num_processes, initializer=init_pool, initargs=(configs,)) as pool:
-        results = pool.map(run_game, payload)
+    with ctx.Pool(processes=num_processes, initializer=init_pool, initargs=(configs if configs else payload,)) as pool:
+        results = pool.map(runner, payload)
         pool.close()
         pool.join()
-    gc.collect()
-
-def run_params(params):
-    num_processes = min(len(params), os.cpu_count() or 1)
-    ctx = get_context("spawn")
-    with ctx.Pool(processes=num_processes, initializer=init_pool, initargs=(params,)) as pool:
-        results = pool.map(run_game_auto, params)
-        pool.close()
-        pool.join()
-    gc.collect()
+    gc.collect()    
 
 # be a little conservative in choosing the total number of optimal instances
 # in reality this multi engine will run an iteration, that is one multi process after another
@@ -98,7 +88,9 @@ if __name__ == "__main__":
                             configs.append(
                                 f"{batch}/{enum_configs[key]}" if batch != "" else enum_configs[key])
 
-                    run_configs(configs)
+                    payload = list(enumerate(configs))
+                    
+                    run(payload, game_runner, configs=configs)
                     
                     print("Simulation is successful.\n")
                     ex = True if input("Exit? (y/n): ") == "y" else False
@@ -109,7 +101,7 @@ if __name__ == "__main__":
                 # Evaluate parameters of rational strategies
                 case 3:
                     # Lazy loading
-                    from param_engine import initialise_run_auto, run_game_auto
+                    from param_engine import run_game_auto
 
                     obs_var = input(
                         "Enter variable under observation (1: r_shift; 2: l_shift; 3: risk, 4: limit): ")
@@ -143,7 +135,7 @@ if __name__ == "__main__":
                         params.append([obs_var, c_val])
                         c_val = value
 
-                    run_params(params)
+                    run(params, run_game_auto)
 
                     print("Evaluation Completed.\n")
                     ex = True if input("Exit? (y/n): ") == "y" else False
