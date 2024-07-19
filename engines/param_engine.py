@@ -1,6 +1,4 @@
 from multiprocessing import Pool
-import json
-import importlib
 import os
 import sys
 
@@ -9,31 +7,12 @@ sys.path.append(os.getcwd())
 from Game import Game
 from components.Player import Player
 from components.Logger import Logger
-
+from engines.utils import rationalStrat
 
 # from checks.compare_test import compare_test
-
 # from strategies.Strategy import Strategy
 
-
-def rationalStrat(limit, r_shift=0, l_shift=0, risk=0, iniLimitMultiplier=None):
-    from strategies.Strategy import Strategy
-
-    strat = Strategy()
-    strat.eval = True
-    strat.r_shift = r_shift
-    strat.l_shift = l_shift
-    strat.risk = risk
-    strat.limit = limit
-
-    if iniLimitMultiplier:
-        strat.iniLimit = True
-        strat.iniLimitMultiplier = iniLimitMultiplier
-
-    return strat
-
-
-def initialise_run_auto(obsVar, value, id=0, benchmark=False, test=False):
+def initialise_run_param(obsVar, value, id=0, benchmark=False, test=False):
     data = {}
     limit = 100000
 
@@ -99,7 +78,7 @@ def run_game_auto(data):
     retries = 0
     while True:
         try:
-            game = initialise_run_auto(obs_var, c_val)
+            game = initialise_run_param(obs_var, c_val)
             game.play()
             break
         except:
