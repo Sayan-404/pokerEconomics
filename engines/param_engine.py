@@ -1,28 +1,48 @@
+from multiprocessing import Pool
+import json
+import importlib
 import os
 import sys
 
 sys.path.append(os.getcwd())
 
-import importlib
-import json
+from Game import Game
+from components.Player import Player
+from components.Logger import Logger
 
-from multiprocessing import Pool
 
 # from checks.compare_test import compare_test
-from components.Logger import Logger
-from components.Player import Player
-from Game import Game
 
-from strategies.Strategy import Strategy
+# from strategies.Strategy import Strategy
 
-def initialise_run(obsVar, value, id=0, benchmark=False, test=False):
+
+def rationalStrat(limit, r_shift=0, l_shift=0, risk=0, iniLimitMultiplier=None):
+    from strategies.Strategy import Strategy
+
+    strat = Strategy()
+    strat.eval = True
+    strat.r_shift = r_shift
+    strat.l_shift = l_shift
+    strat.risk = risk
+    strat.limit = limit
+
+    if iniLimitMultiplier:
+        strat.iniLimit = True
+        strat.iniLimitMultiplier = iniLimitMultiplier
+
+    return strat
+
+
+def initialise_run_auto(obsVar, value, id=0, benchmark=False, test=False):
     data = {}
+    limit = 100000
 
     # Create a fully balanced strategy for comparison
-    balanced_strat = Strategy()
+
+    balanced_strat = rationalStrat(limit)
     balanced_strat.eval = True
 
-    test_strat = Strategy()
+    test_strat = rationalStrat(limit)
     test_strat.eval = True
 
     if obsVar == "r_shift":
@@ -35,9 +55,11 @@ def initialise_run(obsVar, value, id=0, benchmark=False, test=False):
         raise Exception("Invalid parameter given for evaluation.")
 
     # Create players
-    player1 = Player("base", 100000000, "base", getattr(balanced_strat, "decide"))
-    player2 = Player(f"{obsVar}_{value}", 100000000, "test", getattr(test_strat, "decide"))
-    
+    player1 = Player("base", 100000000, "base",
+                     getattr(balanced_strat, "decide"))
+    player2 = Player(f"{obsVar}_{value}", 100000000,
+                     "test", getattr(test_strat, "decide"))
+
     players = [player1, player2]
 
     seed = None
@@ -45,7 +67,8 @@ def initialise_run(obsVar, value, id=0, benchmark=False, test=False):
         seed = data["seed"]
 
     num = 100
-    logger = Logger(log_hands=False, benchmark=benchmark, strategies=[player.strategy_name for player in players], number_of_hands=num)
+    logger = Logger(log_hands=False, benchmark=benchmark, strategies=[
+                    player.strategy_name for player in players], number_of_hands=num)
 
     retries = 0
     while True:
@@ -70,24 +93,27 @@ def initialise_run(obsVar, value, id=0, benchmark=False, test=False):
                 break
     return game
 
-def run_game(data):
+
+def run_game_auto(data):
     obs_var, c_val = data
     retries = 0
     while True:
         try:
-            game = initialise_run(obs_var, c_val)
+            game = initialise_run_auto(obs_var, c_val)
             game.play()
             break
         except:
             retries += 1
             print("An error occurred while executing game.play(). Retrying...")
-            
+
             if retries == 5:
                 print("Simulation failed.")
                 break
 
+
 if __name__ == "__main__":
-    obs_var = input("Enter variable under observation (1: r_shift; 2: l_shift; 3: risk, 4: limit): ")
+    obs_var = input(
+        "Enter variable under observation (1: r_shift; 2: l_shift; 3: risk, 4: limit): ")
     min_range = float(input("Enter minimum value to observe: "))
     max_range = float(input("Enter maximum value to observe: "))
     step = float(input("Enter the step value: "))
@@ -114,6 +140,6 @@ if __name__ == "__main__":
         c_val = value
 
     with Pool(len(params)) as p:
-        p.map(run_game, params)
+        p.map(run_game_auto, params)
 
     print("Eval Completed")

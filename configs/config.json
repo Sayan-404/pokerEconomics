@@ -1,6 +1,6 @@
 {
   "log_hands": false,
-  "runs": 10,
+  "runs": 10000000,
   "simulation": true,
   "player1": {
     "id": "Sayan",
@@ -10,7 +10,7 @@
   "player2": {
     "id": "Sourjya",
     "bankroll": 1000000000,
-    "strategy": "rational.ideal.very_loose_high_risk"
+    "strategy": "rational.ideal.balanced"
   },
   "seed": null
 }
