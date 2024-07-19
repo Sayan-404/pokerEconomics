@@ -138,9 +138,9 @@ class Logger:
         json.dump(config_data, self.config_file, indent=4)
         # initiating games csv
         writer = csv.writer(self.games_file)
-        row = ["hand_no"] + [p.package_state()["id"]+"("+p.package_state()["strategy"]+")" for p in players] + [p.package_state()["id"]+"(AF)" for p in players] + ["winner", "ending_round"]
+        row = ["hand_no"] + [str(p.package_state()["id"])+"("+p.package_state()["strategy"]+")" for p in players] + [str(p.package_state()["id"])+"(AF)" for p in players] + ["winner", "ending_round"]
         writer.writerow(row)
-        row = [0] + [p.package_state()["bankroll"] for p in players] + ["", -1]
+        row = [0] + [p.package_state()["bankroll"] for p in players] + ["", "", -1]
         writer.writerow(row)
 
     def log_hand(self):

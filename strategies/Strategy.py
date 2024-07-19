@@ -9,6 +9,9 @@ class Strategy:
         """
             Initialises all the required variables for easy access by children classes.
         """
+        # If eval True then strategy is being used for automated data generation
+        self.eval = False
+
         self.seed = None
 
         self.information = {}
@@ -93,8 +96,15 @@ class Strategy:
 
     def decide(self, information):
         # This function should be `initialised` so that it can use class variables
-        raise NotImplementedError(
-            f"The decide function is not implemented by {self.strategy}")
+        if self.eval:
+            if information == {}:
+                pass
+            else:
+                self.initialise(information)
+                return self.move
+        else:
+            raise NotImplementedError(
+                f"The decide function is not implemented by {self.strategy}")
 
     def reason(self):
         self.hs = privateValue(self.holeCards, self.communityCards)
