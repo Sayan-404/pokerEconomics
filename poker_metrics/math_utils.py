@@ -8,7 +8,7 @@ import numpy as np
 
 
 def create_probabilistic_score(hole_cards, community_cards=[]):
-    from . import chen, ph_score
+    from poker_metrics.ph_score import get_score
     hole_cards = set(hole_cards)
     community_cards = set(community_cards)
 
@@ -22,8 +22,6 @@ def create_probabilistic_score(hole_cards, community_cards=[]):
     w = {card: 1/len(opp_cards) for card in opp_cards}
     ahead = tied = behind = 0.0
 
-    def get_score(cards):
-        return chen.get_score(cards) if len(cards) == 2 else ph_score.get_score(cards)
     current_rank = get_score(hole_cards | community_cards)
     for cards in opp_cards:
         rank = get_score(set(cards) | community_cards)
