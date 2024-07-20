@@ -1,41 +1,20 @@
-import gc
 import os
-import re
 import sys
-import traceback
-from multiprocessing import get_context
-from itertools import combinations_with_replacement
 
 sys.path.append(os.getcwd())
 
-from aws import shutdownInstance
-from engine import initialise_run
-
-
-
-def init_pool(configs):
-    global shared_configs
-    shared_configs = configs
-
-
-def game_runner(data):
-    """
-    Worker processes for multiprocessing.
-    """
-    id, config = data
-    game = initialise_run(shared_configs[id], id)
-    game.play()
-    del game
-    gc.collect()
-
 def run(payload, runner, configs={}):
+    from gc import collect
+    from engines.utils import init_pool
+    from multiprocessing import get_context
+
     num_processes = min(len(payload), os.cpu_count() or 1)
     ctx = get_context("spawn")
     with ctx.Pool(processes=num_processes, initializer=init_pool, initargs=(configs if configs else payload,)) as pool:
         results = pool.map(runner, payload)
         pool.close()
         pool.join()
-    gc.collect()    
+    collect()    
 
 # be a little conservative in choosing the total number of optimal instances
 # in reality this multi engine will run an iteration, that is one multi process after another
@@ -60,12 +39,15 @@ if __name__ == "__main__":
 
                 # Run simulations with pre-defined configs
                 case 1:
+                    from engines.utils import run_game
+                    from re import search
+
                     configs = []
                     batch = input("Enter batch: ")
                     directory = f"configs/{batch}" if batch else ""
                     files = os.listdir(directory)
                     for config in files:
-                        x = re.search(".json$", config)
+                        x = search(".json$", config)
                         if x:
                             y = x.string.split(".")[0]
                             if y != "config" and y != "benchmark_config":
@@ -91,7 +73,7 @@ if __name__ == "__main__":
 
                     payload = list(enumerate(configs))
                     
-                    run(payload, game_runner, configs=configs)
+                    run(payload, run_game, configs=configs)
                     
                     print("Simulation is successful.\n")
                     ex = True if input("Exit? (y/n): ") == "y" else False
@@ -101,7 +83,9 @@ if __name__ == "__main__":
 
                 # Take properties from csv and run simulation
                 case 2:
-                    from auto_engine import strategies, run_game_auto
+                    from engines.utils import strategies, run_game_auto
+                    from itertools import combinations_with_replacement
+
                     configFile = input("Enter config file: ")
                     bankroll = float(input("Enter initial bankroll of all players: "))
                     limit = float(input("Enter overall limit: "))
@@ -148,7 +132,7 @@ if __name__ == "__main__":
                 # Evaluate parameters of rational strategies
                 case 3:
                     # Lazy loading
-                    from param_engine import run_game_auto
+                    from engines.utils import run_game_param
 
                     obs_var = input(
                         "Enter variable under observation (1: r_shift; 2: l_shift; 3: risk, 4: limit): ")
@@ -182,7 +166,7 @@ if __name__ == "__main__":
                         params.append([obs_var, c_val])
                         c_val = value
 
-                    run(params, run_game_auto)
+                    run(params, run_game_param)
 
                     print("Evaluation Completed.\n")
                     ex = True if input("Exit? (y/n): ") == "y" else False
@@ -194,10 +178,12 @@ if __name__ == "__main__":
 
 
     except Exception as e:
+        from traceback import print_exc
         print(f"An error occurred.")
-        traceback.print_exc()
+        print_exc()
     finally:
         # shuts down the instance
         # add an IAM role with ec2:StopInstance permission and add this role to the ec2 instance
         if aws:
+            from engines.utils import shutdownInstance
             shutdownInstance()

@@ -3,11 +3,11 @@
 ## to-do
 
 - [ ] clean up repository
-  - [ ] Remove chen from private value
+  - [x] Remove chen from private value
   - [ ] Decide whether to keep the rational .py files
   - [x] Clean up the batch configs
   - [ ] Refactor codebase
-    - [ ] Refactor engine components
+    - [x] Refactor engine components
     - [ ] Refactor Strategy
     - [ ] Refactor poker_metrics
 - [ ] Decide something for the seed

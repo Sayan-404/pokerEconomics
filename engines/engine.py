@@ -11,59 +11,57 @@ from components.Logger import Logger
 from components.Player import Player
 from Game import Game
 
-
-def get_player_decider(player):
-    module = importlib.import_module("strategies.{}".format(player["strategy"]))
-    return getattr(module, "decide")
-
-
-def initialise_run(config, id=0, benchmark=False, test=False):
-    data = {}
-
-    if test:
-        data = config
-    else:
-        with open(f"configs/{config}.json", "r") as f:
-            data = json.load(f)
-
-    # Create players
-    player1 = Player(
-        data["player1"]["id"],
-        data["player1"]["bankroll"],
-        data["player1"]["strategy"],
-        get_player_decider(data["player1"]),
-    )
-    player2 = Player(
-        data["player2"]["id"],
-        data["player2"]["bankroll"],
-        data["player2"]["strategy"],
-        get_player_decider(data["player2"]),
-    )
-    players = [player1, player2]
-
-    seed = None
-    if "seed" in data:
-        seed = data["seed"]
-
-    num = data["runs"]
-    logger = Logger(log_hands=data["log_hands"], benchmark=benchmark, strategies=[player.strategy_name for player in players], number_of_hands=num)
-    game = Game(
-        players,
-        logger,
-        number_of_hands=num,
-        simul=data["simulation"],
-        seed=seed,
-        id=id,
-        config=data,
-        test=test,
-    )
-    return game
+from engines.utils import *
 
 
 if __name__ == "__main__":
-    config = input("Enter name of config: ")
-    game = initialise_run(config)
-    game.play()
+    print("\nSingle-threaded Simulator\n\n0: For config based simulation\n1: For automatic simulation based on rational properties\n")
+
+    while True:
+        mode = int(input("Enter option: "))
+
+        match mode:
+            case 0:
+                config = input("Enter name of config: ")
+                game = initialise_run(config)
+                game.play()
+                break
+            case 1:
+                configFile = input("Enter config file: ")
+                bankroll = float(input("Enter bankroll of all players: "))
+                limit = float(input("Enter overall limit: "))
+                iniLimitMul = int(input("Enter initial round limit multiplier (-1 for none): "))
+                
+                if iniLimitMul == -1:
+                    iniLimitMul = None
+
+                strats = strategies(configFile)
+                
+                print("\nList of strategies defined:")
+
+                for i in range(len(strats)):
+                    print(f"{i}: {strats[i][0]}")
+
+                i = int(input("Enter first strategy index: "))
+                j = int(input("Enter second strategy index: "))
+
+                eval_strats = []
+                eval_strats.append(strats[i])
+                eval_strats.append(strats[j])
+
+                config = {
+                    "limit": limit,
+                    "iniLimitMul": iniLimitMul,
+                    "strats": eval_strats,
+                    "bankroll": bankroll
+                }
+
+                run_game_auto(config)
+
+                break
+
+            case _:
+                continue
     # ch = input("Run compare test? (y/n): ")
     # if ch == "y" or ch == "yes":
     #     compare_test(f"{game.logger.path}/games.csv")

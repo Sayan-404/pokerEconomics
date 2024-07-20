@@ -3,7 +3,7 @@ import os
 import sys
 from multiprocessing import Pool
 
-from engine import initialise_run
+from utils import initialise_run
 
 sys.path.append(os.getcwd())
 
