@@ -1021,8 +1021,7 @@ class Game:
         af = {}
 
         for player in self.players:
-            total_moves = self.stats[player.id]["frugals"] + \
-                self.stats[player.id]["prodigals"]
+            total_moves = self.stats[player.id]["frugals"] + self.stats[player.id]["prodigals"]
             prodigalness = 0
             frugalness = 0
 

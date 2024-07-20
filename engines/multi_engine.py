@@ -4,6 +4,7 @@ import re
 import sys
 import traceback
 from multiprocessing import get_context
+from itertools import combinations
 
 sys.path.append(os.getcwd())
 
@@ -97,6 +98,44 @@ if __name__ == "__main__":
                     if ex:
                         break
                     print()
+
+                # Take properties from csv and run simulation
+                case 2:
+                    from auto_engine import strategies, run_game_auto
+                    configFile = input("Enter config file: ")
+                    limit = float(input("Enter overall limit: "))
+                    iniLimitMul = int(input("Enter initial round limit multiplier (-1 for none): "))
+                    
+                    if iniLimitMul == -1:
+                        iniLimitMul = None
+
+                    strats = strategies(configFile)
+                    
+                    print("\nList of strategies defined:")
+
+                    for i in range(len(strats)):
+                        print(f"{i}: {strats[i][0]}")
+
+                    indexes = input("Enter all the strategy indexes to pair and run: ").split(" ")
+                    indexes = [int(i) for i in indexes]
+
+                    eval_strats = []
+                    for i in range(len(strats)):
+                        if i in indexes:
+                            eval_strats.append(strats[i])
+
+                    pairings = list(combinations(eval_strats, 2))
+                    payload = []
+                    
+                    for pairing  in pairings:
+                        config = {
+                            "limit": limit,
+                            "iniLimitMul": iniLimitMul,
+                            "strats": pairing 
+                        }
+                        payload.append(config)
+
+                    run(payload, run_game_auto)
 
                 # Evaluate parameters of rational strategies
                 case 3:

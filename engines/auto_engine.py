@@ -19,8 +19,8 @@ def strategies(configFile):
 
     with open(f"configs/{configFile}.csv", "r") as f:
         reader = csv.reader(f)
+        next(reader)
         for row in reader:
-            # print(row)
             strategies.append(list(row))
 
     return strategies
@@ -54,26 +54,26 @@ def initialise_run_auto(limit, strats, iniLimitMultiplier, id=0, benchmark=False
                     player.strategy_name for player in players], number_of_hands=num)
 
     retries = 0
-    # while True:
-    #     try:
-    game = Game(
-        players,
-        logger,
-        number_of_hands=num,
-        simul=True,
-        seed=seed,
-        id=id,
-        config={},
-        test=False,
-    )
-            # break
-        # except:
-        #     retries += 1
-        #     print("An error occurred while creating the Game object. Retrying...")
+    while True:
+        try:
+            game = Game(
+                players,
+                logger,
+                number_of_hands=num,
+                simul=True,
+                seed=seed,
+                id=id,
+                config={},
+                test=False,
+            )
+            break
+        except:
+            retries += 1
+            print("An error occurred while creating the Game object. Retrying...")
 
-        #     if retries == 5:
-        #         print("Simulation failed.")
-        #         break
+            if retries == 5:
+                print("Simulation failed.")
+                break
     return game
 
 
