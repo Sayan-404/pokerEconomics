@@ -12,12 +12,12 @@
     - [ ] Refactor poker_metrics
 - [ ] Decide something for the seed
 - [ ] clean up requirements.txt
-- [ ] create an all encompassing setup script that compiles shared library, creates virtual python environment and installs all dependencies
+- [x] create an all encompassing setup script that compiles shared library, creates virtual python environment and installs all dependencies
 - [ ] finalise all parameters (for strategies and others)
 - [x] final code review
 - [ ] documentation (comments and other documentation for strategies)
 - [x] change preflop betting
 - [x] integrate risk into mean shifting
 - [x] observe river
-- [ ] create optimal shuffles for fair evaluation
+- [ ] create optimal testing grounds for a more comprehensive testing
 - [ ] parameter evaluation demo
