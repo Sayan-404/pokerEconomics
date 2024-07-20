@@ -7,8 +7,6 @@ sys.path.append(os.getcwd())
 from poker_metrics.math_utils import create_probabilistic_score
 from hand_evaluator.evaluate_cards import evaluate_cards
 
-# from .hand_potential import potential
-
 # Include utilities for developing strategies
 
 # Pre-defined variables
@@ -79,7 +77,6 @@ def prodigalMove(state, betAmt=10):
         elif move[0] == "a":
             return move
 
-
 def frugalMove(state):
     """
     Returns the suitable cooperative move based on the current state of the game.
@@ -134,7 +131,6 @@ def availableMoves(state, betamt=10):
 
     return valid_moves
 
-
 def fixDefection(moves, state):
     # Finds a defective move and fix it if required
     return_moves = []
@@ -147,7 +143,6 @@ def fixDefection(moves, state):
         return_moves.append(move)
 
     return return_moves
-
 
 def canDefect(state):
     return_value = False

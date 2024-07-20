@@ -3,15 +3,10 @@ import sys
 
 sys.path.append(os.getcwd())
 
-
-from itertools import combinations
-
-from hand_evaluator.evaluate_cards import evaluate_cards
-from poker_metrics.math_utils import inverse_range, kde_plot, scale
-from tqdm import tqdm
-
-
 def get_score(cards):
+    from hand_evaluator.evaluate_cards import evaluate_cards
+    from poker_metrics.math_utils import inverse_range, scale
+
     score = evaluate_cards(*cards)
     if len(cards) == 5:
         score = inverse_range(score, 1, 7462)
@@ -26,6 +21,10 @@ def get_score(cards):
 
 
 if __name__ == "__main__":
+    from tqdm import tqdm
+    from itertools import combinations
+    from poker_metrics.math_utils import kde_plot
+
     ranks = "23456789TJQKA"
     suits = "scdh"
     deck = [r+s for r in ranks for s in suits]

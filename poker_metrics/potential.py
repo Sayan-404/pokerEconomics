@@ -5,8 +5,6 @@ from itertools import combinations
 sys.path.append(os.getcwd())
 from poker_metrics.utils import get_rank_category
 
-# from phevaluator.evaluator import evaluate_cards
-
 def potential(hole_cards, community_cards, type_lookahead = 1):
     # 1 type_lookahead is 1 card look ahead
     # 2 type_lookahead is 2 card look ahead only applicable for flop

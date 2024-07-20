@@ -2,7 +2,7 @@ from phevaluator.evaluator import evaluate_cards
 from hand_evaluator.evaluate_cards import evaluate_cards as c_evaluate_cards
 from poker_metrics import odds
 from poker_metrics.utils import privateValue
-from poker_metrics.simple_hand_potential import potential
+from poker_metrics.potential import potential
 from itertools import combinations
 import random
 import time

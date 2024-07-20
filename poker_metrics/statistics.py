@@ -8,7 +8,7 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 from scipy.stats import gaussian_kde
-import matplotlib
+
 
 def irStats():
     ranks = "23456789TJQKA"
@@ -238,5 +238,71 @@ def simplifiedPvStatsRiver():
     plt.show()
 
 
+def odds(lower_limit, upper_limit, hand_strength, risk, left_shift, r_shift, seed=None):
+    from scipy.stats import truncnorm
+    if seed:
+        np.random.seed(seed)
+
+    # Pot limit can never be less than 0 theoretically
+    if lower_limit < 0:
+        raise Exception("Lower limit can never be less than 0.")
+
+    sigma = upper_limit/3
+    mean = lower_limit + hand_strength*(r_shift + risk - left_shift)
+
+    t_lower = (lower_limit - mean) / sigma
+    t_upper = (upper_limit - mean) / sigma
+    dist = truncnorm(t_lower, t_upper, loc=mean, scale=sigma)
+
+    # Uncomment the following to view the distribution
+    with open("temp.txt", "a") as fobj:
+        fobj.write(f"Pot Odds: {lower_limit}\n")
+        fobj.write(f"y': {upper_limit}\n")
+        fobj.write(f"y/x: {upper_limit}\n")
+        fobj.write("\n\n\n")
+
+    # Plot the PDF of the truncated normal distribution
+    x = np.linspace(lower_limit, upper_limit, 1000)
+    pdf = dist.pdf(x)
+    plt.plot(x, pdf, 'r-', lw=2, label='PDF of truncated normal distribution')
+
+    ymin, ymax = plt.ylim()
+
+    plt.vlines(lower_limit, ymin, ymax, colors='b',
+               linestyles='--', label=f'Pot Odds {lower_limit}')
+    plt.text(lower_limit, ymin,
+             f' Pot Odds ({lower_limit})', color='b', verticalalignment='top')
+
+    plt.vlines(lower_limit, ymin, ymax, colors='b',
+               linestyles='--', label=f'Lower Limit {lower_limit}')
+    plt.text(lower_limit, ymin,
+             f' Lower Limit ({lower_limit})', color='b', verticalalignment='center')
+
+    plt.vlines(upper_limit, ymin, ymax, colors='b',
+               linestyles='--', label=f'Upper Limit {upper_limit}')
+    plt.text(upper_limit, ymin,
+             f' Upper Limit ({upper_limit})', color='b', verticalalignment='bottom')
+
+    # plt.vlines(sigma, ymin, ymax, colors='b', linestyles='--', label=f'Sigma {sigma}')
+    # plt.text(sigma, ymin, f' Sigma ({sigma})', color='b', verticalalignment='bottom')
+
+    plt.vlines(mean, ymin, ymax, colors='b',
+               linestyles='--', label=f'Mean {mean}')
+    plt.text(mean, ymin, f' Mean ({mean})',
+             color='b', verticalalignment='baseline')
+
+    # Add labels and title
+    plt.xlabel('Value')
+    plt.ylabel('Probability Density')
+    plt.title('Truncated Normal Distribution')
+    plt.legend(loc='best')
+
+    print(dist.rvs())
+
+    # Show the plot
+    plt.show()
+
+
 if __name__ == "__main__":
-    irStats()
+    # irStats()
+    odds(0.8, 1, 0.8, 2, 0, 0)
