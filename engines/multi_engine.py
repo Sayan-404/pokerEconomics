@@ -4,7 +4,7 @@ import re
 import sys
 import traceback
 from multiprocessing import get_context
-from itertools import combinations
+from itertools import combinations_with_replacement
 
 sys.path.append(os.getcwd())
 
@@ -103,6 +103,7 @@ if __name__ == "__main__":
                 case 2:
                     from auto_engine import strategies, run_game_auto
                     configFile = input("Enter config file: ")
+                    bankroll = float(input("Enter initial bankroll of all players: "))
                     limit = float(input("Enter overall limit: "))
                     iniLimitMul = int(input("Enter initial round limit multiplier (-1 for none): "))
                     
@@ -124,18 +125,25 @@ if __name__ == "__main__":
                         if i in indexes:
                             eval_strats.append(strats[i])
 
-                    pairings = list(combinations(eval_strats, 2))
+                    pairings = list(combinations_with_replacement(eval_strats, 2))
                     payload = []
                     
                     for pairing  in pairings:
                         config = {
                             "limit": limit,
                             "iniLimitMul": iniLimitMul,
-                            "strats": pairing 
+                            "strats": pairing,
+                            "bankroll": bankroll
                         }
                         payload.append(config)
 
                     run(payload, run_game_auto)
+
+                    print("Simulation Completed.\n")
+                    ex = True if input("Exit? (y/n): ") == "y" else False
+                    if ex:
+                        break
+                    print()
 
                 # Evaluate parameters of rational strategies
                 case 3:

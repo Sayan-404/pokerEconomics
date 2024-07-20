@@ -26,7 +26,7 @@ def strategies(configFile):
     return strategies
 
 
-def initialise_run_auto(limit, strats, iniLimitMultiplier, id=0, benchmark=False, test=False):
+def initialise_run_auto(limit, strats, iniLimitMultiplier, bankroll=1000000, id=0, benchmark=False, test=False):
     # print(strats)
 
     # Create a fully balanced strategy for comparison
@@ -37,10 +37,10 @@ def initialise_run_auto(limit, strats, iniLimitMultiplier, id=0, benchmark=False
     strat2.eval = True
 
     # Create players
-    player1 = Player(f"{strats[0][0]}", 100000000, f"{strats[0][0]}",
+    player1 = Player(f"{strats[0][0]}", bankroll, f"{strats[0][0]}",
                      getattr(strat1, "decide"))
     
-    player2 = Player(f"{strats[1][0]}", 100000000, f"{strats[0][0]}",
+    player2 = Player(f"{strats[1][0]}", bankroll, f"{strats[0][0]}",
                      getattr(strat2, "decide"))
 
     players = [player1, player2]
@@ -81,11 +81,12 @@ def run_game_auto(config):
     strats = config["strats"]
     limit = config["limit"]
     iniLimitMul = config["iniLimitMul"]
+    bankroll = config["bankroll"]
 
     retries = 0
     while True:
         try:
-            game = initialise_run_auto(limit, strats, iniLimitMul)
+            game = initialise_run_auto(limit, strats, iniLimitMul, bankroll=bankroll)
             game.play()
             break
         except:
@@ -101,6 +102,7 @@ if __name__ == "__main__":
     configFile = input("Enter config file: ")
     limit = float(input("Enter overall limit: "))
     iniLimitMul = int(input("Enter initial round limit multiplier (-1 for none): "))
+    bankroll = float(input("Enter bankroll of all players: "))
     
     if iniLimitMul == -1:
         iniLimitMul = None
@@ -122,7 +124,8 @@ if __name__ == "__main__":
     config = {
         "limit": limit,
         "iniLimitMul": iniLimitMul,
-        "strats": eval_strats 
+        "strats": eval_strats,
+        "bankroll": bankroll
     }
 
     run_game_auto(config)
