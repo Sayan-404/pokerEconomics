@@ -206,6 +206,27 @@ def flush(board):
     else:
         return 0
 
+def equity(hole, board):
+    if len(hole) != 2 or len(board) < 3:
+        raise 'Invalid number of input cards.'
+    outs = 0
+    if pair(hole,board) == 1:
+        if twopair(hole,board) != 1:
+            outs += twopair(hole,board)
+        if trips(hole,board) != 1:
+            outs += trips(hole,board)
+        if boat(hole,board) != 1:
+            outs += boat(hole,board)
+        if quads(hole,board) != 1:
+            outs += quads(hole,board)
+    else:
+        outs += pair(hole,board)
+
+    if straight(hole+board) != 1:
+        outs += straight(hole+board)
+    if flush(hole+board) != 1:
+        outs += flush(hole+board)
+    return outs
 
 if __name__ == "__main__":
     hole=["Ah","2h"]

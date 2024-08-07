@@ -1,23 +1,33 @@
-from phevaluator.evaluator import evaluate_cards
 from hand_evaluator.evaluate_cards import evaluate_cards as c_evaluate_cards
 from poker_metrics import odds
 from poker_metrics.utils import privateValue
 from poker_metrics.potential import potential
+from poker_metrics.outs import equity
 from itertools import combinations
 import random
 import time
 from tqdm import tqdm
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+sns.set_theme(style = 'whitegrid')   
+
 rank = "23456789TJQKA"
 suit = "csdh"
 deck = [r+s for r in rank for s in suit]
 possible_combinations = list(combinations(deck, 5))
 total_time = 0
-runs = 100000
+runs = 10000
+
+deviation = []
+
 for _ in tqdm(range(runs), desc="Processing..."):
     t = possible_combinations[random.randint(0, len(possible_combinations)-1)]
     t_deck = [card for card in deck if card not in t]
     a = time.time()
-    _ = odds(0.3, 0.7, 0.6, 0, 0.2)
+    combination_equity = equity(t[:2], t[2:])
+    # _ = odds(0.3, 0.7, 0.6, 0, 0.2)
     # _ = evaluate_cards(*t)
     # _ = c_evaluate_cards(*t)
     # _ = potential(t_deck, t[:2], t[2:], 2)
@@ -26,8 +36,18 @@ for _ in tqdm(range(runs), desc="Processing..."):
     # _ = privateValue(t[:2], t[2:])
     b = time.time()
     total_time += b-a
+    enumeration_equity = potential(t[:2], t[2:], 2)[0]
+    deviation.append(enumeration_equity - combination_equity)
+
 print(f"Total time: {total_time}")
 print(f"Average time for each process: {total_time/runs}")
+
+if len(deviation) > 0:
+    print(f"Range: {max(deviation) - min(deviation)}")
+    
+    sns.stripplot(x=deviation, jitter=True)
+    plt.show()
+
 # pheval(python): .55 seconds
 # pheval(c): .27 seconds
 # base level potential optimisation (tuple and DP and python eval): 20688 seconds
