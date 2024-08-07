@@ -3,6 +3,8 @@
 ranks = ["A","2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K", "A"]
 suits = ["s","c","h","d"]
 def pair(hole,board):
+    if(flush(hole+board) == -1 or straight(hole+board == -1)):
+        return 0
     hand = hole + board
     # print(len(hand))
     count=0
@@ -150,17 +152,11 @@ def straight(board):
         counter = 0
         for i in sequence:
             if (i == 3):
-                if(lb == 5):
-                    return 4
-                else:
-                    return 4
+                return 4
             if (i==2):
                 counter+=1
         if (counter == 2):
-            if(lb == 5):
-                return 4
-            else:
-                return 4
+            return 4
         else:
             return 0
     
@@ -176,7 +172,7 @@ def straight(board):
                 else:
                     return 8
             if(max == 5):
-                return 0 
+                return -1
             else:
                 return 0
             
@@ -197,12 +193,9 @@ def flush(board):
         count = 1
 
     if (max == 5):
-        return 0
+        return -1
     if (max == 4):
-        if lb == 5:
-            return 9
-        else:
-            return  9
+        return 9
     else:
         return 0
 
@@ -222,7 +215,15 @@ def equity(hole, board):
     if len(hole) != 2 or len(board) < 3:
         raise 'Invalid number of input cards.'
     outs = 0
-    outs += pair(hole,board) + twopair(hole,board) + trips(hole,board) + boat(hole,board) + quads(hole,board) + straight(hole+board) + flush(hole+board) - straightflush(hole+board) - pairFlush(hole,board)
+    if pair(hole,board) != -1:
+        outs += twopair(hole,board) + trips(hole,board) + boat(hole,board) + quads(hole,board)
+    else:
+        outs += pair(hole,board)
+    if straight(hole+board) != -1:
+        outs += straight(hole+board)
+    if flush(hole+board) != -1:
+        outs += flush(hole+board)
+    outs = outs - straightflush(hole+board) - pairFlush(hole+board)
     prob = 0
     if len(hole+board) == 5:
         prob = outs/47 + ((52-outs)/47) * (outs/46)
@@ -231,27 +232,18 @@ def equity(hole, board):
     return prob
 
 if __name__ == "__main__":
-    hole=['2s', '4h']
-    board = ['5h', 'Jh', 'Ah']
+    hole=['4c', '5c']
+    board = ['7c', 'Qc', 'Ac']
     outs = 0
-    outs += pair(hole,board) + twopair(hole,board) + trips(hole,board) + boat(hole,board) + quads(hole,board) + straight(hole+board) + flush(hole+board) - straightflush(hole+board) - pairFlush(hole,board)
-    # _pair = pair(hole,board) if pair(hole,board) != -1 else 0
-    # if pair(hole,board) == -1:
-    #     if twopair(hole,board) != -1:
-    #         outs += twopair(hole,board)
-    #     if trips(hole,board) != -1:
-    #         outs += trips(hole,board)
-    #     if boat(hole,board) > 0 and boat(hole,board)<1:
-    #         outs += boat(hole,board) - trips(hole,board)
-    #     if quads(hole,board) != 1:
-    #         outs += quads(hole,board)
-    # else:
-    #     outs += pair(hole,board)
-
-    # if straight(hole+board) != 1:
-    #     outs += straight(hole+board)
-    # if flush(hole+board) != 1:
-    #     outs += flush(hole+board)
+    if pair(hole,board) != -1:
+        outs += twopair(hole,board) + trips(hole,board) + boat(hole,board) + quads(hole,board)
+    else:
+        outs += pair(hole,board)
+    if straight(hole+board) != -1:
+        outs += straight(hole+board)
+    if flush(hole+board) != -1:
+        outs += flush(hole+board)
+    outs = outs - straightflush(hole+board) - pairFlush(hole,board)
     prob = 0
     if len(hole+board) == 5:
         prob = outs/47 + ((52-outs)/47) * (outs/46)
