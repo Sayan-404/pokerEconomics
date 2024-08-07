@@ -35,7 +35,7 @@ sys.path.append(os.getcwd())
 
 from outs import *
 
-def potential(hole, board, lookahead=1):
+def potential(hole, board, type_lookahead=1):
     outs = 0
     _pair = pair(hole,board)
     _twopair = twopair(hole,board)
@@ -55,7 +55,7 @@ def potential(hole, board, lookahead=1):
     outs += _straight if _straight!=1 else 0
     outs += _flush if _flush!=1 else 0
 
-    return outs
+    return outs, 1-outs
 
 if __name__ == "__main__":
 

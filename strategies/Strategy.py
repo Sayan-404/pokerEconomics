@@ -117,9 +117,7 @@ class Strategy:
         if self.bluff:
             self.bluffer()
 
-        lookahead = 2 if self.round == 1 else 1
-        self.sp = potential(self.holeCards, self.communityCards, type_lookahead=lookahead)[
-            0] if self.round in [1, 2] else None
+        self.sp = potential(self.holeCards, self.communityCards)[0] if self.round in [1, 2] else None
         self.effectivePotential = self.hs if self.round in [0, 3] else self.sp
 
         self.po = (self.callValue/(self.pot + self.callValue))

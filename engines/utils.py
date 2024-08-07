@@ -135,7 +135,7 @@ def initialise_run_auto(limit, strats, iniLimitMultiplier, bankroll=1000000, id=
     # if "seed" in data:
     #     seed = data["seed"]
 
-    num = 100
+    num = 100000
     logger = Logger(log_hands=False, benchmark=benchmark, strategies=[
                     player.strategy_name for player in players], number_of_hands=num)
 
