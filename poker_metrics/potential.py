@@ -36,7 +36,7 @@ def potential(hole_cards, community_cards, type_lookahead = 1):
 if __name__ == "__main__":
 
 
-    comm_cards = ['2c', '3h', '4h']
-    hole = ['Ah', '2h'] 
+    hole=['2s', '4h']
+    board = ['5h', 'Jh', 'Ah']
 
-    print(potential(hole, comm_cards, 2))
+    print(potential(hole, board, 2))

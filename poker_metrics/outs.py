@@ -11,13 +11,13 @@ def pair(hole,board):
             if (hand[i][0] == hand[j][0]):
                 count += 1
     
-    if count == 1:
-        return 1
+    if count >=1:
+        return 0
     else:
         if len(hand) == 5:
-            return 0.6
+            return 15
         else:
-            return 0.42
+            return 16 
 
 def twopair(hole,board):
     hand = hole + board
@@ -28,15 +28,15 @@ def twopair(hole,board):
             if (hand[i][0] == hand[j][0]):
                 count += 1
     
-    if count == 2:
-        return 1
+    if count >= 2:
+        return 0
     if count == 0:
         return 0
     if count == 1:
         if len(hand) == 5:
-            return 0.12 
+            return 9 
         else:
-            return 0.08
+            return 12
 
 def trips(hole,board):
     hand = hole+board
@@ -47,13 +47,13 @@ def trips(hole,board):
                 count += 1
     
     if count == 3:
-        return 1
+        return 0
     else:
         if count == 1:
             if len(hand) == 5:
-                return 0.08
+                return 2
             else:
-                return 0.04
+                return 2
         else:
             return 0
         
@@ -66,18 +66,18 @@ def boat(hole,board):
                 count += 1
     
     if count == 5:
-        return 1
+        return 0
     else:
         if count == 2:
             if len(hand) == 5:
-                return 0.172
+                return 4
             else:
-                return 0.08
+                return 4
         if count == 3:
                 if len(hand)==5:
-                    return 0.215
+                    return 6
                 else:
-                    return 0.108
+                    return 9
         else:
             return 0
 
@@ -90,12 +90,12 @@ def quads(hole,board):
                 count += 1
 
     if count == 4:
-        return 1
+        return 0
     if count == 3:
         if len(hand) == 5:
-            return 0.043
+            return 1
         else:
-            return 0.021
+            return 1
     else:
         return 0
     
@@ -151,32 +151,32 @@ def straight(board):
         for i in sequence:
             if (i == 3):
                 if(lb == 5):
-                    return 0.172
+                    return 4
                 else:
-                    return 0.08
+                    return 4
             if (i==2):
                 counter+=1
         if (counter == 2):
             if(lb == 5):
-                return 0.172
+                return 4
             else:
-                return 0.08
+                return 4
         else:
             return 0
     
     else:
             if(sequence[len(sequence)-1] == 4):
                 if(lb == 5):
-                    return 0.172
+                    return 4
                 else:
-                    return 0.08
+                    return 4
             if (max == 4):
                 if(lb == 5):
-                    return 0.344
+                    return 8
                 else:
-                    return 0.173
+                    return 8
             if(max == 5):
-                return 1 
+                return 0 
             else:
                 return 0
             
@@ -197,59 +197,67 @@ def flush(board):
         count = 1
 
     if (max == 5):
-        return 1
+        return 0
     if (max == 4):
         if lb == 5:
-            return 0.387
+            return 9
         else:
-            return  0.195
+            return  9
     else:
         return 0
 
+def straightflush(board):
+    if(straight(board) == 8 and flush(board) == 9):
+        return 2
+    if(straight(board) == 4 and flush(board) == 9):
+        return 1
+    return 0
+
+def pairFlush(hole,board):
+    if(pair(hole,board) != -1 and flush(hole+board) == 9):
+        return 1
+    return 0
+ 
 def equity(hole, board):
     if len(hole) != 2 or len(board) < 3:
         raise 'Invalid number of input cards.'
     outs = 0
-    if pair(hole,board) == 1:
-        if twopair(hole,board) != 1:
-            outs += twopair(hole,board)
-        if trips(hole,board) != 1:
-            outs += trips(hole,board)
-        if boat(hole,board) != 1:
-            outs += boat(hole,board)
-        if quads(hole,board) != 1:
-            outs += quads(hole,board)
+    outs += pair(hole,board) + twopair(hole,board) + trips(hole,board) + boat(hole,board) + quads(hole,board) + straight(hole+board) + flush(hole+board) - straightflush(hole+board) - pairFlush(hole,board)
+    prob = 0
+    if len(hole+board) == 5:
+        prob = outs/47 + ((52-outs)/47) * (outs/46)
     else:
-        outs += pair(hole,board)
-
-    if straight(hole+board) != 1:
-        outs += straight(hole+board)
-    if flush(hole+board) != 1:
-        outs += flush(hole+board)
-    return outs
+        prob = outs/46
+    return prob
 
 if __name__ == "__main__":
-    hole=["Ah","2h"]
-    board = ["2c","3h","4h"]
+    hole=['2s', '4h']
+    board = ['5h', 'Jh', 'Ah']
     outs = 0
-    
-    if pair(hole,board) == 1:
-        if twopair(hole,board) != 1:
-            outs += twopair(hole,board)
-        if trips(hole,board) != 1:
-            outs += trips(hole,board)
-        if boat(hole,board) != 1:
-            outs += boat(hole,board)
-        if quads(hole,board) != 1:
-            outs += quads(hole,board)
-    else:
-        outs += pair(hole,board)
+    outs += pair(hole,board) + twopair(hole,board) + trips(hole,board) + boat(hole,board) + quads(hole,board) + straight(hole+board) + flush(hole+board) - straightflush(hole+board) - pairFlush(hole,board)
+    # _pair = pair(hole,board) if pair(hole,board) != -1 else 0
+    # if pair(hole,board) == -1:
+    #     if twopair(hole,board) != -1:
+    #         outs += twopair(hole,board)
+    #     if trips(hole,board) != -1:
+    #         outs += trips(hole,board)
+    #     if boat(hole,board) > 0 and boat(hole,board)<1:
+    #         outs += boat(hole,board) - trips(hole,board)
+    #     if quads(hole,board) != 1:
+    #         outs += quads(hole,board)
+    # else:
+    #     outs += pair(hole,board)
 
-    if straight(hole+board) != 1:
-        outs += straight(hole+board)
-    if flush(hole+board) != 1:
-        outs += flush(hole+board)
-    print(flush(hole+board))
-    print(f"Ahead/total:{outs} Inconsequential/Total:{1 - outs}")
+    # if straight(hole+board) != 1:
+    #     outs += straight(hole+board)
+    # if flush(hole+board) != 1:
+    #     outs += flush(hole+board)
+    prob = 0
+    if len(hole+board) == 5:
+        prob = outs/47 + ((52-outs)/47) * (outs/46)
+    else:
+        prob = outs/46
+    # print(flush(hole+board))
+    print(f"Ahead/total:{prob} Inconsequential/Total:{1 - prob}")
 
     

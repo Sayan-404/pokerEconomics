@@ -26,7 +26,11 @@ for _ in tqdm(range(runs), desc="Processing..."):
     t = possible_combinations[random.randint(0, len(possible_combinations)-1)]
     t_deck = [card for card in deck if card not in t]
     a = time.time()
+    # print(t[:2],t[2:])
     combination_equity = equity(t[:2], t[2:])
+    
+    if(combination_equity >= 1):
+        print(t[:2], t[2:])
     # _ = odds(0.3, 0.7, 0.6, 0, 0.2)
     # _ = evaluate_cards(*t)
     # _ = c_evaluate_cards(*t)
@@ -36,17 +40,17 @@ for _ in tqdm(range(runs), desc="Processing..."):
     # _ = privateValue(t[:2], t[2:])
     b = time.time()
     total_time += b-a
-    enumeration_equity = potential(t[:2], t[2:], 2)[0]
-    deviation.append(enumeration_equity - combination_equity)
+    # enumeration_equity = potential(t[:2], t[2:], 2)[0]
+    # deviation.append(enumeration_equity - combination_equity)
 
 print(f"Total time: {total_time}")
 print(f"Average time for each process: {total_time/runs}")
 
-if len(deviation) > 0:
-    print(f"Range: {max(deviation) - min(deviation)}")
+# if len(deviation) > 0:
+#     print(f"Range: {max(deviation) - min(deviation)}")
     
-    sns.stripplot(x=deviation, jitter=True)
-    plt.show()
+#     sns.stripplot(x=deviation, jitter=True)
+#     plt.show()
 
 # pheval(python): .55 seconds
 # pheval(c): .27 seconds
