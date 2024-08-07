@@ -3,7 +3,7 @@
 ranks = ["A","2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K", "A"]
 suits = ["s","c","h","d"]
 def pair(hole,board):
-    if(flush(hole+board) == -1 or straight(hole+board == -1)):
+    if(flush(hole+board) == -1 or straight(hole+board) == -1):
         return 0
     hand = hole + board
     # print(len(hand))
@@ -14,7 +14,7 @@ def pair(hole,board):
                 count += 1
     
     if count >=1:
-        return 0
+        return -1
     else:
         if len(hand) == 5:
             return 15
@@ -215,7 +215,7 @@ def equity(hole, board):
     if len(hole) != 2 or len(board) < 3:
         raise 'Invalid number of input cards.'
     outs = 0
-    if pair(hole,board) != -1:
+    if pair(hole,board) == -1:
         outs += twopair(hole,board) + trips(hole,board) + boat(hole,board) + quads(hole,board)
     else:
         outs += pair(hole,board)
@@ -223,7 +223,7 @@ def equity(hole, board):
         outs += straight(hole+board)
     if flush(hole+board) != -1:
         outs += flush(hole+board)
-    outs = outs - straightflush(hole+board) - pairFlush(hole+board)
+    outs = outs - straightflush(hole+board) - pairFlush(hole,board)
     prob = 0
     if len(hole+board) == 5:
         prob = outs/47 + ((52-outs)/47) * (outs/46)
@@ -232,10 +232,10 @@ def equity(hole, board):
     return prob
 
 if __name__ == "__main__":
-    hole=['4c', '5c']
-    board = ['7c', 'Qc', 'Ac']
+    hole=['3c', '9h']
+    board = ['Jh', 'Qd', 'Ad']
     outs = 0
-    if pair(hole,board) != -1:
+    if pair(hole,board) == -1:
         outs += twopair(hole,board) + trips(hole,board) + boat(hole,board) + quads(hole,board)
     else:
         outs += pair(hole,board)
