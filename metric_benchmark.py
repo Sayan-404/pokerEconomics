@@ -7,18 +7,13 @@ from itertools import combinations
 import random
 import time
 from tqdm import tqdm
-import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
-
-sns.set_theme(style = 'whitegrid')   
 
 rank = "23456789TJQKA"
 suit = "csdh"
 deck = [r+s for r in rank for s in suit]
 possible_combinations = list(combinations(deck, 5))
 total_time = 0
-runs = 10000
+runs = 100000
 
 deviation = []
 
@@ -27,10 +22,7 @@ for _ in tqdm(range(runs), desc="Processing..."):
     t_deck = [card for card in deck if card not in t]
     a = time.time()
     # print(t[:2],t[2:])
-    combination_equity = equity(t[:2], t[2:])
-    
-    if(combination_equity >= 1):
-        print(t[:2], t[2:])
+    _ = equity(t[:2], t[2:])
     # _ = odds(0.3, 0.7, 0.6, 0, 0.2)
     # _ = evaluate_cards(*t)
     # _ = c_evaluate_cards(*t)
@@ -40,17 +32,9 @@ for _ in tqdm(range(runs), desc="Processing..."):
     # _ = privateValue(t[:2], t[2:])
     b = time.time()
     total_time += b-a
-    # enumeration_equity = potential(t[:2], t[2:], 2)[0]
-    # deviation.append(enumeration_equity - combination_equity)
 
 print(f"Total time: {total_time}")
 print(f"Average time for each process: {total_time/runs}")
-
-# if len(deviation) > 0:
-#     print(f"Range: {max(deviation) - min(deviation)}")
-    
-#     sns.stripplot(x=deviation, jitter=True)
-#     plt.show()
 
 # pheval(python): .55 seconds
 # pheval(c): .27 seconds
@@ -62,5 +46,6 @@ print(f"Average time for each process: {total_time/runs}")
 # hand equity (flop): 5227 seconds
 # hand equity (turn): 235 seconds
 # hand equity (river): 0.399 seconds
+# Hand equity by outs.py: 4.13 seconds
 # Odds Total time: 57.63293266296387
 # Odds Average time for each process: 0.0005763293266296387

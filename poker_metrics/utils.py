@@ -168,23 +168,23 @@ def privateValue(hole_cards, community_cards=[]):
 def get_rank_category(hand):
     rank = evaluate_cards(*hand)
     if (rank > 6185):
-        return 8
+        return 8, "HIGH CARD"
     if (rank > 3325):
-        return 7
+        return 7, "ONE_PAIR"
     if (rank > 2467):
-        return 6
+        return 6, "TWO PAIR"
     if (rank > 1609):
-        return 5
+        return 5, "THREE_OF_A_KIND"
     if (rank > 1599):
-        return 4;
+        return 4, "STRAIGHT"
     if (rank > 322):
-        return 3
+        return 3, "FLUSH"
     if (rank > 166):
-        return 2
+        return 2, "FULL HOUSE"
     if (rank > 10):
-        return 1
+        return 1, "FOUR OF A KIND"
     else:
-        return 0
+        return 0, "STRAIGHT FLUSH"
 
 def ir(holeCards):
     # Lowest: -351

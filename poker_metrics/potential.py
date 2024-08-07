@@ -19,13 +19,13 @@ def potential(hole_cards, community_cards, type_lookahead = 1):
 
     deck = [card for card in deck if card not in hand]
 
-    current_rank_category = get_rank_category(hand)
+    current_rank_category = get_rank_category(hand)[0]
     ahead = 0
     inconsequential = 0
     possible_combinations = list(combinations(deck, type_lookahead))
     for cards in possible_combinations:
         full_hand = hole_cards + community_cards + list(cards)
-        future_rank_category = get_rank_category(full_hand)
+        future_rank_category = get_rank_category(full_hand)[0]
         if future_rank_category < current_rank_category:
             ahead += 1
         elif future_rank_category == current_rank_category:
