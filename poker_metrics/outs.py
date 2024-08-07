@@ -4,7 +4,7 @@ ranks = ["A","2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K", "A"]
 suits = ["s","c","h","d"]
 def pair(hole,board):
     hand = hole + board
-    print(len(hand))
+    # print(len(hand))
     count=0
     for i in range(len(hand)):
         for j in range(i+1,len(hand)):
@@ -21,7 +21,7 @@ def pair(hole,board):
 
 def twopair(hole,board):
     hand = hole + board
-    print(len(hand))
+    # print(len(hand))
     count=0
     for i in range(len(hand)):
         for j in range(i+1,len(hand)):
@@ -184,17 +184,21 @@ def straight(board):
 def flush(board):
     lb = len(board)
     prev = board[0][1]
-    count = 0
+    count = 1
+    max = 0
     for i in range(0,lb):
-        if board[i][1] == prev:
-            count+=1
-        else:
-            count = 0
-        prev = board[i][1]
+        index = board[i][1]
+        for j in range(0,lb):
+            if i!=j:
+                if board[j][1] == index:
+                    count+=1
+        if count>max:
+            max = count
+        count = 1
 
-    if (count == 5):
+    if (max == 5):
         return 1
-    if (count == 4):
+    if (max == 4):
         if lb == 5:
             return 0.387
         else:
@@ -204,8 +208,27 @@ def flush(board):
 
 
 if __name__ == "__main__":
-    hole=["5h","Td"]
-    board = ["Ac","2d","3d","4s"]
-    print(straight(hole+board))
+    hole=["Ah","2h"]
+    board = ["2c","3h","4h"]
+    outs = 0
+    
+    if pair(hole,board) == 1:
+        if twopair(hole,board) != 1:
+            outs += twopair(hole,board)
+        if trips(hole,board) != 1:
+            outs += trips(hole,board)
+        if boat(hole,board) != 1:
+            outs += boat(hole,board)
+        if quads(hole,board) != 1:
+            outs += quads(hole,board)
+    else:
+        outs += pair(hole,board)
+
+    if straight(hole+board) != 1:
+        outs += straight(hole+board)
+    if flush(hole+board) != 1:
+        outs += flush(hole+board)
+    print(flush(hole+board))
+    print(f"Ahead/total:{outs} Inconsequential/Total:{1 - outs}")
 
     
