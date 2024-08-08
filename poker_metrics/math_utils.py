@@ -74,4 +74,6 @@ def odds(lower_limit, upper_limit, hand_strength, risk, left_shift, r_shift, see
     return dist.rvs()
 
 if __name__ == "__main__":
-    create_probabilistic_score(hole_cards=["3c", "4h"], community_cards=["2h", "7d", "7c"])
+    hole = ('3s', '6s') 
+    board = ('6h', '8c', '9d')
+    print(create_probabilistic_score(hole_cards=hole, community_cards=board))
