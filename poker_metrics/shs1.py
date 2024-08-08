@@ -1,7 +1,8 @@
 from itertools import combinations
 from collections import Counter
 
-from utils import get_rank_category
+from poker_metrics.utils import get_rank_category
+# from utils import get_rank_category
 
 def handStrength(hole, board):
     hand = hole+board
@@ -155,12 +156,12 @@ def getHigher(phand, rhand):
     p_hand = sorted(set(phand))
     r_hand = sorted(set(rhand))
 
+    if len(p_hand) == 0 or len(r_hand) == 0:
+        return 0
+
     if max(p_hand) == max(r_hand):
         p_hand.pop()
         r_hand.pop()
-
-        if len(p_hand) == 0 or len(r_hand) == 0:
-            return 0
         
         getHigher(p_hand, r_hand)
     
@@ -284,8 +285,8 @@ def inRanks(hand):
     return [round(card/10) for card in hand]
 
 if __name__ == "__main__":
-    hole = ('3s', '6s') 
-    board = ('6h', '8c', '9d')
+    hole = ('4d', '8c')  
+    board = ('8s', 'Ac', 'Ad')
     print(handStrength(hole, board))
 
     # print(seqs([2, 2, 2, 2, 5, 5, 3, 3, 7]))

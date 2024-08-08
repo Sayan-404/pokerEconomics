@@ -23,7 +23,7 @@ for _ in tqdm(range(runs), desc="Processing..."):
     t_deck = [card for card in deck if card not in t]
     a = time.time()
     # print(t[:2],t[2:])
-    # _ = handStrength(hole=t[:2], board=t[2:])
+    _ = handStrength(hole=t[:2], board=t[2:])
     # _ = equity(t[:2], t[2:])
     # _ = odds(0.3, 0.7, 0.6, 0, 0.2)
     # _ = evaluate_cards(*t)
@@ -31,7 +31,7 @@ for _ in tqdm(range(runs), desc="Processing..."):
     # _ = potential(t_deck, t[:2], t[2:], 2)
     # _ = simple_pot(t_deck, t[:2], t[2:], 2)
     # _ = equity(t[:2], t[2:])
-    _ = privateValue(t[:2], t[2:])
+    # _ = privateValue(t[:2], t[2:])
     b = time.time()
     total_time += b-a
 
