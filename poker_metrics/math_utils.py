@@ -1,6 +1,6 @@
 def create_probabilistic_score(hole_cards, community_cards=[]):
     from itertools import combinations
-    from poker_metrics.ph_score import get_score
+    from ph_score import get_score
     
     hole_cards = set(hole_cards)
     community_cards = set(community_cards)

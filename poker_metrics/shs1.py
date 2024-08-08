@@ -34,10 +34,10 @@ def handStrength(hole, board):
         if state == 1:
             ahead += 1
 
-    return (ahead + tied/2)/(ahead + behind + tied)
+    return (ahead + tied/2)/(ahead + behind + tied/2)
 
 def getState(phand, hand, rank, intHand):
-    pattern = getPattern(hand, intHand)
+    pattern = getPattern(hand)
     rhand = sorted(inRanks(hand))
 
     if pattern > rank:
@@ -170,13 +170,13 @@ def getHigher(phand, rhand):
         else:
             return -1
     
-def getPattern(hand, intHand):
+def getPattern(hand):
     hand = sorted(set(hand))
     rhand = sorted(inRanks(hand))
 
     # Handle the cases of straight and flushes
     straight = isStraight(rhand)
-    flush = isFlush(intHand)
+    flush = isFlush(hand)
     if straight:
         if flush:
             return 0
@@ -193,7 +193,7 @@ def getPattern(hand, intHand):
     
     sequences = sorted(sequences)
 
-    if len(sequences) == 2:
+    if len(sequences) >= 2:
         max_seq = len(sequences[-1])
 
         if max_seq == 3:
