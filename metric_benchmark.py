@@ -3,7 +3,7 @@ from poker_metrics import odds
 from poker_metrics.utils import privateValue
 from poker_metrics.potential import potential
 from poker_metrics.outs import equity
-from poker_metrics.shs1 import handStrength
+from poker_metrics.shs4 import handStrength
 from itertools import combinations
 import random
 import time
