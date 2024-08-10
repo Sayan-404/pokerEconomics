@@ -1,7 +1,11 @@
 
 
-ranks = ["A","2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K", "A"]
+ranks = ["2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K", "A"]
 suits = ["s","c","h","d"]
+
+backdoorflush = 0
+backdoorstraight = 0
+
 def pair(hole,board):
     if(flush(hole+board) == -1 or straight(hole+board) == -1):
         return 0
@@ -113,6 +117,7 @@ def sortcards(board):
         board.append(reverse_order[i])
     return board  
 
+
 def getLongestSequence(board):
     i=0
     board = sortcards(board)
@@ -126,60 +131,65 @@ def getLongestSequence(board):
                 start = j
                 break
         temp = i
+        origin = start
+        temp_gutshot = 0
         while(1):
-            if board[(temp+1)%len(board)] == ranks[(start + 1)%len(ranks)]:
+            _temp = (temp+1)%len(board) if origin == 12 else temp+1
+            _start = (start+1)%len(ranks) if origin == 12 else start+1
+            if _temp > len(board) - 1:
+                break
+            if board[_temp] == ranks[_start]:
                 count+=1
                 temp+=1
                 start+=1
             else:
+                if temp_gutshot == 1:
+                    break
                 if board[(temp+1)%len(board)] == ranks[(start+2)%len(ranks)]:
-                    gutshot = 1
-                break
+                    count+=1
+                    temp+=1
+                    start+=2
+                    temp_gutshot = 1
+                else:
+                    break
+            if temp_gutshot == 1:
+                gutshot = temp_gutshot
         sequenceCounter.append(count)
         i+=1
+    
     return sequenceCounter,gutshot
 
 def straight(board):
-    lb = len(board)
+    if(flush(board) == -1):
+        return 0
     board = sortcards(board)
-    
     sequence, gutshot = getLongestSequence(board)
-    max = 0
-    for i in sequence:
-        if i > max:
-            max = i
-    if gutshot:
-        counter = 0
-        for i in sequence:
-            if (i == 3):
-                return 4
-            if (i==2):
-                counter+=1
-        if (counter == 2):
-            return 4
-        else:
-            return 0
+    # print(sequence)
     
+    maxi = max(sequence)
+    if gutshot == 1:
+        if maxi == 4:
+            counter = 0
+            for i in sequence:
+                if i == maxi:
+                    counter+=1
+            if counter == 2:
+                return 8
+            return 4
+        if maxi == 5:
+            return 4
+        return 0
     else:
-            if(sequence[len(sequence)-1] == 4):
-                if(lb == 5):
-                    return 4
-                else:
-                    return 4
-            if (max == 4):
-                if(lb == 5):
-                    return 8
-                else:
-                    return 8
-            if(max == 5):
-                return -1
-            else:
-                return 0
-            
-
+        if maxi == 5:
+            return -1
+        if maxi == 4:
+            if  board[len(board)-1] == 'A':
+                return 4
+            return 8
+        return 0
 def flush(board):
+    global backdoorflush
     lb = len(board)
-    prev = board[0][1]
     count = 1
     max = 0
     for i in range(0,lb):
@@ -191,14 +201,15 @@ def flush(board):
         if count>max:
             max = count
         count = 1
-
+    if (max == 3 and lb == 5):
+        backdoorflush = 0.0416
     if (max == 5):
         return -1
     if (max == 4):
         return 9
     else:
         return 0
-
+    
 def straightflush(board):
     if(straight(board) == 8 and flush(board) == 9):
         return 2
@@ -215,26 +226,34 @@ def equity(hole, board):
     if len(hole) != 2 or len(board) < 3:
         raise 'Invalid number of input cards.'
     outs = 0
-    if pair(hole,board) == -1:
-        outs += twopair(hole,board) + trips(hole,board) + boat(hole,board) + quads(hole,board)
+    _pair=pair(hole,board)
+    _straight = straight(hole+board)
+    _flush = flush(hole+board)
+    if _pair == -1:
+        _2pair=twopair(hole,board)
+        _trips=trips(hole,board)
+        _quads=quads(hole,board)
+        _boat=boat(hole,board)
+        outs += _2pair + _trips + _boat + _quads
     else:
-        outs += pair(hole,board)
-    if straight(hole+board) != -1:
-        outs += straight(hole+board)
-    if flush(hole+board) != -1:
-        outs += flush(hole+board)
+        outs += _pair
+    if _straight != -1:
+        outs += _straight
+    if _flush != -1:
+        outs += _flush
     outs = outs - straightflush(hole+board) - pairFlush(hole,board)
     prob = 0
     if len(hole+board) == 5:
-        prob = outs/47 + ((52-outs)/47) * (outs/46)
+        prob = outs/47 + ((52-outs)/47) * (outs/46) + backdoorflush + backdoorstraight
     else:
         prob = outs/46
     return prob
 
 if __name__ == "__main__":
-    hole=['3c', '9h']
-    board = ['Jh', 'Qd', 'Ad']
+    hole=['3h', '4h' ]
+    board = ['9c', 'Qh', 'Kh']
     outs = 0
+    
     if pair(hole,board) == -1:
         outs += twopair(hole,board) + trips(hole,board) + boat(hole,board) + quads(hole,board)
     else:
@@ -246,7 +265,7 @@ if __name__ == "__main__":
     outs = outs - straightflush(hole+board) - pairFlush(hole,board)
     prob = 0
     if len(hole+board) == 5:
-        prob = outs/47 + ((52-outs)/47) * (outs/46)
+        prob = outs/47 + ((52-outs)/47) * (outs/46) + backdoorflush + backdoorstraight
     else:
         prob = outs/46
     # print(flush(hole+board))
