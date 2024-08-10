@@ -147,7 +147,7 @@ double handStrength(int *hole, int hole_size, int *board, int board_size)
 
         if (rank < pRank)
         {
-            ahead += w;
+            behind += w;
         }
         else if (rank == pRank)
         {
@@ -155,7 +155,7 @@ double handStrength(int *hole, int hole_size, int *board, int board_size)
         }
         else
         {
-            behind += w;
+            ahead += w;
         }
     }
 
@@ -170,7 +170,7 @@ double handStrength(int *hole, int hole_size, int *board, int board_size)
     // printf("Behind: %d\n", behind);
 
     // *100 is the percentage of hands that we beat or at least tie given the input
-    return 1 - ((ahead + tied / 2) / (ahead + tied + behind));
+    return ((ahead + tied / 2) / (ahead + tied + behind));
 }
 
 // Example usage

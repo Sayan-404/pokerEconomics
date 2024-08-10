@@ -6,6 +6,7 @@ from itertools import combinations
 sys.path.append(os.getcwd())
 from poker_metrics.math_utils import create_probabilistic_score
 from hand_evaluator.evaluate_cards import evaluate_cards
+from poker_metrics.hand_strength.shs import handStrength
 
 # Include utilities for developing strategies
 
@@ -162,7 +163,9 @@ def privateValue(hole_cards, community_cards=[]):
     if community_cards == []:
         return ir_based_score(hole_cards)
 
-    return create_probabilistic_score(hole_cards, community_cards)
+    # return create_probabilistic_score(hole_cards, community_cards)
+    return handStrength(hole_cards, community_cards)
+
 
 
 def get_rank_category(hand):
