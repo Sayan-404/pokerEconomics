@@ -74,4 +74,15 @@ fi
 g++ -fPIC --shared -std=c++11 -I include/ wrapper.cpp build/libpheval.so.0.6.0 -o wrapper.so
 cd ..
 
+cd poker_metrics/hand_strength
+mkdir -p build
+cd build
+cmake ..
+make pheval
+cd ..
+if [ -f "build/libpheval.0.6.0.dylib" ]; then
+    mv build/libpheval.0.6.0.dylib build/libpheval.so.0.6.0
+fi
+g++ -fPIC --shared -std=c++11 -I include/ hs.c build/libpheval.so.0.6.0 -o hs.so
+
 echo "\e[33mProcess complete, check above log for errors and restart if needed.\e[0m"

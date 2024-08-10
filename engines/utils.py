@@ -260,15 +260,15 @@ def run_game_auto(config):
     bankroll = config["bankroll"]
 
     retries = 0
-    # while True:
-    #     try:
-    game = initialise_run_auto(limit, strats, iniLimitMul, bankroll=bankroll)
-    game.play()
-            # break
-        # except:
-        #     retries += 1
-        #     print("An error occurred while executing game.play(). Retrying...")
+    while True:
+        try:
+            game = initialise_run_auto(limit, strats, iniLimitMul, bankroll=bankroll)
+            game.play()
+            break
+        except:
+            retries += 1
+            print("An error occurred while executing game.play(). Retrying...")
 
-        #     if retries == 5:
-        #         print("Simulation failed.")
-        #         break
+            if retries == 5:
+                print("Simulation failed.")
+                break
