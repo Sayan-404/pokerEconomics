@@ -1,6 +1,6 @@
 def create_probabilistic_score(hole_cards, community_cards=[]):
     from itertools import combinations
-    from poker_metrics.ph_score import get_score
+    from ph_score import get_score
     
     hole_cards = set(hole_cards)
     community_cards = set(community_cards)
@@ -74,6 +74,8 @@ def odds(lower_limit, upper_limit, hand_strength, risk, left_shift, r_shift, see
     return dist.rvs()
 
 if __name__ == "__main__":
-    hole = ('4d', '8c')  
-    board = ('8s', 'Ac', 'Ad')
+    # hole = ('As', 'Kh')  
+    # board = ('Td', '9c', '6h', '4s')
+    hole = ["As", "7d"]
+    board = ["8h", "3c", "2s", "Kc"]
     print(create_probabilistic_score(hole_cards=hole, community_cards=board))
