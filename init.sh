@@ -84,5 +84,17 @@ if [ -f "build/libpheval.0.6.0.dylib" ]; then
     mv build/libpheval.0.6.0.dylib build/libpheval.so.0.6.0
 fi
 g++ -fPIC --shared -std=c++11 -I include/ hs.c build/libpheval.so.0.6.0 -o hs.so
+cd ../..
+
+cd poker_metrics/potential
+mkdir -p build
+cd build
+cmake ..
+make pheval
+cd ..
+if [ -f "build/libpheval.0.6.0.dylib" ]; then
+    mv build/libpheval.0.6.0.dylib build/libpheval.so.0.6.0
+fi
+g++ -fPIC --shared -std=c++11 -I include/ potential.c build/libpheval.so.0.6.0 -o pot.so
 
 echo "\e[33mProcess complete, check above log for errors and restart if needed.\e[0m"
