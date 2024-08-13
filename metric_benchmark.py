@@ -1,7 +1,8 @@
 from hand_evaluator.evaluate_cards import evaluate_cards as c_evaluate_cards
 from poker_metrics import odds
 from poker_metrics.utils import privateValue
-from poker_metrics.potential import potential
+from poker_metrics.ogpotential import potential
+from poker_metrics.potential.potential import potential as cpotential
 from poker_metrics.outs import equity
 from poker_metrics.hand_strength.shs import handStrength
 from itertools import combinations
@@ -23,12 +24,13 @@ for _ in tqdm(range(runs), desc="Processing..."):
     t_deck = [card for card in deck if card not in t]
     a = time.time()
     # print(t[:2],t[2:])
-    _ = handStrength(hole=t[:2], board=t[2:])
+    _ = cpotential(t[:2], t[2:])
+    # _ = handStrength(hole=t[:2], board=t[2:])
     # _ = equity(t[:2], t[2:])
     # _ = odds(0.3, 0.7, 0.6, 0, 0.2)
     # _ = evaluate_cards(*t)
     # _ = c_evaluate_cards(*t)
-    # _ = potential(t_deck, t[:2], t[2:], 2)
+    # _ = potential(t[:2], t[2:])
     # _ = simple_pot(t_deck, t[:2], t[2:], 2)
     # _ = equity(t[:2], t[2:])
     # _ = privateValue(t[:2], t[2:])

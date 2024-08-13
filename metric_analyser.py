@@ -1,7 +1,9 @@
-from poker_metrics.potential import potential
+from poker_metrics.ogpotential import potential
 from poker_metrics.outs import equity
 from poker_metrics.hand_strength.shs import handStrength
 from poker_metrics.utils import privateValue
+from poker_metrics.potential.potential import potential
+from poker_metrics.ogpotential import potential as pot
 from poker_metrics.utils import get_rank_category
 from itertools import combinations
 import numpy as np
@@ -36,7 +38,7 @@ for _ in tqdm(range(runs), desc="Processing..."):
         print(get_rank_category(t))
         print(t[:2], t[2:])
 
-    enumeration_equity = equity(t[:2], t[2:])
+    enumeration_equity = pot(t[:2], t[2:])[0]
     dev = enumeration_equity - combination_equity
     if abs(dev) > 0.2:
         outlier_category[0.2].append((get_rank_category(t), t))
