@@ -98,3 +98,4 @@ fi
 g++ -fPIC --shared -std=c++11 -I include/ potential.c build/libpheval.so.0.6.0 -o pot.so
 
 echo "\e[33mProcess complete, check above log for errors and restart if needed.\e[0m"
+cd ../..

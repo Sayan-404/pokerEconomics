@@ -11,9 +11,10 @@ __pycache__
 .vscode
 build/
 wrapper.so
-potential.so
+hs.so
+pot.so
+*.so
 libpheval.so.0.6.0
 pyrightconfig.json
 /data/r*
 /data/testa*
-hs.so
