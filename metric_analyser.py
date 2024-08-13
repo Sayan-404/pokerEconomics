@@ -38,7 +38,8 @@ for _ in tqdm(range(runs), desc="Processing..."):
         print(get_rank_category(t))
         print(t[:2], t[2:])
 
-    enumeration_equity = pot(t[:2], t[2:])[0]
+    lookahead = 2 if (len(t[2:]) == 3) else 1
+    enumeration_equity = pot(t[:2], t[2:], lookahead)[0]
     dev = enumeration_equity - combination_equity
     if abs(dev) > 0.2:
         outlier_category[0.2].append((get_rank_category(t), t))
