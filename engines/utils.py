@@ -67,8 +67,20 @@ def strategies(configFile):
 
 def get_player_decider(player):
     import importlib
-    module = importlib.import_module("strategies.{}".format(player["strategy"]))
-    return getattr(module, "decide")
+
+    try:
+        module = importlib.import_module("strategies.{}".format(player["strategy"]))
+        return getattr(module, "decide")
+    except ImportError:
+        strats = strategies('config')
+        strat = next((strat for strat in strats if strat[0] == player["strategy"]), None)
+
+        if strat == None:
+            raise Exception(f"Strategy {player['strategy']} does not exist.")
+        
+        strat = rationalStrat(100000, float(strat[1]), float(strat[2]), float(strat[3]), True if strat[4] == "True" else False, 0)
+
+        return getattr(strat, "decide")
 
 def initialise_run(config, id=0, benchmark=False, test=False):
     data = {}
@@ -116,7 +128,7 @@ def initialise_run(config, id=0, benchmark=False, test=False):
 
 def initialise_run_auto(limit, strats, iniLimitMultiplier, bankroll=1000000, id=0, benchmark=False, test=False):
     # Create a fully balanced strategy for comparison
-    strat1 = rationalStrat(limit, r_shift=int(strats[0][1]), l_shift=float(strats[0][2]), risk=float(strats[0][3]), bluff=True if strats[0][4] == "True" else False, iniLimitMultiplier=iniLimitMultiplier)
+    strat1 = rationalStrat(limit, r_shift=float(strats[0][1]), l_shift=float(strats[0][2]), risk=float(strats[0][3]), bluff=True if strats[0][4] == "True" else False, iniLimitMultiplier=iniLimitMultiplier)
     strat1.eval = True
 
     strat2 = rationalStrat(limit, r_shift=float(strats[1][1]), l_shift=float(strats[1][2]), risk=float(strats[1][3]), bluff=True if strats[1][4] == "True" else False, iniLimitMultiplier=iniLimitMultiplier)
