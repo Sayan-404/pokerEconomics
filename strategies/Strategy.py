@@ -1,4 +1,5 @@
-from poker_metrics import frugalMove, privateValue, prodigalMove, odds, potential
+from poker_metrics import frugalMove, privateValue, prodigalMove, odds
+from poker_metrics.potential.potential import potential
 
 import random
 
@@ -117,15 +118,16 @@ class Strategy:
         if self.bluff:
             self.bluffer()
 
-        self.sp = potential(self.holeCards, self.communityCards)[0] if self.round in [1, 2] else None
+        self.sp = potential(self.holeCards, self.communityCards) if self.round in [1, 2] else 0
         self.effectivePotential = self.hs if self.round in [0, 3] else self.sp
 
         self.po = (self.callValue/(self.pot + self.callValue))
 
         self.ll = self.po/(1 - self.po)
         # If strength is 1 then instead of collapsing, return the strength
-        self.ul2 = (self.effectivePotential/(1 - self.effectivePotential)) + \
-            self.risk if self.effectivePotential != 1 else self.effectivePotential
+        # self.ul2 = (self.effectivePotential/(1 - self.effectivePotential)) + \
+        #     self.risk if self.effectivePotential != 1 else self.effectivePotential
+        self.ul2 = self.sp + self.hs
 
         self.t_determiner = self.ul2 - self.ll
 
