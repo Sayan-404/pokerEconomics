@@ -54,7 +54,7 @@ class Strategy:
         # A number defining the risk capacity of a strategy
         self.risk = 0
 
-        self.bluff = False                    # If true then bluff
+        self.bluff = 0                    # If true then bluff
 
         self.move = ()
 
@@ -115,7 +115,7 @@ class Strategy:
         self.hs = privateValue(self.holeCards, self.communityCards)
 
         # Bluff if true
-        if self.bluff:
+        if self.bluff > 0:
             self.bluffer()
 
         self.sp = potential(self.holeCards, self.communityCards) if self.round in [1, 2] else 0
@@ -231,7 +231,7 @@ class Strategy:
         # Inverses a strategy's hand strength to turn weak hand to strong
 
         if self.hs < 0.55:
-            if 1 == random.randint(0, 2):
+            if 1 == random.randint(1, self.bluff):
                 self.hs = 1 - self.hs
 
     def __str__(self):

@@ -20,7 +20,8 @@ if __name__ == "__main__":
         match mode:
             case 0:
                 config = input("Enter name of config: ")
-                game = initialise_run(config)
+                ratConfig = input("Enter name of rational config file (.csv): ")
+                game = initialise_run_config(config, rat_config=ratConfig)
                 game.play()
                 break
 

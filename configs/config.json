@@ -5,12 +5,14 @@
   "player1": {
     "id": "Sayan",
     "bankroll": 100000000000,
-    "strategy": "changing_styles"
+    "strategy": "bluff",
+    "limit": 100000
   },
   "player2": {
     "id": "Sourjya",
     "bankroll": 1000000000000,
-    "strategy": "balanced"
+    "strategy": "balanced",
+    "limit": 100000
   },
   "seed": null
 }

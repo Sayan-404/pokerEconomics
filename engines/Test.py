@@ -3,7 +3,7 @@ import os
 import sys
 from multiprocessing import Pool
 
-from utils import initialise_run
+from utils import initialise_run_config
 
 sys.path.append(os.getcwd())
 
@@ -22,7 +22,7 @@ def configList():
 
 def run_game(data):
     id, config = data
-    game = initialise_run(config, id=id, test=True)
+    game = initialise_run_config(config, id=id, test=True)
     game.play()
 
 

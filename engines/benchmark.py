@@ -4,11 +4,11 @@ import os
 import subprocess
 import time
 
-from utils import initialise_run
+from utils import initialise_run_config
 
 
 def worker(_):
-    game = initialise_run("benchmark_config", benchmark=True)
+    game = initialise_run_config("benchmark_config", benchmark=True)
     game.play(True)
 
 def adaptive_benchmark(multiplier=10):

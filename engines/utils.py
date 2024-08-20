@@ -37,7 +37,7 @@ def shutdownInstance():
         print(f"Failed to shut down instance: \n{traceback.print_exc()}")
 
 
-def rationalStrat(limit, r_shift=0, l_shift=0, risk=0, bluff=False, iniLimitMultiplier=None):
+def rationalStrat(limit, r_shift=0, l_shift=0, risk=0, bluff=0, iniLimitMultiplier=None):
     from strategies.Strategy import Strategy
 
     strat = Strategy()
@@ -46,6 +46,7 @@ def rationalStrat(limit, r_shift=0, l_shift=0, risk=0, bluff=False, iniLimitMult
     strat.l_shift = l_shift
     strat.risk = risk
     strat.limit = limit
+    strat.bluff = bluff
 
     if iniLimitMultiplier:
         strat.iniLimit = True
@@ -65,24 +66,24 @@ def strategies(configFile):
 
     return strategies
 
-def get_player_decider(player):
+def get_player_decider(player, rat_config='config'):
     import importlib
 
     try:
         module = importlib.import_module("strategies.{}".format(player["strategy"]))
         return getattr(module, "decide")
     except ImportError:
-        strats = strategies('config')
+        strats = strategies(rat_config)
         strat = next((strat for strat in strats if strat[0] == player["strategy"]), None)
 
         if strat == None:
             raise Exception(f"Strategy {player['strategy']} does not exist.")
         
-        strat = rationalStrat(100000, float(strat[1]), float(strat[2]), float(strat[3]), True if strat[4] == "True" else False, 0)
+        strat = rationalStrat(player['limit'], float(strat[1]), float(strat[2]), float(strat[3]), int(strat[4]), 0)
 
         return getattr(strat, "decide")
 
-def initialise_run(config, id=0, benchmark=False, test=False):
+def initialise_run_config(config, id=0, benchmark=False, test=False, rat_config='config'):
     data = {}
 
     if test:
@@ -97,13 +98,13 @@ def initialise_run(config, id=0, benchmark=False, test=False):
         data["player1"]["id"],
         data["player1"]["bankroll"],
         data["player1"]["strategy"],
-        get_player_decider(data["player1"]),
+        get_player_decider(data["player1"], rat_config),
     )
     player2 = Player(
         data["player2"]["id"],
         data["player2"]["bankroll"],
         data["player2"]["strategy"],
-        get_player_decider(data["player2"]),
+        get_player_decider(data["player2"], rat_config),
     )
     players = [player1, player2]
 
@@ -126,12 +127,12 @@ def initialise_run(config, id=0, benchmark=False, test=False):
     return game
 
 
-def initialise_run_auto(limit, strats, iniLimitMultiplier, bankroll=1000000, id=0, benchmark=False, test=False):
+def initialise_run_auto(limit, strats, iniLimitMultiplier, bankroll=1000000, id=0, benchmark=False):
     # Create a fully balanced strategy for comparison
-    strat1 = rationalStrat(limit, r_shift=float(strats[0][1]), l_shift=float(strats[0][2]), risk=float(strats[0][3]), bluff=True if strats[0][4] == "True" else False, iniLimitMultiplier=iniLimitMultiplier)
+    strat1 = rationalStrat(limit, r_shift=float(strats[0][1]), l_shift=float(strats[0][2]), risk=float(strats[0][3]), bluff=strats[0][4], iniLimitMultiplier=iniLimitMultiplier)
     strat1.eval = True
 
-    strat2 = rationalStrat(limit, r_shift=float(strats[1][1]), l_shift=float(strats[1][2]), risk=float(strats[1][3]), bluff=True if strats[1][4] == "True" else False, iniLimitMultiplier=iniLimitMultiplier)
+    strat2 = rationalStrat(limit, r_shift=float(strats[1][1]), l_shift=float(strats[1][2]), risk=float(strats[1][3]), bluff=strats[1][4], iniLimitMultiplier=iniLimitMultiplier)
     strat2.eval = True
 
     # Create players
@@ -241,7 +242,7 @@ def run_game(data):
     """
     from gc import collect
     id, config = data
-    game = initialise_run(shared_configs[id], id)
+    game = initialise_run_config(shared_configs[id], id)
     game.play()
     del game
     collect()

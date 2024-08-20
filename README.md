@@ -22,3 +22,8 @@
 - [ ] create optimal testing grounds for a more comprehensive testing
 - [ ] parameter evaluation demo
 - [ ] Bluffer limit implementation
+
+## System Checks Before Final Simulation
+
+- [ ] Aggression factor showing after end of simulation
+- [ ] Maths of strategy verified

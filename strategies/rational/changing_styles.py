@@ -11,7 +11,7 @@ class ChildStrategy(Strategy):
         self.l_shift = random.uniform(0, 1)
         self.r_shift = random.uniform(0, 1)
         self.risk = random.uniform(0.2, 1)
-        self.bluff = random.choice([True, False])
+        self.bluff = random.uniform(0, 1)
 
         self.initialise(information)
 
