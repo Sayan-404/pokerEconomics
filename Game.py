@@ -364,8 +364,8 @@ class Game:
             if self.simul:
                 # Ensure player stats are initialized
                 if f"{player.id}" not in self.stats:
-                    self.stats[f"{player.id}"] = {"prodigals": 0, "frugals": 0}
-
+                    self.stats = {players[0].id: {"prodigals": 0, "frugals": 0}, players[1].id: {"prodigals": 0, "frugals": 0}}
+    
                 action, bet = player.decide(
                     self.package_state(player_index, call_value=callsize)
                 )

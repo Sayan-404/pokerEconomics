@@ -3,9 +3,6 @@ import sys
 
 sys.path.append(os.getcwd())
 
-import importlib
-import json
-
 # from checks.compare_test import compare_test
 from components.Logger import Logger
 from components.Player import Player
@@ -15,7 +12,7 @@ from engines.utils import *
 
 
 if __name__ == "__main__":
-    print("\nSingle-threaded Simulator\n\n0: For config based simulation\n1: For automatic simulation based on rational properties\n")
+    print("\nSingle-threaded Simulator\n\n0: For config based simulation\n1: For manual simulation based on input of game properties\n")
 
     while True:
         mode = int(input("Enter option: "))
@@ -26,6 +23,7 @@ if __name__ == "__main__":
                 game = initialise_run(config)
                 game.play()
                 break
+
             case 1:
                 configFile = input("Enter config file: ")
                 bankroll = float(input("Enter bankroll of all players: "))

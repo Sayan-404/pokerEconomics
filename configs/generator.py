@@ -25,14 +25,23 @@ def create_single_config():
 
 def generate_round_robin_strategy_configs():
     strats = []
-    types = ["action", "rational", "rational/ideal"]
+    types = ["action/", ""]
     for ty in types:
-        files = os.listdir(f"strategies/{ty}/")
+        files = os.listdir(f"strategies/{ty}")
         for strat in files:
             x = re.search(".py$", strat)
             if x:
                 y = f"{ty}.{x.string.split('.')[0]}"
                 strats.append(y)
+    
+    import csv
+
+    with open(f"configs/config.csv", "r") as f:
+        reader = csv.reader(f)
+        next(reader)
+        for row in reader:
+            strats.append(row[0])
+
     enum_strats = {i: strats[i] for i in range(len(strats))}
     print("Enter the numbers (separated by spaces) corresponding to the strategies according to the list below: ")
     for key in enum_strats:
