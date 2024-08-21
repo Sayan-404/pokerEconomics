@@ -153,12 +153,5 @@ class Logger:
     def log_result(self, data):
         writer = csv.writer(self.games_file)
 
-        af = []
-
-        if int(data["hand_no"]) == (self.total_num_hands - 1):
-            af = [p for p in data["af"]]
-        else:
-            af = ["", ""]
-
-        row = [data["hand_no"] + 1]  + [p for p in data["bankrolls"]] + [p for p in af] + [data["winner"], data["round"]]
+        row = [data["hand_no"] + 1]  + [p for p in data["bankrolls"]] + [p for p in data['af']] + [data["winner"], data["round"]]
         writer.writerow(row)

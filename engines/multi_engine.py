@@ -133,7 +133,8 @@ if __name__ == "__main__":
                 case 3:
                     # Lazy loading
                     from engines.utils import run_game_param
-
+                    
+                    nums = int(input("Enter runs: "))
                     obs_var = input(
                         "Enter variable under observation (1: r_shift; 2: l_shift; 3: risk, 4: limit): ")
                     min_range = float(input("Enter minimum value to observe: "))
@@ -163,7 +164,7 @@ if __name__ == "__main__":
                     c_val = min_range
                     while c_val < max_range:
                         value = c_val + step
-                        params.append([obs_var, c_val])
+                        params.append([obs_var, c_val, nums])
                         c_val = value
 
                     run(params, run_game_param)

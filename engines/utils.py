@@ -175,7 +175,7 @@ def initialise_run_auto(limit, strats, iniLimitMultiplier, bankroll=1000000, id=
                 break
     return game
 
-def initialise_run_param(obsVar, value, id=0, benchmark=False, test=False):
+def initialise_run_param(obsVar, value, num, id=0, benchmark=False, test=False):
     data = {}
     limit = 100000
 
@@ -208,7 +208,6 @@ def initialise_run_param(obsVar, value, id=0, benchmark=False, test=False):
     if "seed" in data:
         seed = data["seed"]
 
-    num = 100
     logger = Logger(log_hands=False, benchmark=benchmark, strategies=[
                     player.strategy_name for player in players], number_of_hands=num)
 
@@ -249,11 +248,11 @@ def run_game(data):
 
 def run_game_param(data):
     from gc import collect
-    obs_var, c_val = data
+    obs_var, c_val, nums = data
     retries = 0
     while True:
         try:
-            game = initialise_run_param(obs_var, c_val)
+            game = initialise_run_param(obs_var, c_val, nums)
             game.play()
             del game
             collect()
