@@ -140,6 +140,7 @@ if __name__ == "__main__":
                     min_range = float(input("Enter minimum value to observe: "))
                     max_range = float(input("Enter maximum value to observe: "))
                     step = float(input("Enter the step value: "))
+                    seed = float(input("Enter seed: "))
 
                     while True:
                         match obs_var:
@@ -164,7 +165,7 @@ if __name__ == "__main__":
                     c_val = min_range
                     while c_val < max_range:
                         value = c_val + step
-                        params.append([obs_var, c_val, nums])
+                        params.append([seed, obs_var, c_val, nums])
                         c_val = value
 
                     run(params, run_game_param)

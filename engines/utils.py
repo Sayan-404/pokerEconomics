@@ -175,12 +175,10 @@ def initialise_run_auto(limit, strats, iniLimitMultiplier, bankroll=1000000, id=
                 break
     return game
 
-def initialise_run_param(obsVar, value, num, id=0, benchmark=False, test=False):
-    data = {}
+def initialise_run_param(seed, obsVar, value, num, id=0, benchmark=False, test=False):
     limit = 100000
 
     # Create a fully balanced strategy for comparison
-
     balanced_strat = rationalStrat(limit)
     balanced_strat.eval = True
 
@@ -204,10 +202,6 @@ def initialise_run_param(obsVar, value, num, id=0, benchmark=False, test=False):
 
     players = [player1, player2]
 
-    seed = None
-    if "seed" in data:
-        seed = data["seed"]
-
     logger = Logger(log_hands=False, benchmark=benchmark, strategies=[
                     player.strategy_name for player in players], number_of_hands=num)
 
@@ -221,7 +215,6 @@ def initialise_run_param(obsVar, value, num, id=0, benchmark=False, test=False):
                 simul=True,
                 seed=seed,
                 id=id,
-                config=data,
                 test=False,
             )
             break
@@ -248,11 +241,11 @@ def run_game(data):
 
 def run_game_param(data):
     from gc import collect
-    obs_var, c_val, nums = data
+    seed, obs_var, c_val, nums = data
     retries = 0
     while True:
         try:
-            game = initialise_run_param(obs_var, c_val, nums)
+            game = initialise_run_param(seed, obs_var, c_val, nums)
             game.play()
             del game
             collect()
