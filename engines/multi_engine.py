@@ -90,9 +90,13 @@ if __name__ == "__main__":
                     bankroll = float(input("Enter initial bankroll of all players: "))
                     limit = float(input("Enter overall limit: "))
                     iniLimitMul = int(input("Enter initial round limit multiplier (-1 for none): "))
+                    seed = float(input("Enter seed (-1 for None): "))
                     
                     if iniLimitMul == -1:
-                        iniLimitMul = None
+                        iniLimitMul = False
+
+                    if seed == -1:
+                        seed = None
 
                     strats = strategies(configFile)
                     
@@ -117,7 +121,8 @@ if __name__ == "__main__":
                             "limit": limit,
                             "iniLimitMul": iniLimitMul,
                             "strats": pairing,
-                            "bankroll": bankroll
+                            "bankroll": bankroll,
+                            "seed": seed
                         }
                         payload.append(config)
 

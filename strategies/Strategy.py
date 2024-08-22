@@ -124,10 +124,7 @@ class Strategy:
         self.po = (self.callValue/(self.pot + self.callValue))
 
         self.ll = self.po/(1 - self.po)
-        # If strength is 1 then instead of collapsing, return the strength
-        # self.ul2 = (self.effectivePotential/(1 - self.effectivePotential)) + \
-        #     self.risk if self.effectivePotential != 1 else self.effectivePotential
-        self.ul2 = self.sp + self.hs
+        self.ul2 = self.sp + self.hs + self.risk
 
         self.t_determiner = self.ul2 - self.ll
 

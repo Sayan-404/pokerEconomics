@@ -127,12 +127,12 @@ def initialise_run_config(config, id=0, benchmark=False, test=False, rat_config=
     return game
 
 
-def initialise_run_auto(limit, strats, iniLimitMultiplier, bankroll=1000000, id=0, benchmark=False):
+def initialise_run_auto(seed, limit, strats, iniLimitMultiplier, bankroll=1000000, id=0, benchmark=False):
     # Create a fully balanced strategy for comparison
-    strat1 = rationalStrat(limit, r_shift=float(strats[0][1]), l_shift=float(strats[0][2]), risk=float(strats[0][3]), bluff=strats[0][4], iniLimitMultiplier=iniLimitMultiplier)
+    strat1 = rationalStrat(limit, r_shift=float(strats[0][1]), l_shift=float(strats[0][2]), risk=float(strats[0][3]), bluff=int(strats[0][4]), iniLimitMultiplier=iniLimitMultiplier)
     strat1.eval = True
 
-    strat2 = rationalStrat(limit, r_shift=float(strats[1][1]), l_shift=float(strats[1][2]), risk=float(strats[1][3]), bluff=strats[1][4], iniLimitMultiplier=iniLimitMultiplier)
+    strat2 = rationalStrat(limit, r_shift=float(strats[1][1]), l_shift=float(strats[1][2]), risk=float(strats[1][3]), bluff=int(strats[1][4]), iniLimitMultiplier=iniLimitMultiplier)
     strat2.eval = True
 
     # Create players
@@ -143,10 +143,6 @@ def initialise_run_auto(limit, strats, iniLimitMultiplier, bankroll=1000000, id=
                      getattr(strat2, "decide"))
 
     players = [player1, player2]
-
-    seed = None
-    # if "seed" in data:
-    #     seed = data["seed"]
 
     num = 100000
     logger = Logger(log_hands=False, benchmark=benchmark, strategies=[
@@ -263,11 +259,12 @@ def run_game_auto(config):
     limit = config["limit"]
     iniLimitMul = config["iniLimitMul"]
     bankroll = config["bankroll"]
+    seed = config["seed"]
 
     retries = 0
     while True:
         try:
-            game = initialise_run_auto(limit, strats, iniLimitMul, bankroll=bankroll)
+            game = initialise_run_auto(seed, limit, strats, iniLimitMul, bankroll=bankroll)
             game.play()
             break
         except:
