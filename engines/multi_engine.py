@@ -142,10 +142,12 @@ if __name__ == "__main__":
                     nums = int(input("Enter runs: "))
                     obs_var = input(
                         "Enter variable under observation (1: r_shift; 2: l_shift; 3: risk, 4: limit): ")
-                    min_range = float(input("Enter minimum value to observe: "))
-                    max_range = float(input("Enter maximum value to observe: "))
+                    min_range = float(input("Enter lower limit of range to observe: "))
+                    max_range = float(input("Enter upper limit of range to observe: "))
                     step = float(input("Enter the step value: "))
                     seed = float(input("Enter seed: "))
+                    limit = float(input("Enter limit: "))
+                    iniLimitMul = float(input("Enter initial round limit: "))
 
                     while True:
                         match obs_var:
@@ -168,11 +170,12 @@ if __name__ == "__main__":
                     params = []
 
                     c_val = min_range
+                    id = 0
                     while c_val < max_range:
                         value = c_val + step
-                        params.append([seed, obs_var, c_val, nums])
+                        params.append([seed, obs_var, c_val, nums, limit, iniLimitMul, id])
                         c_val = value
-
+                        id += 1
                     run(params, run_game_param)
 
                     print("Evaluation Completed.\n")

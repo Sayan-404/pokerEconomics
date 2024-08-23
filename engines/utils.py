@@ -171,14 +171,13 @@ def initialise_run_auto(seed, limit, strats, iniLimitMultiplier, bankroll=100000
                 break
     return game
 
-def initialise_run_param(seed, obsVar, value, num, id=0, benchmark=False, test=False):
-    limit = 100000
+def initialise_run_param(seed, obsVar, value, num, limit, iniLimitMul, id=0, benchmark=False, test=False):
 
     # Create a fully balanced strategy for comparison
-    balanced_strat = rationalStrat(limit)
+    balanced_strat = rationalStrat(limit=limit, iniLimitMultiplier=iniLimitMul)
     balanced_strat.eval = True
 
-    test_strat = rationalStrat(limit)
+    test_strat = rationalStrat(limit=limit, iniLimitMultiplier=iniLimitMul)
     test_strat.eval = True
 
     if obsVar == "r_shift":
@@ -237,11 +236,11 @@ def run_game(data):
 
 def run_game_param(data):
     from gc import collect
-    seed, obs_var, c_val, nums = data
+    seed, obs_var, c_val, nums, limit, iniLimitMul, id = data
     retries = 0
     while True:
         try:
-            game = initialise_run_param(seed, obs_var, c_val, nums)
+            game = initialise_run_param(seed, obs_var, c_val, nums, limit, iniLimitMul, id = id)
             game.play()
             del game
             collect()
