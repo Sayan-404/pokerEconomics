@@ -86,7 +86,7 @@ class Strategy:
             if self.round == 0:
                 self.limit = self.iniLimitMultiplier*self.initialPot
             else:
-                self.limit = information["limit"]
+                self.limit = 10000
 
         self.reason()
         self.setBet()
