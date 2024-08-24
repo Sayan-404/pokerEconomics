@@ -86,7 +86,7 @@ class Strategy:
             if self.round == 0:
                 self.limit = self.iniLimitMultiplier*self.initialPot
             else:
-                self.limit = 100000
+                self.limit = information["limit"]
 
         self.reason()
         self.setBet()
@@ -95,7 +95,7 @@ class Strategy:
         self.setMove()
 
         if (self.betAmt > self.limit):
-            raise Exception(f"{self.betAmt} {self.initialPot}")
+            raise Exception(f"{self.betAmt} {self.limit}")
 
         self.prevActionRound = self.round
 

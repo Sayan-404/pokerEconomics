@@ -6,13 +6,15 @@
     "id": "Sayan",
     "bankroll": 100000000000,
     "strategy": "bluff",
-    "limit": 100000
+    "limit": 100000,
+    "iniLimitMul": 500
   },
   "player2": {
     "id": "Sourjya",
     "bankroll": 1000000000000,
     "strategy": "balanced",
-    "limit": 100000
+    "limit": 100000,
+    "iniLimitMul": 500
   },
   "seed": null
 }
