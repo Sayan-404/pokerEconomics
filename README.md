@@ -30,5 +30,12 @@
 
 ## Run docker
 
-```docker build . -t image_name
-docker run -d image_name```
+```docker build . -t image_name```
+```docker run -d -i image_name```
+
+Open docker desktop and then exec in the container menu, navigate to root and run ```. venv/bin/activate``` to activate.
+
+```docker stop container_hash```
+Get container hash using ```docker ps```.
+
+To delete container: ```docker rm container_hash```.
