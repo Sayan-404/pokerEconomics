@@ -27,3 +27,8 @@
 
 - [ ] Aggression factor showing after end of simulation
 - [ ] Maths of strategy verified
+
+## Run docker
+
+```docker build . -t image_name
+docker run -d image_name```
