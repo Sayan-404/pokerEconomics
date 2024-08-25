@@ -171,20 +171,25 @@ class Game:
                 enablePrint()
             elif self.simul:
                 blockPrint()
-                for i in tqdm(
-                    range(self.number_of_hands),
+                with tqdm(
+                    total=self.number_of_hands,
                     desc=f"Simulation ##{self.id}: ",
                     position=self.id,
-                ):
-                    if self.test:
-                        self.debug_data = {
-                            "config": self.config,
-                            "rawActionChain": self.actionChain,
-                        }
-                        chainValidate(self.debug_data, self.hand_number)
+                    leave=True,
+                ) as pbar:
+                    for i in range(self.number_of_hands):
+                        if self.test:
+                            self.debug_data = {
+                                "config": self.config,
+                                "rawActionChain": self.actionChain,
+                            }
+                            chainValidate(self.debug_data, self.hand_number)
 
-                    if not self.sub_play(i):
-                        break
+                        if not self.sub_play(i):
+                            break
+
+                        pbar.update(1)
+                        
                 enablePrint()
             else:
                 for i in range(self.number_of_hands):
