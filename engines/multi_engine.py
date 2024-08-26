@@ -112,9 +112,6 @@ if __name__ == "__main__":
                     limit = float(input("Enter overall limit: "))  # Overall limit for the simulation.
                     iniLimitMul = int(input("Enter initial round limit multiplier (-1 for none): "))  # Multiplier for initial round limit.
                     seed = float(input("Enter seed (-1 for None): "))  # Seed for random number generation.
-                    
-                    if iniLimitMul == -1:
-                        iniLimitMul = False  # Disable initial limit multiplier if input is -1.
 
                     if seed == -1:
                         seed = None  # Disable seeding if input is -1.

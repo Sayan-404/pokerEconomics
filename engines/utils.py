@@ -43,7 +43,7 @@ def shutdownInstance():
         import traceback
         print(f"Failed to shut down instance: \n{traceback.print_exc()}")
 
-def rationalStrat(limit, r_shift, l_shift, risk, bluff, iniLimitMultiplier):
+def rationalStrat(limit, r_shift=0, l_shift=0, risk=0, bluff=0, iniLimitMultiplier=None):
     """
     Create a rational strategy configuration for a game.
 
@@ -264,25 +264,24 @@ def initialise_run_param(seed, obsVar, value, num, limit, iniLimitMul, id=0, ben
         Initialize and configure a game run with parameterized strategies for comparison.
 
         Parameters:
-        - seed: The seed for random number generation.
-        - obsVar: The variable to observe (e.g., 'r_shift', 'l_shift', 'risk').
-        - value: The value of the observed variable.
-        - num: The number of hands to simulate.
-        - limit: The betting limit.
-        - iniLimitMul: Initial limit multiplier for the strategies.
-        - id: The ID of the run.
-        - benchmark: A boolean indicating whether to enable benchmarking.
-        - test: A boolean indicating whether this is a test run.
+
+            - seed - The seed for random number generation.
+            - obsVar - The variable to observe (e.g., 'r_shift', 'l_shift', 'risk').
+            - value - The value of the observed variable.
+            - num - The number of hands to simulate.
+            - limit - The betting limit.
+            - iniLimitMul - Initial limit multiplier for the strategies.
+            - id - The ID of the run.
+            - benchmark - A boolean indicating whether to enable benchmarking.
+            - test - A boolean indicating whether this is a test run.
 
         Returns:
         - A configured Game object.
     """
+
     # Create strategies for comparison
     balanced_strat = rationalStrat(limit=limit, iniLimitMultiplier=iniLimitMul)
-    balanced_strat.eval = True
-
     test_strat = rationalStrat(limit=limit, iniLimitMultiplier=iniLimitMul)
-    test_strat.eval = True
 
     if obsVar == "r_shift":
         test_strat.r_shift = value
@@ -294,13 +293,12 @@ def initialise_run_param(seed, obsVar, value, num, limit, iniLimitMul, id=0, ben
         raise Exception("Invalid parameter given for evaluation.")
 
     # Create players
-    player1 = Player("base", 100000000, "base", getattr(balanced_strat, "decide"))
-    player2 = Player(f"test_{obsVar}_{value}", 100000000, f"test_{obsVar}_{value}", getattr(test_strat, "decide"))
+    player1 = Player("base", 1000000000000, "base", getattr(balanced_strat, "decide"))
+    player2 = Player(f"test_{obsVar}_{value}", 1000000000000, f"test_{obsVar}_{value}", getattr(test_strat, "decide"))
 
+    # Initialise and return the configured game object
     players = [player1, player2]
-
     logger = Logger(log_hands=False, benchmark=benchmark, strategies=[player.strategy_name for player in players], number_of_hands=num)
-
     game = Game(
         players,
         logger,
@@ -311,6 +309,7 @@ def initialise_run_param(seed, obsVar, value, num, limit, iniLimitMul, id=0, ben
         config={},
         test=test,
     )
+
     return game
 
 
@@ -350,21 +349,13 @@ def run_game_param(data):
     """
     from gc import collect
     seed, obs_var, c_val, nums, limit, iniLimitMul, id = data
-    retries = 0
-    while True:
-        try:
-            game = initialise_run_param(seed, obs_var, c_val, nums, limit, iniLimitMul, id = id)
-            game.play()
-            del game
-            collect()
-            break
-        except:
-            retries += 1
-            print("An error occurred while executing game.play(). Retrying...")
 
-            if retries == 5:
-                print("Simulation failed.")
-                break
+    # Get the game object & play
+    game = initialise_run_param(seed, obs_var, c_val, nums, limit, iniLimitMul, id = id)
+    game.play()
+    del game
+    collect()
+
 
 def run_game_manual(config):
     """
