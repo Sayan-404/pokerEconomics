@@ -1,15 +1,14 @@
-import json
 import os
 import sys
 import traceback
-
 from tqdm import tqdm
+from multiprocessing import Lock
 
 from checks.system_checks import chainValidate, extractChain
-from components import Player
 from components.Deck import Deck
 from components.Showdown import Showdown
 
+progress_lock = Lock()
 
 # Disable print
 def blockPrint():
@@ -175,7 +174,9 @@ class Game:
                     total=self.number_of_hands,
                     desc=f"Simulation ##{self.id}: ",
                     position=self.id,
-                    leave=True,
+                    leave=False,
+                    dynamic_ncols=True,
+                    colour='#00ff00'
                 ) as pbar:
                     for i in range(self.number_of_hands):
                         if self.test:
@@ -188,7 +189,8 @@ class Game:
                         if not self.sub_play(i):
                             break
 
-                        pbar.update(1)
+                        with progress_lock:
+                            pbar.update(1)
                         
                 enablePrint()
             else:

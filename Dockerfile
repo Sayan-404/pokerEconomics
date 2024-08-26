@@ -19,7 +19,7 @@ RUN pip install --upgrade pip && \
 
 # Compile the shared library for evaluate cards
 RUN cd hand_evaluator && \
-    rm -rf build/CMakeCache.txt && \
+    rm -rf build && \
     mkdir -p build && \
     cd build && \
     cmake .. && \
@@ -30,7 +30,7 @@ RUN cd hand_evaluator && \
 
 # Compile the hand strength shared library
 RUN cd poker_metrics/hand_strength && \
-    rm -rf build/CMakeCache.txt && \
+    rm -rf build && \
     mkdir -p build && \
     cd build && \
     cmake .. && \
@@ -41,7 +41,7 @@ RUN cd poker_metrics/hand_strength && \
 
 # Compile the potential shared library
 RUN cd poker_metrics/potential && \
-    rm -rf build/CMakeCache.txt && \
+    rm -rf build && \
     mkdir -p build && \
     cd build && \
     cmake .. && \

@@ -1,0 +1,51 @@
+services:
+  project:
+    restart: always
+    container_name: poker-economics
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - type: bind
+        source: ./checks
+        target: /pokerEconomics/checks
+      - type: bind
+        source: ./components
+        target: /pokerEconomics/components
+      - type: bind
+        source: ./configs
+        target: /pokerEconomics/configs
+      - type: bind
+        source: ./engines
+        target: /pokerEconomics/engines
+      - type: bind
+        source: ./poker_metrics/math_utils.py
+        target: /pokerEconomics/poker_metrics/math_utils.py
+      - type: bind
+        source: ./poker_metrics/ph_score.py
+        target: /pokerEconomics/poker_metrics/ph_score.py
+      - type: bind
+        source: ./poker_metrics/statistics.py
+        target: /pokerEconomics/poker_metrics/statistics.py
+      - type: bind
+        source: ./poker_metrics/utils.py
+        target: /pokerEconomics/poker_metrics/utils.py
+      - type: bind
+        source: ./poker_metrics/__init__.py
+        target: /pokerEconomics/poker_metrics/__init__.py
+      - type: bind
+        source: ./strategies
+        target: /pokerEconomics/strategies
+      - type: bind
+        source: ./analysis.py
+        target: /pokerEconomics/analysis.py
+      - type: bind
+        source: ./Game.py
+        target: /pokerEconomics/Game.py
+      - type: bind
+        source: ./metric_analyser.py
+        target: /pokerEconomics/metric_analyser.py
+      - type: bind
+        source: ./metric_benchmark.py
+        target: /pokerEconomics/metric_benchmark.py
+    command: tail -f /dev/null

@@ -26,7 +26,7 @@ def run(payload, runner, configs={}):
     # Initialize a pool of worker processes with the specified initializer and arguments.
     with ctx.Pool(processes=num_processes, initializer=init_pool, initargs=(configs if configs else payload,)) as pool:
         # Run the runner function on each item in the payload concurrently.
-        results = pool.map(runner, payload)
+        _ = pool.map(runner, payload)
         pool.close()  # Close the pool to prevent any more tasks from being submitted.
         pool.join()  # Wait for all worker processes to finish.
     
