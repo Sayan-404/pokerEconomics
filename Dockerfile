@@ -49,5 +49,5 @@ RUN cd poker_metrics/potential && \
     cd .. && \
     g++ -fPIC --shared -std=c++11 -I include/ potential.c build/libpheval.so -o pot.so
 
-# Entry point command
-CMD ["bash"]
+# Default command to keep container running
+CMD ["tail", "-f", "/dev/null"]
