@@ -2,13 +2,10 @@ import os
 import sys
 import traceback
 from tqdm import tqdm
-from multiprocessing import Lock
 
 from checks.system_checks import chainValidate, extractChain
 from components.Deck import Deck
 from components.Showdown import Showdown
-
-progress_lock = Lock()
 
 # Disable print
 def blockPrint():
@@ -32,6 +29,7 @@ class Game:
         id=0,
         config={},
         test=False,
+        progress_lock=None
     ):
         self.seed = seed
         self.id = id
@@ -59,6 +57,7 @@ class Game:
         self.playing = len(players)
         self.blind = {}
         logger.log_config(players, number_of_hands, self.deck.seed)
+        self.progress_lock = progress_lock
 
     def get_max_bet(self, player_index):
         """
@@ -174,8 +173,6 @@ class Game:
                     total=self.number_of_hands,
                     desc=f"Simulation ##{self.id}: ",
                     position=self.id,
-                    leave=False,
-                    dynamic_ncols=True,
                     colour='#00ff00'
                 ) as pbar:
                     for i in range(self.number_of_hands):
@@ -189,7 +186,10 @@ class Game:
                         if not self.sub_play(i):
                             break
 
-                        with progress_lock:
+                        if self.progress_lock:
+                            with self.progress_lock:
+                                pbar.update(1)
+                        else:
                             pbar.update(1)
                         
                 enablePrint()
