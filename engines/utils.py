@@ -43,20 +43,22 @@ def shutdownInstance():
         import traceback
         print(f"Failed to shut down instance: \n{traceback.print_exc()}")
 
-def rationalStrat(limit, r_shift=0, l_shift=0, risk=0, bluff=0, iniLimitMultiplier=None):
+def rationalStrat(limit, r_shift, l_shift, risk, bluff, iniLimitMultiplier):
     """
     Create a rational strategy configuration for a game.
 
     Parameters:
-    - limit: The betting limit.
-    - r_shift: Right shift for strategy adjustments.
-    - l_shift: Left shift for strategy adjustments.
-    - risk: Risk factor in the strategy.
-    - bluff: Bluffing factor in the strategy.
-    - iniLimitMultiplier: Initial limit multiplier if specified.
+
+        - limit - The betting limit.
+        - r_shift - Right shift for strategy adjustments.
+        - l_shift - Left shift for strategy adjustments.
+        - risk - Risk factor in the strategy.
+        - bluff - Bluffing factor in the strategy.
+        - iniLimitMultiplier - Initial limit multiplier if specified.
 
     Returns:
-    - A configured Strategy object.
+
+        - A configured Strategy object.
     """
     from strategies.Strategy import Strategy
 
@@ -68,12 +70,9 @@ def rationalStrat(limit, r_shift=0, l_shift=0, risk=0, bluff=0, iniLimitMultipli
     strat.r_shift = r_shift
     strat.l_shift = l_shift
     strat.risk = risk
-    strat.limit = limit
+    strat.defaultLimit = limit
     strat.bluff = bluff
-
-    if iniLimitMultiplier:
-        strat.iniLimit = True
-        strat.iniLimitMultiplier = iniLimitMultiplier
+    strat.iniLimitMultiplier = iniLimitMultiplier
 
     # Returns the strategy object
     return strat
@@ -83,10 +82,12 @@ def strategies(configFile):
     Load strategy configurations from a CSV file.
 
     Parameters:
-    - configFile: The name of the configuration file (without the .csv extension).
+
+        - configFile - The name of the configuration file (without the .csv extension).
 
     Returns:
-    - A list of strategies read from the CSV file.
+
+        - A list of strategies with properties read from the CSV file.
     """
     import csv
     strategies = []
@@ -105,11 +106,13 @@ def get_player_decider(player, rat_config='config'):
     Retrieve the decision-making function for a player based on their strategy.
 
     Parameters:
-    - player: A dictionary containing player information, including strategy.
-    - rat_config: The configuration file name for rational strategies.
+
+        - player - A dictionary containing player information, including strategy.
+        - rat_config - The configuration file name for rational strategies.
 
     Returns:
-    - A decision-making function corresponding to the player's strategy.
+
+        - A decision-making function `decide` corresponding to the player's strategy.
     """
     import importlib
 
@@ -137,20 +140,23 @@ def initialise_run_config(config, id=0, benchmark=False, test=False, rat_config=
     Initialize and configure a game run based on a JSON configuration file.
 
     Parameters:
-    - config: The name of the JSON configuration file (without the .json extension).
-    - id: The ID of the run.
-    - benchmark: A boolean indicating whether to enable benchmarking.
-    - test: A boolean indicating whether this is a test run.
-    - rat_config: The configuration file name for rational strategies.
+
+        - config - The name of the JSON configuration file (without the .json extension).
+        - id - The ID of the run.
+        - benchmark - A boolean indicating whether to enable benchmarking.
+        - test - A boolean indicating whether this is a test run.
+        - rat_config - The configuration file name for rational strategies.
 
     Returns:
-    - A configured Game object.
+
+        - A configured Game object.
     """
     data = {}
 
     if test:
         data = config
     else:
+        # If not test then extract the config.json file
         import json
         with open(f"configs/{config}.json", "r") as f:
             data = json.load(f)
@@ -162,18 +168,21 @@ def initialise_run_config(config, id=0, benchmark=False, test=False, rat_config=
         data["player1"]["strategy"],
         get_player_decider(data["player1"], rat_config),
     )
+
     player2 = Player(
         data["player2"]["id"],
         data["player2"]["bankroll"],
         data["player2"]["strategy"],
         get_player_decider(data["player2"], rat_config),
     )
+
     players = [player1, player2]
 
     seed = None
     if "seed" in data:
         seed = data["seed"]
 
+    # Initialise the game object
     num = data["runs"]
     logger = Logger(log_hands=data["log_hands"], benchmark=benchmark, strategies=[player.strategy_name for player in players], number_of_hands=num)
     game = Game(
@@ -186,79 +195,87 @@ def initialise_run_config(config, id=0, benchmark=False, test=False, rat_config=
         config=data,
         test=test,
     )
+
+    # Return the configured game object
     return game
 
-def initialise_run_auto(runs, seed, limit, strats, iniLimitMultiplier, bankroll=1000000, id=0, benchmark=False):
+def initialise_run_manual(runs, seed, limit, strats, iniLimitMultiplier, bankroll=1000000, id=0, benchmark=False):
     """
     Initialize and configure a game run with automatic player setup.
 
     Parameters:
-    - seed: The seed for random number generation.
-    - limit: The betting limit.
-    - strats: A list of strategies for the players.
-    - iniLimitMultiplier: Initial limit multiplier for the strategies.
-    - bankroll: The starting bankroll for each player.
-    - id: The ID of the run.
-    - benchmark: A boolean indicating whether to enable benchmarking.
+
+        - seed - The seed for random number generation.
+        - limit - The betting limit.
+        - strats - A list of strategies for the players.
+        - iniLimitMultiplier - Initial limit multiplier for the strategies.
+        - bankroll - The starting bankroll for each player.
+        - id - The ID of the run.
+        - benchmark - A boolean indicating whether to enable benchmarking.
 
     Returns:
-    - A configured Game object.
+        - A configured Game object.
     """
-    # Create strategies for players
-    strat1 = rationalStrat(limit, r_shift=float(strats[0][1]), l_shift=float(strats[0][2]), risk=float(strats[0][3]), bluff=int(strats[0][4]), iniLimitMultiplier=iniLimitMultiplier)
-    strat1.eval = True
 
-    strat2 = rationalStrat(limit, r_shift=float(strats[1][1]), l_shift=float(strats[1][2]), risk=float(strats[1][3]), bluff=int(strats[1][4]), iniLimitMultiplier=iniLimitMultiplier)
-    strat2.eval = True
+    # Create the strategy objects for both players
+    # Equivalent of importing a children strategy module
+    strat1 = rationalStrat(
+        limit, 
+        r_shift=float(strats[0][1]), 
+        l_shift=float(strats[0][2]), 
+        risk=float(strats[0][3]), 
+        bluff=int(strats[0][4]), 
+        iniLimitMultiplier=iniLimitMultiplier
+    )
+
+    strat2 = rationalStrat(
+        limit, 
+        r_shift=float(strats[1][1]), 
+        l_shift=float(strats[1][2]), 
+        risk=float(strats[1][3]), 
+        bluff=int(strats[1][4]), 
+        iniLimitMultiplier=iniLimitMultiplier
+    )
 
     # Create players
     player1 = Player(f"{strats[0][0]}", bankroll, f"{strats[0][0]}", getattr(strat1, "decide"))
     player2 = Player(f"{strats[1][0]}", bankroll, f"{strats[0][0]}", getattr(strat2, "decide"))
 
+    # Set up parameters of Game object
     players = [player1, player2]
-
     logger = Logger(log_hands=False, benchmark=benchmark, strategies=[player.strategy_name for player in players], number_of_hands=runs)
 
-    retries = 0
-    while True:
-        try:
-            game = Game(
-                players,
-                logger,
-                number_of_hands=runs,
-                simul=True,
-                seed=seed,
-                id=id,
-                config={},
-                test=False,
-            )
-            break
-        except:
-            retries += 1
-            print("An error occurred while creating the Game object. Retrying...")
+    # Create the game object and return it
+    game = Game(
+        players,
+        logger,
+        number_of_hands=runs,
+        simul=True,
+        seed=seed,
+        id=id,
+        config={},
+        test=False,
+    )
 
-            if retries == 5:
-                print("Simulation failed.")
-                break
     return game
 
 def initialise_run_param(seed, obsVar, value, num, limit, iniLimitMul, id=0, benchmark=False, test=False):
     """
-    Initialize and configure a game run with parameterized strategies for comparison.
+        Initialize and configure a game run with parameterized strategies for comparison.
 
-    Parameters:
-    - seed: The seed for random number generation.
-    - obsVar: The variable to observe (e.g., 'r_shift', 'l_shift', 'risk').
-    - value: The value of the observed variable.
-    - num: The number of hands to simulate.
-    - limit: The betting limit.
-    - iniLimitMul: Initial limit multiplier for the strategies.
-    - id: The ID of the run.
-    - benchmark: A boolean indicating whether to enable benchmarking.
-    - test: A boolean indicating whether this is a test run.
+        Parameters:
+        - seed: The seed for random number generation.
+        - obsVar: The variable to observe (e.g., 'r_shift', 'l_shift', 'risk').
+        - value: The value of the observed variable.
+        - num: The number of hands to simulate.
+        - limit: The betting limit.
+        - iniLimitMul: Initial limit multiplier for the strategies.
+        - id: The ID of the run.
+        - benchmark: A boolean indicating whether to enable benchmarking.
+        - test: A boolean indicating whether this is a test run.
 
-    Returns:
-    - A configured Game object.
+        Returns:
+        - A configured Game object.
     """
     # Create strategies for comparison
     balanced_strat = rationalStrat(limit=limit, iniLimitMultiplier=iniLimitMul)
@@ -349,7 +366,7 @@ def run_game_param(data):
                 print("Simulation failed.")
                 break
 
-def run_game_auto(config):
+def run_game_manual(config):
     """
     Runs a game simulation with the provided configuration parameters.
     
@@ -362,10 +379,10 @@ def run_game_auto(config):
             - seed (int): The seed value for the game's random number generator.
     
     Returns:
-        None
+        - None
     """
 
-    # Get all the simulation attributes from the config
+    # Get all the simulation attributes from the config dictionary
     strats = config["strats"]
     limit = config["limit"]
     iniLimitMul = config["iniLimitMul"]
@@ -373,24 +390,14 @@ def run_game_auto(config):
     seed = config["seed"]
     runs = config["runs"]
 
-    retries = 0
-    while True:
-        try:
-            game = initialise_run_auto(runs, seed, limit, strats, iniLimitMul, bankroll=bankroll)
-            game.play()
-            break
-        except:
-            retries += 1
-            print("An error occurred while executing game.play(). Retrying...")
+    # Get configured game from `initialise_run_manual` and run the game
+    game = initialise_run_manual(runs, seed, limit, strats, iniLimitMul, bankroll=bankroll)
+    game.play()
 
-            if retries == 5:
-                print("Simulation failed.")
-                break
 
 if __name__ == "__main__":
     """
     Test the utility module by creating a game with default parameters.
-    """
-    
+    """    
     game = initialise_run_param(seed=1, obsVar="r_shift", value=0.5, num=100000, limit=50000, iniLimitMul=100)
     game.play()

@@ -103,7 +103,7 @@ if __name__ == "__main__":
 
                 case 2:
                     # Automate simulations based on properties defined in a CSV file.
-                    from engines.utils import strategies, run_game_auto  
+                    from engines.utils import strategies, run_game_manual  
                     from itertools import combinations_with_replacement 
 
                     configFile = input("Enter config file (without .csv): ")  # Prompt for the config file name.
@@ -153,7 +153,7 @@ if __name__ == "__main__":
                         payload.append(config)
 
                     # Run the automated simulations with the generated payload.
-                    run(payload, run_game_auto)
+                    run(payload, run_game_manual)
 
                     print("Simulation Completed.\n")
                     ex = True if input("Exit? (y/n): ") == "y" else False

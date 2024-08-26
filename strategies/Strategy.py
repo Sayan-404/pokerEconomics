@@ -65,7 +65,6 @@ class Strategy:
         self.sp = -1
         self.po = -1
         self.t_determiner = -1
-        self.effectivePotential = -1          # hs or sp depending on the situation
 
         # A number defining the "prodigalness" of a strategy
         self.r_shift = 0
@@ -80,7 +79,7 @@ class Strategy:
 
         self.move = ()
 
-        # self.defaultLimit = 100000
+        self.defaultLimit = 100000
 
     def initialise(self, information):
         """
@@ -259,7 +258,7 @@ class Strategy:
         """
 
         # Only applicable for heads-up
-        if (self.round == 0) and ((self.prevActionRound != 0)):
+        if (self.round == 0):
             self.initialPot = 2 * self.bigBlind
 
             # Ideally
