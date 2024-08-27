@@ -8,5 +8,3 @@ The following types of engines are available for different purposes.
 4. `Test.py` - Engine to test `Game.py`.
 
 In addition, there's an `utils.py` which contains all the helper functions for the engines.
-
-## `engine.py`

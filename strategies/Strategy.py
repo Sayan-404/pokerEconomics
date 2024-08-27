@@ -26,7 +26,7 @@ class Strategy:
             - `betAmt`: The additional amount the player will bet or raise.
             - `bigBlind`: The big blind value.
             - `hs`, `sp`, `po`, `t_determiner`, `effectivePotential`: Metrics used for decision making and placing bets.
-            - `r_shift`, `l_shift`, `risk`: Numbers defining the "prodigalness", "frugalness", and risk capacity of the strategy.
+            - `shift`, `risk`: Numbers defining the "prodigalness", "frugalness", and risk capacity of the strategy.
             - `bluff`: A flag indicating whether the player should bluff.
             - `move`: The move the player will make.
             - `defaultLimit`: The default limit for the strategy.
@@ -66,11 +66,8 @@ class Strategy:
         self.po = -1
         self.t_determiner = -1
 
-        # A number defining the "prodigalness" of a strategy
-        self.r_shift = 0
-
-        # A number defining the "frugalness" of a strategy
-        self.l_shift = 0
+        # A number defining the "prodigalness/frugalness" of a strategy
+        self.shift = 0
 
         # A number defining the risk capacity of a strategy
         self.risk = 0
@@ -198,7 +195,7 @@ class Strategy:
             # The odd is decided randomly from player's playing range
 
             self.r = odds(self.ll, self.ul, self.hs, self.risk,
-                          self.l_shift, self.r_shift)
+                          self.shift)
 
             self.monValue = round(self.pot*self.r)
             self.betAmt = self.monValue

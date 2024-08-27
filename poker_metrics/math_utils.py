@@ -53,7 +53,7 @@ def kde_plot(scores):
     plt.show()
 
 
-def odds(lower_limit, upper_limit, hand_strength, risk, l_shift, r_shift):
+def odds(lower_limit, upper_limit, hand_strength, risk, shift):
     from scipy.stats import truncnorm
     
     # Pot limit can never be less than 0 theoretically
@@ -61,7 +61,7 @@ def odds(lower_limit, upper_limit, hand_strength, risk, l_shift, r_shift):
         raise Exception("Lower limit can never be less than 0.")
 
     sigma = upper_limit/3
-    mean = lower_limit + hand_strength*(r_shift + risk - l_shift)
+    mean = lower_limit + hand_strength*(shift + risk)
 
     t_lower = (lower_limit - mean) / sigma
     t_upper = (upper_limit - mean) / sigma

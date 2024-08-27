@@ -163,7 +163,7 @@ if __name__ == "__main__":
                     from engines.utils import run_game_param  # Import parameter evaluation function.
                     
                     nums = int(input("Enter runs: "))  # Number of runs for the simulation.
-                    obs_var = input("Enter variable under observation (1: r_shift; 2: l_shift; 3: risk, 4: limit): ")  # Variable under observation.
+                    obs_var = input("Enter variable under observation (1: shift, 2: risk, 3: bluff): ")  # Variable under observation.
                     min_range = float(input("Enter lower limit of range to observe: "))  # Lower bound of the range.
                     max_range = float(input("Enter upper limit of range to observe: "))  # Upper bound of the range.
                     step = float(input("Enter the step value: "))  # Step value for the range.
@@ -175,20 +175,17 @@ if __name__ == "__main__":
                     while True:
                         match obs_var:
                             case "1":
-                                obs_var = "r_shift"
+                                obs_var = "shift"
                                 break
                             case "2":
-                                obs_var = "l_shift"
-                                break
-                            case "3":
                                 obs_var = "risk"
                                 break
-                            case "4":
-                                obs_var = "limit"
+                            case "3":
+                                obs_var = "bluff"
                                 break
                             case _:
-                                obs_var = input(
-                                    "Enter variable under observation (1: r_shift; 2: l_shift; 3: risk, 4: limit): ")
+                                obs_var = input("Enter variable under observation (1: shift, 2: risk, 3: bluff): ")  # Variable under observation.
+
 
                     params = []  # List to hold parameter configurations.
 

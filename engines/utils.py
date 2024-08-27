@@ -43,15 +43,14 @@ def shutdownInstance():
         import traceback
         print(f"Failed to shut down instance: \n{traceback.print_exc()}")
 
-def rationalStrat(limit, r_shift=0, l_shift=0, risk=0, bluff=0, iniLimitMultiplier=None):
+def rationalStrat(limit, shift=0, risk=0, bluff=0, iniLimitMultiplier=None):
     """
     Create a rational strategy configuration for a game.
 
     Parameters:
 
         - limit - The betting limit.
-        - r_shift - Right shift for strategy adjustments.
-        - l_shift - Left shift for strategy adjustments.
+        - shift - Shift for strategy adjustments.
         - risk - Risk factor in the strategy.
         - bluff - Bluffing factor in the strategy.
         - iniLimitMultiplier - Initial limit multiplier if specified.
@@ -67,8 +66,7 @@ def rationalStrat(limit, r_shift=0, l_shift=0, risk=0, bluff=0, iniLimitMultipli
 
     # Give the properties to the strategy
     strat.eval = True
-    strat.r_shift = r_shift
-    strat.l_shift = l_shift
+    strat.shift = shift
     strat.risk = risk
     strat.defaultLimit = limit
     strat.bluff = bluff
@@ -120,7 +118,7 @@ def get_player_decider(player, rat_config='config'):
         # Get the actual module from strategies directory if exists
         module = importlib.import_module("strategies.{}".format(player["strategy"]))
         return getattr(module, "decide")
-    except ImportError:
+    except ModuleNotFoundError:
         # Get the module from rational config
         strats = strategies(rat_config)
         strat = next((strat for strat in strats if strat[0] == player["strategy"]), None)
@@ -130,7 +128,7 @@ def get_player_decider(player, rat_config='config'):
             raise Exception(f"Strategy {player['strategy']} does not exist.")
         
         # Set up a strategy object with properties
-        strat = rationalStrat(player['limit'], float(strat[1]), float(strat[2]), float(strat[3]), int(strat[4]), player["iniLimitMul"])
+        strat = rationalStrat(player['limit'], float(strat[1]), float(strat[2]), float(strat[3]), player["iniLimitMul"])
 
         # Return the decide function
         return getattr(strat, "decide")
@@ -221,19 +219,17 @@ def initialise_run_manual(runs, seed, limit, strats, iniLimitMultiplier, bankrol
     # Equivalent of importing a children strategy module
     strat1 = rationalStrat(
         limit, 
-        r_shift=float(strats[0][1]), 
-        l_shift=float(strats[0][2]), 
-        risk=float(strats[0][3]), 
-        bluff=int(strats[0][4]), 
+        shift=float(strats[0][1]), 
+        risk=float(strats[0][2]), 
+        bluff=int(strats[0][3]), 
         iniLimitMultiplier=iniLimitMultiplier
     )
 
     strat2 = rationalStrat(
         limit, 
-        r_shift=float(strats[1][1]), 
-        l_shift=float(strats[1][2]), 
-        risk=float(strats[1][3]), 
-        bluff=int(strats[1][4]), 
+        shift=float(strats[1][1]), 
+        risk=float(strats[1][2]), 
+        bluff=int(strats[1][3]), 
         iniLimitMultiplier=iniLimitMultiplier
     )
 
@@ -266,7 +262,7 @@ def initialise_run_param(seed, obsVar, value, num, limit, iniLimitMul, id=0, ben
         Parameters:
 
             - seed - The seed for random number generation.
-            - obsVar - The variable to observe (e.g., 'r_shift', 'l_shift', 'risk').
+            - obsVar - The variable to observe (e.g., 'shift', 'risk', 'limit').
             - value - The value of the observed variable.
             - num - The number of hands to simulate.
             - limit - The betting limit.
@@ -283,12 +279,12 @@ def initialise_run_param(seed, obsVar, value, num, limit, iniLimitMul, id=0, ben
     balanced_strat = rationalStrat(limit=limit, iniLimitMultiplier=iniLimitMul)
     test_strat = rationalStrat(limit=limit, iniLimitMultiplier=iniLimitMul)
 
-    if obsVar == "r_shift":
-        test_strat.r_shift = value
-    elif obsVar == "l_shift":
-        test_strat.l_shift = value
+    if obsVar == "shift":
+        test_strat.shift = value
     elif obsVar == "risk":
         test_strat.risk = value
+    elif obsVar == "bluff":
+        test_strat.bluff = value
     else:
         raise Exception("Invalid parameter given for evaluation.")
 
@@ -383,12 +379,4 @@ def run_game_manual(config):
 
     # Get configured game from `initialise_run_manual` and run the game
     game = initialise_run_manual(runs, seed, limit, strats, iniLimitMul, bankroll=bankroll)
-    game.play()
-
-
-if __name__ == "__main__":
-    """
-    Test the utility module by creating a game with default parameters.
-    """    
-    game = initialise_run_param(seed=1, obsVar="r_shift", value=0.5, num=100000, limit=50000, iniLimitMul=100)
     game.play()

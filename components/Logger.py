@@ -52,7 +52,7 @@ class Logger:
                 caller_function_name = caller_frame.function
                 caller_module = inspect.getmodule(caller_frame.frame)
                 caller_module_name = caller_module.__name__ if caller_module else None
-                prefix = f"[LOG@{caller_module_name}.{caller_function_name} {time.strftime("%D %H:%M:%S", time.localtime())}]"
+                prefix = f"[LOG@{caller_module_name}.{caller_function_name} {time.strftime('%D %H:%M:%S', time.localtime())}]"
                 print(prefix, *args, sep=sep, end=end, file=file, flush=flush)
             self.print = _misc_log
         else:

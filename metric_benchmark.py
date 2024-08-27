@@ -1,9 +1,9 @@
 from hand_evaluator.evaluate_cards import evaluate_cards as c_evaluate_cards
 from poker_metrics import odds
 from poker_metrics.utils import privateValue
-from poker_metrics.ogpotential import potential
+# from poker_metrics.ogpotential import potential
+# from poker_metrics.outs import equity
 from poker_metrics.potential.potential import potential as cpotential
-from poker_metrics.outs import equity
 from poker_metrics.hand_strength.shs import handStrength
 from itertools import combinations
 import random
