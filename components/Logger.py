@@ -96,12 +96,13 @@ class Logger:
     def close_files(self):
         self.config_file.close()
         self.games_file.close()
-        self.hand_file.close()
+        if self.log_hands:
+            self.hand_file.close()
 
     def handle_hand_file(self, i):
-        self.hand_file.close()
         if not self.log_hands:
             return
+        self.hand_file.close()
         self.current_hand_data = {
             "blinds": {
                 "bankrolls": {},

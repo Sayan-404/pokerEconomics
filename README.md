@@ -26,7 +26,7 @@
 ## System Checks Before Final Simulation
 
 - [ ] Aggression factor showing after end of simulation
-- [ ] Maths of strategy verified
+- [x] Maths of strategy verified
 
 ## Run docker
 

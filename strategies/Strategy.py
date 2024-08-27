@@ -198,7 +198,7 @@ class Strategy:
             # The odd is decided randomly from player's playing range
 
             self.r = odds(self.ll, self.ul, self.hs, self.risk,
-                          self.l_shift, self.r_shift, self.seed)
+                          self.l_shift, self.r_shift)
 
             self.monValue = round(self.pot*self.r)
             self.betAmt = self.monValue
