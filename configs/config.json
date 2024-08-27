@@ -1,6 +1,6 @@
 {
-  "log_hands": false,
-  "runs": 100000,
+  "log_hands": true,
+  "runs": 1000,
   "simulation": true,
   "player1": {
     "id": "Sayan",
@@ -16,5 +16,5 @@
     "limit": 100000,
     "iniLimitMul": 500
   },
-  "seed": null
+  "seed": 69069096
 }

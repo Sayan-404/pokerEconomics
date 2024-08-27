@@ -56,10 +56,11 @@ def kde_plot(scores):
 def odds(lower_limit, upper_limit, hand_strength, risk, left_shift, r_shift, seed=None):
     from scipy.stats import truncnorm
 
+    rng = None
     if seed:
-        from numpy.random import seed as sd
-        sd(seed)
-
+        import numpy as np
+        rng = np.random.default_rng(seed)
+    
     # Pot limit can never be less than 0 theoretically
     if lower_limit < 0:
         raise Exception("Lower limit can never be less than 0.")
@@ -72,7 +73,7 @@ def odds(lower_limit, upper_limit, hand_strength, risk, left_shift, r_shift, see
     dist = truncnorm(t_lower, t_upper, loc=mean, scale=sigma)
 
     # Comment the return while viewing the distribution
-    return dist.rvs()
+    return dist.rvs(random_state=rng)
 
 if __name__ == "__main__":
     # hole = ('As', 'Kh')  

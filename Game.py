@@ -28,9 +28,8 @@ class Game:
         seed=None,
         id=0,
         config={},
-        test=False,
-        progress_lock=None
-    ):
+        test=False
+        ):
         self.seed = seed
         self.id = id
         self.config = config
@@ -57,7 +56,6 @@ class Game:
         self.playing = len(players)
         self.blind = {}
         logger.log_config(players, number_of_hands, self.deck.seed)
-        self.progress_lock = progress_lock
 
     def get_max_bet(self, player_index):
         """
@@ -173,7 +171,7 @@ class Game:
                     total=self.number_of_hands,
                     desc=f"Simulation ##{self.id}: ",
                     position=self.id,
-                    colour='#00ff00'
+                    colour='#00ff00',
                 ) as pbar:
                     for i in range(self.number_of_hands):
                         if self.test:
@@ -186,11 +184,7 @@ class Game:
                         if not self.sub_play(i):
                             break
 
-                        if self.progress_lock:
-                            with self.progress_lock:
-                                pbar.update(1)
-                        else:
-                            pbar.update(1)
+                        pbar.update(1)
                         
                 enablePrint()
             else:
