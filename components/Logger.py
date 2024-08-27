@@ -17,10 +17,11 @@ import json
 import os
 import time
 import uuid
-
+import inspect
 
 class Logger:
-    def __init__(self, log_hands = False, benchmark = False, strategies = [], number_of_hands = 0):
+
+    def __init__(self, log_hands = False, benchmark = False, strategies = [], number_of_hands = 0, simul = False):
         name = ""
         for strat in strategies:
             name += f"{strat}_"
@@ -31,7 +32,32 @@ class Logger:
         self.path = f"{os.path.abspath(os.getcwd())}/data/{folder}"
         os.makedirs(self.path)
         self.config_file = open(f"{self.path}/config.json", "w")
-        self.hand_file = open(f"{self.path}/hand_0.json", "a")
+
+        if log_hands:
+            self.hand_file = open(f"{self.path}/hand_0.json", "a")
+
+        # log.txt logs print statements in cases where print is blocked and log_hands is on
+        # helps in debugging
+        # to print selectively, change the file parameter to any string
+        # this helps in isolated debugging prints
+
+        if simul and log_hands:
+            self.misc_log_file = open(f"{self.path}/log.txt", "a")
+            self.selective_misc_log_file = open(f"{self.path}/selective_log.txt", "a")
+            def _misc_log(*args, sep=' ', end='\n', file=self.misc_log_file, flush=False):
+                if type(file) == str:
+                    file = self.selective_misc_log_file
+                current_frame = inspect.currentframe()
+                caller_frame = inspect.getouterframes(current_frame, 2)[1]
+                caller_function_name = caller_frame.function
+                caller_module = inspect.getmodule(caller_frame.frame)
+                caller_module_name = caller_module.__name__ if caller_module else None
+                prefix = f"[LOG@{caller_module_name}.{caller_function_name} {time.strftime("%D %H:%M:%S", time.localtime())}]"
+                print(prefix, *args, sep=sep, end=end, file=file, flush=flush)
+            self.print = _misc_log
+        else:
+            self.print = print
+
         self.current_hand_data = {
             "blinds": {
                 "bankrolls": {},

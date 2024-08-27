@@ -184,7 +184,7 @@ def initialise_run_config(config, id=0, benchmark=False, test=False, rat_config=
 
     # Initialise the game object
     num = data["runs"]
-    logger = Logger(log_hands=data["log_hands"], benchmark=benchmark, strategies=[player.strategy_name for player in players], number_of_hands=num)
+    logger = Logger(log_hands=data["log_hands"], benchmark=benchmark, strategies=[player.strategy_name for player in players], number_of_hands=num, simul=data["simulation"])
     game = Game(
         players,
         logger,
@@ -243,7 +243,7 @@ def initialise_run_manual(runs, seed, limit, strats, iniLimitMultiplier, bankrol
 
     # Set up parameters of Game object
     players = [player1, player2]
-    logger = Logger(log_hands=False, benchmark=benchmark, strategies=[player.strategy_name for player in players], number_of_hands=runs)
+    logger = Logger(log_hands=False, benchmark=benchmark, strategies=[player.strategy_name for player in players], number_of_hands=runs, simul=True)
 
     # Create the game object and return it
     game = Game(
@@ -298,7 +298,7 @@ def initialise_run_param(seed, obsVar, value, num, limit, iniLimitMul, id=0, ben
 
     # Initialise and return the configured game object
     players = [player1, player2]
-    logger = Logger(log_hands=False, benchmark=benchmark, strategies=[player.strategy_name for player in players], number_of_hands=num)
+    logger = Logger(log_hands=False, benchmark=benchmark, strategies=[player.strategy_name for player in players], number_of_hands=num, simul=True)
     game = Game(
         players,
         logger,

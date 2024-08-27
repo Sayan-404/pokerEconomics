@@ -22,7 +22,7 @@ class TestGame(unittest.TestCase):
 
         self.players = [self.player1, self.player2]
 
-        self.logger = Logger(log_hands=False, strategies=[player.strategy_name for player in self.players], number_of_hands=2)
+        self.logger = Logger(log_hands=False, strategies=[player.strategy_name for player in self.players], number_of_hands=2, simul=True)
 
         self.game = Game(self.players, self.logger, 2, simul=True)
 
