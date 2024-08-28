@@ -10,17 +10,17 @@
     - [x] Refactor engine components
     - [x] Refactor Strategy
     - [x] Refactor poker_metrics
-- [ ] Decide something for the seed
+- [x] Decide something for the seed
 - [x] clean up requirements.txt
 - [x] create an all encompassing setup script that compiles shared library, creates virtual python environment and installs all dependencies
 - [ ] finalise all parameters (for strategies and others)
 - [x] final code review
-- [ ] documentation (comments and other documentation for strategies)
+- [x] documentation (comments and other documentation for strategies)
 - [x] change preflop betting
 - [x] integrate risk into mean shifting
 - [x] observe river
 - [x] create optimal testing grounds for a more comprehensive testing
-- [ ] parameter evaluation demo
+- [x] parameter evaluation demo
 - [x] Bluffer limit implementation
 
 ## System Checks Before Final Simulation
