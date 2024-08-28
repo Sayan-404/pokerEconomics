@@ -9,9 +9,9 @@ from scipy.interpolate import make_interp_spline
 
 def plot(file_path):
     # Check for the data directory
-    data_path = os.path.join(file_path, 'data')
+    data_path = os.path.join(file_path, "data")
     if not os.path.isdir(data_path):
-        print(f"No data directory found in {file_path}")
+        print(f"No data directory found in {data_path}")
         return
 
     # Iterate over all directories in the data directory
@@ -34,7 +34,7 @@ def plot(file_path):
                 )  # Increase the number of points for smoothness
 
                 players = [name for index, name in enumerate(
-                    df.columns) if 0 < index < len(df.columns) - 2]
+                    df.columns) if 0 < index < len(df.columns) - 4]
                 for i in range(2):
                     df[players[i]] -= df[players[i]][0]
                 # Create smooth curves for Sayan and Sourjya
@@ -44,20 +44,26 @@ def plot(file_path):
                 y_sayan_smooth = spl_sayan(x_new)
                 y_sourjya_smooth = spl_sourjya(x_new)
 
+                # Extract aggression factor
+                aggression_factor_keys = [name for index, name in enumerate(
+                    df.columns) if 2 < index < len(df.columns) - 2]
+                aggression_factors = [df[i].loc[[1][0]] for i in aggression_factor_keys]
+
                 # Plot the smooth curves
                 plt.figure(figsize=(10, 5))
-                plt.plot(x_new, y_sayan_smooth, label=players[0])
-                plt.plot(x_new, y_sourjya_smooth, label=players[1])
+                plt.plot(x_new, y_sayan_smooth, label=f"{players[0]} {aggression_factors[0]}")
+                plt.plot(x_new, y_sourjya_smooth, label=f"{players[1]} {aggression_factors[1]}")
                 plt.title("Scores Over Rounds")
                 plt.xlabel("Hand Number")
                 plt.ylabel("Scores")
                 plt.legend()
                 plt.grid(True)
-                plt.savefig(f"{subdir_path}analysis.png")
+                plt.savefig(f"{subdir_path}/_analysis.png")
 
                 # # Optionally, show the plot
                 # plt.show()
-            except:
+            except Exception as e:
+                print(e)
                 continue
 
 

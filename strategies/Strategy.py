@@ -323,7 +323,7 @@ class Strategy:
         # Only applicable if hand strength is less than 0.5
         if self.hs < 0.5:
             # 1 in `self.bluff` chance to inverse hand strength
-            if 1 == random.randint(1, self.bluff):
+            if 1 == random.randint(1, int(self.bluff)):
                 self.hs = 1 - self.hs
 
     def __str__(self):
