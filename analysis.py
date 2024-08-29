@@ -5,17 +5,18 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from scipy.interpolate import make_interp_spline
-
+from tqdm import tqdm
 
 def plot(file_path):
     # Check for the data directory
-    data_path = os.path.join(file_path, "data")
+    data_path = file_path
     if not os.path.isdir(data_path):
         print(f"No data directory found in {data_path}")
         return
 
     # Iterate over all directories in the data directory
-    for subdir in os.listdir(data_path):
+    for i in tqdm(range(0, len(os.listdir(data_path)))):
+        subdir = os.listdir(data_path)[i]
         subdir_path = os.path.join(data_path, subdir)
         if os.path.isdir(subdir_path):
             csv_file = os.path.join(subdir_path, 'games.csv')
@@ -68,6 +69,8 @@ def plot(file_path):
 
 
 def show_hand(file_path):
+    game_data_dir = input("input game data directory name: ")
+    file_path = os.path.join(file_path, game_data_dir)
     if not os.path.isfile(f"{file_path}hand_0.json"):
         print("hands are not logged (hand_0 not found)")
         return
@@ -86,10 +89,10 @@ def show_hand(file_path):
 # Set up command line argument parsing
 parser = argparse.ArgumentParser(description="Analyser")
 parser.add_argument(
-    "file_path", type=str, help="path to the folder containing game data"
+    "file_path", type=str, help="path to the folder containing game data folder(s)"
 )
 parser.add_argument(
-    "--plot", help="plot bankrolls", action=argparse.BooleanOptionalAction
+    "--plot", help="plot bankrolls in game data folder", action=argparse.BooleanOptionalAction
 )
 parser.add_argument(
     "--show_hand", help="prints individual hand details if present", action=argparse.BooleanOptionalAction
