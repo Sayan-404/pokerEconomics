@@ -59,6 +59,10 @@ def odds(lower_limit, upper_limit, hand_strength, risk, shift):
     # Pot limit can never be less than 0 theoretically
     if lower_limit < 0:
         raise Exception("Lower limit can never be less than 0.")
+    
+    if upper_limit < lower_limit:
+        # fixes bug scale cannot be negative
+        upper_limit = lower_limit + 0.00000001
 
     sigma = upper_limit/3
     mean = lower_limit + hand_strength*(shift + risk)
