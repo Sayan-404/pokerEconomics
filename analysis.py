@@ -52,7 +52,7 @@ def plot(file_path):
 
                 # Plot the smooth curves
                 plt.figure(figsize=(10, 5))
-                plt.plot(x_new, y_sayan_smooth, label=f"{players[0]} {aggression_factors[0]}")
+                plt.plot(x_new, y_sayan_smooth, label=f"{players[0]} {aggression_factors[0]}", linestyle="dashed")
                 plt.plot(x_new, y_sourjya_smooth, label=f"{players[1]} {aggression_factors[1]}")
                 plt.title("Scores Over Rounds")
                 plt.xlabel("Hand Number")
