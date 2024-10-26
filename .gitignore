@@ -5,6 +5,11 @@ env/
 /strats/__pycache__
 __pycache__
 
+truncnorm/bin
+truncnorm/lib
+truncnorm/share
+truncnorm/pyvenv.cfg
+
 .env
 /data/r_*/
 /data/b_*/
