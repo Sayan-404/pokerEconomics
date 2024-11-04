@@ -14,7 +14,7 @@ ll = po / (1 - po)
 ul = sp + hs + risk  # increases range
 
 mean = (1 + hs) * ll + shift  # shifting the mean ll
-sigma = (ul - mean) / 3  # since ul = 3sigma + mean where mean = ll before shifting
+sigma = (ul - ll) / 3  # since ul = 3sigma + ll (original mean is ll) where mean = ll before shifting
 
 t_lower = (ll - mean) / sigma
 t_upper = (ul - mean) / sigma
