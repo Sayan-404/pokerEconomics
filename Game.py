@@ -1034,7 +1034,7 @@ class Game:
             self.streamer.sendObj = self.stats
             self.streamer.stream()
 
-        if self.hand_number == 90000:
+        if self.hand_number == 90000 or self.hand_number == 50000:
             with open(f'game_stats_{self.id}.json', 'w') as f:
                 json.dump(self.stats, f)
 
