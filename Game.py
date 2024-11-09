@@ -1,4 +1,5 @@
 import os
+import json
 import sys
 import traceback
 from tqdm import tqdm
@@ -43,7 +44,7 @@ class Game:
         self.simul = simul
         self.round = 0
         self.logger = logger
-        self.streamer = streamer
+        self.streamer = None
         self.hand_number = 0
         self.all_in = 0
         self.number_of_hands = number_of_hands
@@ -367,13 +368,13 @@ class Game:
             if self.simul:
                 # Ensure player stats are initialized
                 if f"{player.id}" not in self.stats:
-                    self.stats = {players[0].id: {"prodigals": 0, "frugals": 0,"b": 0, "r": 0, "f": 0, "c": 0, "ch": 0}, players[1].id: {"prodigals": 0, "frugals": 0, "b": 0, "r": 0, "f": 0, "c": 0, "ch": 0}}
+                    self.stats = {players[0].id: {"prodigals": 0, "frugals": 0,"b": [], "r": [], "f": [], "c": [], "ch": []}, players[1].id: {"prodigals": 0, "frugals": 0,"b": [], "r": [], "f": [], "c": [], "ch": []}}
     
                 action, bet = player.decide(
                     self.package_state(player_index, call_value=callsize)
                 )
 
-                self.stats[f"{player.id}"][action] += 1
+                self.stats[f"{player.id}"][action].append(bet)
 
 
                 if action in ["b", "r"]:
@@ -1026,8 +1027,15 @@ class Game:
         bankrolls = {player.id: player.bankroll for player in self.players}
         af = {}
 
-        self.streamer.sendObj = self.stats
-        self.streamer.stream()
+        self.stats['hand_number'] = self.hand_number
+        self.stats['round'] = self.round
+
+        if self.streamer:
+            self.streamer.sendObj = self.stats
+            self.streamer.stream()
+
+        with open(f'game_stats_{self.id}.json', 'w') as f:
+            json.dump(self.stats, f)
 
         for player in self.players:
             total_moves = self.stats[player.id]["frugals"] + self.stats[player.id]["prodigals"]
