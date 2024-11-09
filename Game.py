@@ -1034,8 +1034,9 @@ class Game:
             self.streamer.sendObj = self.stats
             self.streamer.stream()
 
-        with open(f'game_stats_{self.id}.json', 'w') as f:
-            json.dump(self.stats, f)
+        if self.hand_number == 90000:
+            with open(f'game_stats_{self.id}.json', 'w') as f:
+                json.dump(self.stats, f)
 
         for player in self.players:
             total_moves = self.stats[player.id]["frugals"] + self.stats[player.id]["prodigals"]
