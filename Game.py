@@ -22,6 +22,7 @@ class Game:
         self,
         players,
         logger,
+        streamer,
         number_of_hands=1,
         deck=Deck,
         simul=False,
@@ -42,6 +43,7 @@ class Game:
         self.simul = simul
         self.round = 0
         self.logger = logger
+        self.streamer = streamer
         self.hand_number = 0
         self.all_in = 0
         self.number_of_hands = number_of_hands
@@ -365,11 +367,14 @@ class Game:
             if self.simul:
                 # Ensure player stats are initialized
                 if f"{player.id}" not in self.stats:
-                    self.stats = {players[0].id: {"prodigals": 0, "frugals": 0}, players[1].id: {"prodigals": 0, "frugals": 0}}
+                    self.stats = {players[0].id: {"prodigals": 0, "frugals": 0,"b": 0, "r": 0, "f": 0, "c": 0, "ch": 0}, players[1].id: {"prodigals": 0, "frugals": 0, "b": 0, "r": 0, "f": 0, "c": 0, "ch": 0}}
     
                 action, bet = player.decide(
                     self.package_state(player_index, call_value=callsize)
                 )
+
+                self.stats[f"{player.id}"][action] += 1
+
 
                 if action in ["b", "r"]:
                     if "prodigals" in self.stats[f"{player.id}"]:
@@ -1020,6 +1025,9 @@ class Game:
         self.logger.print("Hand Ended")
         bankrolls = {player.id: player.bankroll for player in self.players}
         af = {}
+
+        self.streamer.sendObj = self.stats
+        self.streamer.stream()
 
         for player in self.players:
             total_moves = self.stats[player.id]["frugals"] + self.stats[player.id]["prodigals"]

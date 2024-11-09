@@ -64,8 +64,8 @@ def odds(lower_limit, upper_limit, hand_strength, risk, shift):
         # fixes bug scale cannot be negative
         upper_limit = lower_limit + 0.00000001
 
-    sigma = upper_limit/3
-    mean = lower_limit + hand_strength*(shift + risk)
+    mean = (1 + hand_strength) * lower_limit + shift  # shifting the mean ll
+    sigma = (upper_limit - lower_limit) / 3  # since ul = 3sigma + ll (original mean is ll) where mean = ll before shifting
 
     t_lower = (lower_limit - mean) / sigma
     t_upper = (upper_limit - mean) / sigma

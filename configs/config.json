@@ -1,11 +1,11 @@
 {
   "log_hands": false,
-  "runs": 1000,
+  "runs": 150000,
   "simulation": true,
   "player1": {
     "id": "Sayan",
     "bankroll": 100000000000,
-    "strategy": "bluff",
+    "strategy": "loose",
     "limit": 100000,
     "iniLimitMul": 500
   },
