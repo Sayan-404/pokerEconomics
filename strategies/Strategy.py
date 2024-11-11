@@ -34,6 +34,7 @@ class Strategy:
         
         # If eval True then strategy is being used for automated data generation
         self.eval = False
+        self.inspector = None
 
         # Variables for initial limit
         self.iniLimitMultiplier = -1
@@ -147,6 +148,17 @@ class Strategy:
                 pass
             else:
                 self.initialise(information)
+                self.inspector.trackHistory(f"{self.information['player']['id']}", f"{self.information['hand_number']}.{self.information['round']}", {
+                    'holeCards': self.holeCards,
+                    "communityCards": self.communityCards,
+                    "callValue": self.callValue,
+                    "potOdds": self.po,
+                    "ll": self.ll,
+                    "ul": self.ul,
+                    "r": self.r,
+                    "move": list(self.move)
+                })
+                self.inspector.log()
                 return self.move
         else:
             raise NotImplementedError(
@@ -198,7 +210,7 @@ class Strategy:
                           self.shift)
 
             self.monValue = round(self.pot*self.r)
-            self.betAmt = self.monValue
+            self.betAmt = self.monValue             
 
         elif self.t_determiner == 0:
             # When t == 0 then strategy is in balanced position

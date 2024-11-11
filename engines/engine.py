@@ -4,6 +4,7 @@ import sys
 sys.path.append(os.getcwd())
 
 # from checks.compare_test import compare_test
+from components import Inspector
 from engines.utils import *
 
 
@@ -46,11 +47,23 @@ if __name__ == "__main__":
                 # For format, check the README
                 ratConfig = input("Enter name of rational config file (.csv): ")
 
+                inspector = None
+
+                if 'y' in input("Run inspector? (y/n): "):
+                    inspector = Inspector()
+
                 # Get a configured game object by calling `initialise_run_config`
-                game = initialise_run_config(config, rat_config=ratConfig)
+                game = initialise_run_config(config, rat_config=ratConfig, inspector=inspector)
 
                 # Play the game & exit
                 game.play()
+
+                if inspector:
+                    while 'y' not in input('Press "y" to stop inspector: '):
+                        continue
+
+                    inspector.stop_server()
+
                 break
 
             case 1:

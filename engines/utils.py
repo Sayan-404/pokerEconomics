@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 # Add the current working directory to the Python path to allow imports from the project.
 sys.path.append(os.getcwd())
 
-from components import Player, Logger, Streamer
+from components import Player, Logger, Streamer, Inspector
 from Game import Game
 
 # Load environment variables from a .env file.
@@ -43,7 +43,7 @@ def shutdownInstance():
         import traceback
         print(f"Failed to shut down instance: \n{traceback.print_exc()}")
 
-def rationalStrat(limit, shift=0, risk=0, bluff=0, iniLimitMultiplier=None):
+def rationalStrat(limit, shift=0, risk=0, bluff=0, iniLimitMultiplier=None, inspector=None):
     """
     Create a rational strategy configuration for a game.
 
@@ -71,6 +71,7 @@ def rationalStrat(limit, shift=0, risk=0, bluff=0, iniLimitMultiplier=None):
     strat.defaultLimit = limit
     strat.bluff = bluff
     strat.iniLimitMultiplier = iniLimitMultiplier
+    strat.inspector = inspector
 
     # Returns the strategy object
     return strat
@@ -99,7 +100,7 @@ def strategies(configFile):
 
     return strategies
 
-def get_player_decider(player, rat_config='config'):
+def get_player_decider(player, inspector=None, rat_config='config'):
     """
     Retrieve the decision-making function for a player based on their strategy.
 
@@ -128,12 +129,12 @@ def get_player_decider(player, rat_config='config'):
             raise Exception(f"Strategy {player['strategy']} does not exist.")
         
         # Set up a strategy object with properties
-        strat = rationalStrat(player['limit'], float(strat[1]), float(strat[2]), float(strat[3]), player["iniLimitMul"])
+        strat = rationalStrat(player['limit'], float(strat[1]), float(strat[2]), float(strat[3]), player["iniLimitMul"], inspector)
 
         # Return the decide function
         return getattr(strat, "decide")
 
-def initialise_run_config(config, id=0, benchmark=False, test=False, rat_config='config'):
+def initialise_run_config(config, id=0, inspector=None, benchmark=False, test=False, rat_config='config'):
     """
     Initialize and configure a game run based on a JSON configuration file.
 
@@ -164,14 +165,14 @@ def initialise_run_config(config, id=0, benchmark=False, test=False, rat_config=
         data["player1"]["id"],
         data["player1"]["bankroll"],
         data["player1"]["strategy"],
-        get_player_decider(data["player1"], rat_config),
+        get_player_decider(data["player1"], inspector, rat_config),
     )
 
     player2 = Player(
         data["player2"]["id"],
         data["player2"]["bankroll"],
         data["player2"]["strategy"],
-        get_player_decider(data["player2"], rat_config),
+        get_player_decider(data["player2"], inspector, rat_config),
     )
 
     players = [player1, player2]
@@ -187,6 +188,7 @@ def initialise_run_config(config, id=0, benchmark=False, test=False, rat_config=
     game = Game(
         players,
         logger,
+        inspector,
         streamer,
         number_of_hands=num,
         simul=data["simulation"],

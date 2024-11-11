@@ -24,6 +24,7 @@ class Game:
         players,
         logger,
         streamer,
+        inspector,
         number_of_hands=1,
         deck=Deck,
         simul=False,
@@ -45,6 +46,7 @@ class Game:
         self.round = 0
         self.logger = logger
         self.streamer = None
+        self.inspector = inspector
         self.hand_number = 0
         self.all_in = 0
         self.number_of_hands = number_of_hands
@@ -107,6 +109,7 @@ class Game:
             "players": self.players,
             "community_cards": self.community_cards,
             "pot": self.pot,
+            "hand_number": self.hand_number,
             "round": self.round,
             "max_bet": self.get_max_bet(player_index),
             "blinds": self.blind,
