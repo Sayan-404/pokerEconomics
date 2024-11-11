@@ -158,7 +158,7 @@ class Strategy:
                     "r": self.r,
                     "move": list(self.move)
                 })
-                self.inspector.log()
+                # self.inspector.log()
                 return self.move
         else:
             raise NotImplementedError(
