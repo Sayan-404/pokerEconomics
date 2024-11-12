@@ -72,7 +72,7 @@ def odds(lower_limit, upper_limit, hand_strength, risk, shift):
     dist = truncnorm(t_lower, t_upper, loc=mean, scale=sigma)
 
     # Comment the return while viewing the distribution
-    return dist.rvs()
+    return dist.rvs(), mean
 
 if __name__ == "__main__":
     # hole = ('As', 'Kh')  

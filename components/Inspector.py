@@ -58,10 +58,35 @@ class Inspector:
         
         return server, port
 
+    def joinAndLog(self, instances):
+        fields = instances
+        dumpObj = []
+                        
+        if len(fields) == 2 and fields[0] in self.history and fields[1] in self.history:
+            field1 = self.history[fields[0]]
+            field2 = self.history[fields[1]]
+            joined_lists = []
+
+            # Perform join based on matching `history_id`
+            for entry1 in field1:
+                # Find matching entry in field2 by `history_id`
+                matches = [entry2 for entry2 in field2 if entry2.get("history_id") == entry1.get("history_id")]
+                if matches:
+                    # Append both matched entries to a sub-list
+                    for entry2 in matches:
+                        joined_lists.append([entry1, entry2])
+
+            dumpObj = joined_lists
+
+        with open(f'history_join_{instances[0]}_{instances[1]}.json', 'w') as f:
+            json.dump(dumpObj, f)
+
+
     def stop_server(self):
         if self.server:
             self.server.shutdown()
             print("Server stopped")
+
     def _create_request_handler(self):
         inspector = self  # Capture the instance in the closure
 

@@ -66,6 +66,8 @@ class Strategy:
         self.sp = -1
         self.po = -1
         self.t_determiner = -1
+        self.r = None
+        self.distMean = None
 
         # A number defining the "prodigalness/frugalness" of a strategy
         self.shift = 0
@@ -149,14 +151,12 @@ class Strategy:
             else:
                 self.initialise(information)
                 self.inspector.trackHistory(f"{self.information['player']['id']}", f"{self.information['hand_number']}.{self.information['round']}", {
-                    'holeCards': self.holeCards,
-                    "communityCards": self.communityCards,
-                    "callValue": self.callValue,
-                    "potOdds": self.po,
-                    "ll": self.ll,
-                    "ul": self.ul,
+                    "hs": self.hs,
+                    "sp": self.sp,
                     "r": self.r,
-                    "move": list(self.move)
+                    "ul": self.ul,
+                    "mu": self.distMean,
+                    "ul-mu": self.ul - self.distMean, 
                 })
                 # self.inspector.log()
                 return self.move
@@ -206,8 +206,11 @@ class Strategy:
             # Get odds from the odds function and then derive the bet amount
             # The odd is decided randomly from player's playing range
 
-            self.r = odds(self.ll, self.ul, self.hs, self.risk,
+            oddsArray = odds(self.ll, self.ul, self.hs, self.risk,
                           self.shift)
+            
+            self.r = oddsArray[0]
+            self.distMean = oddsArray[1]
 
             self.monValue = round(self.pot*self.r)
             self.betAmt = self.monValue             

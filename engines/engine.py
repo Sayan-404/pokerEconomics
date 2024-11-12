@@ -58,11 +58,14 @@ if __name__ == "__main__":
                 # Play the game & exit
                 game.play()
 
+                inspector.joinAndLog(['Sourjya', 'Sayan'])
+
                 if inspector:
                     while 'y' not in input('Press "y" to stop inspector: '):
                         continue
 
                     inspector.stop_server()
+
 
                 break
 

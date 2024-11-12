@@ -24,3 +24,4 @@ pyrightconfig.json
 /data/r*
 /data/testa*
 journal*
+history*
