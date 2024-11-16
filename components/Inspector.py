@@ -10,8 +10,8 @@ class Inspector:
         self.history = {}
         
         # Automatically start server on a free port
-        self.server, self.port = self._start_server()
-        print(f"Server started on port {self.port}")
+        # self.server, self.port = self._start_server()
+        # print(f"Server started on port {self.port}")
 
     # Journal Functions
     def track(self, instance_name, var_name, value):
@@ -33,11 +33,18 @@ class Inspector:
         self.history[instance_name].append(obj)
 
     def log(self):
-        with open('journal_full.json', 'w') as f:
-            json.dump({
-                "journal": self.journal,
-                "history": self.history,
-            }, f)
+        with open('history.csv', 'w') as f:
+            f.write('hs,sp,ul,r,mu,ul-mu\n')
+            for obj in self.history['Sourjya']:
+                f.write(f"{obj['hs']},{obj['sp']},{obj['ul']},{obj['r']},{obj['mu']},{obj['ul-mu']}\n")
+            
+            for obj in self.history['Sayan']:
+                f.write(f"{obj['hs']},{obj['sp']},{obj['ul']},{obj['r']},{obj['mu']},{obj['ul-mu']}\n")
+        # with open('journal_full.json', 'w') as f:
+        #     json.dump({
+        #         "journal": self.journal,
+        #         "history": self.history,
+        #     }, f)
 
     # Server Functions
     def _start_server(self):

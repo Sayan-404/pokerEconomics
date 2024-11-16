@@ -64,7 +64,11 @@ class Strategy:
         # Metrics for decision making and placing bets
         self.hs = -1
         self.sp = -1
-        self.po = -1
+        self.ps = 0
+        self.ll = 0
+        self.ul = 0
+        self.ul_ = 0
+        self.mu = 0
         self.t_determiner = -1
         self.r = None
         self.distMean = None
@@ -150,15 +154,16 @@ class Strategy:
                 pass
             else:
                 self.initialise(information)
-                self.inspector.trackHistory(f"{self.information['player']['id']}", f"{self.information['hand_number']}.{self.information['round']}", {
-                    "hs": self.hs,
-                    "sp": self.sp,
-                    "r": self.r,
-                    "ul": self.ul,
-                    "mu": self.distMean,
-                    "ul-mu": self.ul - self.distMean, 
-                })
-                # self.inspector.log()
+                if self.inspector:
+                    self.inspector.trackHistory(f"{self.information['player']['id']}", f"{self.information['hand_number']}.{self.information['round']}", {
+                        "hs": self.hs,
+                        "sp": self.sp,
+                        "r": self.r,
+                        "ul": self.ul,
+                        "mu": self.distMean,
+                        "ul-mu": self.ul - self.distMean, 
+                    })
+                    # self.inspector.log()
                 return self.move
         else:
             raise NotImplementedError(
@@ -184,10 +189,14 @@ class Strategy:
 
         self.sp = potential(self.holeCards, self.communityCards) if self.round in [1, 2] else 0
 
-        self.po = (self.callValue/(self.pot + self.callValue))
+        self.ps = self.callValue/self.pot
 
-        self.ll = self.po/(1 - self.po)
-        self.ul = self.sp + self.hs + self.risk
+        self.ul_ = (self.sp + self.risk) if self.round in [1, 2] else (self.hs + self.risk)
+
+        self.mu = ((1 + self.hs) * self.ps) + self.shift
+
+        self.ul = max(self.ul_, self.mu)
+        self.max_bet = round(self.ul * self.pot)
 
         self.t_determiner = self.ul - self.ll
 
@@ -206,14 +215,14 @@ class Strategy:
             # Get odds from the odds function and then derive the bet amount
             # The odd is decided randomly from player's playing range
 
-            oddsArray = odds(self.ll, self.ul, self.hs, self.risk,
+            oddsArray = odds(self.ll, self.ul, self.hs, self.ps, self.risk,
                           self.shift)
             
             self.r = oddsArray[0]
             self.distMean = oddsArray[1]
 
             self.monValue = round(self.pot*self.r)
-            self.betAmt = self.monValue             
+            self.betAmt = min(self.monValue, self.max_bet)          
 
         elif self.t_determiner == 0:
             # When t == 0 then strategy is in balanced position
@@ -254,8 +263,10 @@ class Strategy:
 
         elif self.betAmt < self.callValue:
             # This scenario should not happen so raise an exception
-            raise Exception(
-                f"Bet amount can't be less: {self.betAmt} >! {self.callValue}")
+            # Fold in this scenario
+            self.move = ("f", -1)
+            # raise Exception(
+            #     f"Bet amount can't be less: {self.betAmt} >! {self.callValue}")
 
         else:
             raise Exception(f"Invalid bet amount: {self.betAmt}")
@@ -327,7 +338,13 @@ class Strategy:
         else:
             bet = self.betAmt - self.callValue
             bet = round(bet/self.bigBlind) * self.bigBlind
-            self.betAmt = bet + self.callValue
+        
+            initBetAmt = bet + self.callValue
+
+            if (initBetAmt > self.betAmt):
+                while (initBetAmt > self.betAmt):
+                    initBetAmt -= self.bigBlind
+                self.betAmt = initBetAmt
 
     def bluffer(self):
         """
