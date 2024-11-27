@@ -34,12 +34,12 @@ class Inspector:
 
     def log(self):
         with open('history.csv', 'w') as f:
-            f.write('hs,sp,ul,r,mu,ul-mu\n')
+            f.write('hs,sp,ul,ul_,r,mu,ul-mu,ul-r\n')
             for obj in self.history['Sourjya']:
-                f.write(f"{obj['hs']},{obj['sp']},{obj['ul']},{obj['r']},{obj['mu']},{obj['ul-mu']}\n")
+                f.write(f"{obj['hs']},{obj['sp']},{obj['ul']},{obj['ul_']},{obj['r']},{obj['mu']},{obj['ul-mu']},{obj['ul-r']}\n")
             
             for obj in self.history['Sayan']:
-                f.write(f"{obj['hs']},{obj['sp']},{obj['ul']},{obj['r']},{obj['mu']},{obj['ul-mu']}\n")
+                f.write(f"{obj['hs']},{obj['sp']},{obj['ul']},{obj['ul_']},{obj['r']},{obj['mu']},{obj['ul-mu']},{obj['ul-r']}\n")
         # with open('journal_full.json', 'w') as f:
         #     json.dump({
         #         "journal": self.journal,

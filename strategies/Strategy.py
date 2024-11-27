@@ -160,8 +160,10 @@ class Strategy:
                         "sp": self.sp,
                         "r": self.r,
                         "ul": self.ul,
+                        "ul_": self.ul_,
                         "mu": self.distMean,
                         "ul-mu": self.ul - self.distMean, 
+                        "ul-r": self.ul - self.r
                     })
                     # self.inspector.log()
                 return self.move
@@ -192,10 +194,16 @@ class Strategy:
         self.ps = self.callValue/self.pot
 
         self.ul_ = (self.sp + self.risk) if self.round in [1, 2] else (self.hs + self.risk)
-
         self.mu = ((1 + self.hs) * self.ps) + self.shift
 
-        self.ul = max(self.ul_, self.mu)
+        # self.ul = max(self.ul_, self.mu)
+        self.ul = self.ul_ if self.ul_ > self.mu else self.mu
+        
+        # if self.ul == 0.0 and self.mu > 0.0:
+        #     raise Exception()
+
+        # self.ul = 0
+
         self.max_bet = round(self.ul * self.pot)
 
         self.t_determiner = self.ul - self.ll
@@ -209,29 +217,25 @@ class Strategy:
             - If the t-determiner is less than or equal to 0, the strategy is considered "out of money" and the bet amount is set to -1 (check/fold).
         """
 
-        if self.t_determiner > 0:
-            # When t > 0 then strategy is in the money
-
+        if (self.ul != self.ll):
             # Get odds from the odds function and then derive the bet amount
             # The odd is decided randomly from player's playing range
-
             oddsArray = odds(self.ll, self.ul, self.hs, self.ps, self.risk,
                           self.shift)
             
             self.r = oddsArray[0]
             self.distMean = oddsArray[1]
 
-            self.monValue = round(self.pot*self.r)
-            self.betAmt = min(self.monValue, self.max_bet)          
-
-        elif self.t_determiner == 0:
-            # When t == 0 then strategy is in balanced position
-            # Only Call/Check (return 0 as bet amount)
-            self.betAmt = 0
-
-        elif self.t_determiner <= 0:
-            # When t <= 0 then strategy is out of money
+            if (self.r < self.ps):
+                # Strategy is in out of money
+                self.betAmt = -1
+            else:
+                self.monValue = round(self.pot*self.r)
+                self.betAmt = min(self.monValue, self.max_bet)   
+        
+        else:
             # Explicitly check/fold (return -1 as bet amount)
+            # Strategy is in out of money
             self.betAmt = -1
 
     def setMove(self):
