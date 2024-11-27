@@ -6,6 +6,7 @@ set(CMAKE_BUILD_TYPE  "Release")
 
 # Use C++ 11 Standard to compile
 set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_C_STANDARD 99)
 
