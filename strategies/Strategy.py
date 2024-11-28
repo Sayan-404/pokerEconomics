@@ -125,8 +125,8 @@ class Strategy:
         # Check the README for insight into the following methods
         self.reason()
         self.setBet()
-        self.limiter()
         self.toBlinds()
+        self.limiter()
         self.setMove()
 
         # This statement checks for error
@@ -157,6 +157,8 @@ class Strategy:
                         "hs": self.hs,
                         "sp": self.sp,
                         "betAmt": self.betAmt,
+                        "callValue": self.callValue,
+                        "bigBlind": self.bigBlind,
                         "ul-mu": round(self.ul - self.mu, 10), 
                         "ul-r": round(self.ul - self.r, 10)
                     })
@@ -224,30 +226,6 @@ class Strategy:
             self.betAmt = -1
             self.r = 0
 
-    def limiter(self):
-        """
-            Limits the bet amount based on the player's total bet amount and the specified limit.
-
-            If the total bet amount (including the player's bet) exceeds the limit, the bet amount is adjusted to the maximum allowed within the limit. If the call value plus the player's bet amount exceeds the limit, the bet amount is set to 0 to force a call.
-        """
-
-        if self.betAmt in [-1, 0]:
-            # Ignore limit when explicitly check or fold
-            pass
-        else:
-            tcb = self.betAmt + self.playerBetAmt
-
-            if tcb > self.limit:
-                req = self.callValue + self.playerBetAmt
-
-                if req > self.limit:
-                    # Limit passed
-                    # Forcefully call
-                    self.betAmt = 0
-
-                else:
-                    self.betAmt = self.limit - self.playerBetAmt
-
     def toBlinds(self):
         """
             Converts the monetary value to the nearest big blind multiple.
@@ -265,10 +243,33 @@ class Strategy:
         
             initBetAmt = bet + self.callValue
 
-            if (initBetAmt > self.betAmt):
-                while (initBetAmt > self.betAmt):
-                    initBetAmt -= self.bigBlind
-                self.betAmt = initBetAmt
+            while (initBetAmt > self.betAmt):
+                initBetAmt -= self.bigBlind
+            self.betAmt = initBetAmt
+
+    def limiter(self):
+        """
+            Limits the bet amount based on the player's total bet amount and the specified limit.
+
+            If the total bet amount (including the player's bet) exceeds the limit, the bet amount is adjusted to the maximum allowed within the limit. If the call value plus the player's bet amount exceeds the limit, the bet amount is set to 0 to force a call.
+        """
+
+        if self.betAmt in [-1, 0]:
+            # Ignore limit when explicitly check or fold
+            pass
+        else:
+            tcb = self.betAmt + self.playerBetAmt
+
+            if tcb > self.limit:
+                # req = self.callValue + self.playerBetAmt
+
+                # if req > self.limit:
+                #     # Limit passed
+                #     # Forcefully call
+                #     self.betAmt = 0
+
+                # else:
+                self.betAmt = self.limit - self.playerBetAmt
 
     def setMove(self):
         """
