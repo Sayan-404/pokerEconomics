@@ -53,7 +53,7 @@ def kde_plot(scores):
     plt.show()
 
 
-def odds(lower_limit, upper_limit, hand_strength, pot_share, risk, shift):
+def odds(lower_limit, upper_limit, mu):
     from scipy.stats import truncnorm
     
     # Pot limit can never be less than 0 theoretically
@@ -64,7 +64,7 @@ def odds(lower_limit, upper_limit, hand_strength, pot_share, risk, shift):
         # fixes bug scale cannot be negative
         upper_limit = lower_limit + 0.00000001
 
-    mean = ((1 + hand_strength) * pot_share) + shift
+    mean = mu
     sigma = (upper_limit - lower_limit) / 3  # since ul = 3sigma + ll (original mean is ll) where mean = ll before shifting
 
     t_lower = (lower_limit - mean) / sigma
@@ -72,7 +72,7 @@ def odds(lower_limit, upper_limit, hand_strength, pot_share, risk, shift):
     dist = truncnorm(t_lower, t_upper, loc=mean, scale=sigma)
 
     # Comment the return while viewing the distribution
-    return dist.rvs(), mean
+    return dist.rvs()
 
 if __name__ == "__main__":
     # hole = ('As', 'Kh')  

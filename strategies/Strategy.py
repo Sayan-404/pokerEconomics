@@ -25,7 +25,7 @@ class Strategy:
             - `initialPot`: The initial pot size, used for limiting the pot.
             - `betAmt`: The additional amount the player will bet or raise.
             - `bigBlind`: The big blind value.
-            - `hs`, `sp`, `po`, `t_determiner`, `effectivePotential`: Metrics used for decision making and placing bets.
+            - `hs`, `sp`, `po`, `effectivePotential`: Metrics used for decision making and placing bets.
             - `shift`, `risk`: Numbers defining the "prodigalness", "frugalness", and risk capacity of the strategy.
             - `bluff`: A flag indicating whether the player should bluff.
             - `move`: The move the player will make.
@@ -69,9 +69,7 @@ class Strategy:
         self.ul = 0
         self.ul_ = 0
         self.mu = 0
-        self.t_determiner = -1
         self.r = None
-        self.distMean = None
 
         # A number defining the "prodigalness/frugalness" of a strategy
         self.shift = 0
@@ -158,12 +156,9 @@ class Strategy:
                     self.inspector.trackHistory(f"{self.information['player']['id']}", f"{self.information['hand_number']}.{self.information['round']}", {
                         "hs": self.hs,
                         "sp": self.sp,
-                        "r": self.r,
-                        "ul": self.ul,
-                        "ul_": self.ul_,
-                        "mu": self.distMean,
-                        "ul-mu": self.ul - self.distMean, 
-                        "ul-r": self.ul - self.r
+                        "betAmt": self.betAmt,
+                        "ul-mu": round(self.ul - self.mu, 10), 
+                        "ul-r": round(self.ul - self.r, 10)
                     })
                     # self.inspector.log()
                 return self.move
@@ -180,24 +175,23 @@ class Strategy:
             - Whether a bluff should be attempted (`self.bluffer`) if `self.bluff` is greater than 0.
             - The pot odds (`self.po`) based on the call value and the pot size.
             - The lower limit (`self.ll`) and upper limit (`self.ul`) of the betting range, which are derived from the pot odds and the potential (`self.sp`).
-            - The t-determiner (`self.t_determiner`) which is the difference between the upper and lower limits, and is used to determine the betting strategy.
         """
                 
-        self.hs = privateValue(self.holeCards, self.communityCards)
+        self.hs = round(privateValue(self.holeCards, self.communityCards), 6)
 
         # Bluff if true
         if self.bluff > 0:
             self.bluffer()
 
-        self.sp = potential(self.holeCards, self.communityCards) if self.round in [1, 2] else 0
+        self.sp = round(potential(self.holeCards, self.communityCards) if self.round in [1, 2] else 0, 6)
 
-        self.ps = self.callValue/self.pot
+        self.ps = round(self.callValue/self.pot, 6)
 
-        self.ul_ = (self.sp + self.risk) if self.round in [1, 2] else (self.hs + self.risk)
-        self.mu = ((1 + self.hs) * self.ps) + self.shift
+        self.ul_ = round((self.sp + self.risk) if self.round in [1, 2] else (self.hs + self.risk), 6)
+        self.mu = round(((1 + self.hs) * self.ps) + self.shift, 6)
 
         # self.ul = max(self.ul_, self.mu)
-        self.ul = self.ul_ if self.ul_ > self.mu else self.mu
+        self.ul = round(max(self.ul_, self.mu), 6)
         
         # if self.ul == 0.0 and self.mu > 0.0:
         #     raise Exception()
@@ -206,29 +200,20 @@ class Strategy:
 
         self.max_bet = round(self.ul * self.pot)
 
-        self.t_determiner = self.ul - self.ll
-
     def setBet(self):
         """
-            Sets the bet amount based on the calculated t-determiner value.
-
-            - If the t-determiner is greater than 0, the strategy is considered "in the money" and the bet amount is calculated as a fraction of the pot based on the odds function. 
-            - If the t-determiner is 0, the strategy is considered in a "balanced position" and the bet amount is set to 0 (call/check).
-            - If the t-determiner is less than or equal to 0, the strategy is considered "out of money" and the bet amount is set to -1 (check/fold).
+            Sets the bet amount.
         """
 
         if (self.ul != self.ll):
             # Get odds from the odds function and then derive the bet amount
             # The odd is decided randomly from player's playing range
-            oddsArray = odds(self.ll, self.ul, self.hs, self.ps, self.risk,
-                          self.shift)
-            
-            self.r = oddsArray[0]
-            self.distMean = oddsArray[1]
+            self.r = odds(self.ll, self.ul, self.mu)
 
             if (self.r < self.ps):
                 # Strategy is in out of money
                 self.betAmt = -1
+                self.r = 0
             else:
                 self.monValue = round(self.pot*self.r)
                 self.betAmt = min(self.monValue, self.max_bet)   
@@ -237,6 +222,53 @@ class Strategy:
             # Explicitly check/fold (return -1 as bet amount)
             # Strategy is in out of money
             self.betAmt = -1
+            self.r = 0
+
+    def limiter(self):
+        """
+            Limits the bet amount based on the player's total bet amount and the specified limit.
+
+            If the total bet amount (including the player's bet) exceeds the limit, the bet amount is adjusted to the maximum allowed within the limit. If the call value plus the player's bet amount exceeds the limit, the bet amount is set to 0 to force a call.
+        """
+
+        if self.betAmt in [-1, 0]:
+            # Ignore limit when explicitly check or fold
+            pass
+        else:
+            tcb = self.betAmt + self.playerBetAmt
+
+            if tcb > self.limit:
+                req = self.callValue + self.playerBetAmt
+
+                if req > self.limit:
+                    # Limit passed
+                    # Forcefully call
+                    self.betAmt = 0
+
+                else:
+                    self.betAmt = self.limit - self.playerBetAmt
+
+    def toBlinds(self):
+        """
+            Converts the monetary value to the nearest big blind multiple.
+            
+            - If the bet amount is explicitly a check/fold or call scenario, this method does nothing.
+            - Otherwise, it calculates the bet amount relative to the call value, rounds it to the nearest big blind multiple, and updates the bet amount.
+        """
+        
+        if self.betAmt in [-1, 0]:
+            # Explicitly check/fold or call scenario
+            pass
+        else:
+            bet = self.betAmt - self.callValue
+            bet = round(bet/self.bigBlind) * self.bigBlind
+        
+            initBetAmt = bet + self.callValue
+
+            if (initBetAmt > self.betAmt):
+                while (initBetAmt > self.betAmt):
+                    initBetAmt -= self.bigBlind
+                self.betAmt = initBetAmt
 
     def setMove(self):
         """
@@ -303,52 +335,6 @@ class Strategy:
 
         #     # Converting to blinds
         #     self.initialPot = round(initialPot/self.bigBlind) * self.bigBlind
-
-    def limiter(self):
-        """
-            Limits the bet amount based on the player's total bet amount and the specified limit.
-
-            If the total bet amount (including the player's bet) exceeds the limit, the bet amount is adjusted to the maximum allowed within the limit. If the call value plus the player's bet amount exceeds the limit, the bet amount is set to 0 to force a call.
-        """
-
-        if self.betAmt in [-1, 0]:
-            # Ignore limit when explicitly check or fold
-            pass
-        else:
-            tcb = self.betAmt + self.playerBetAmt
-
-            if tcb > self.limit:
-                req = self.callValue + self.playerBetAmt
-
-                if req > self.limit:
-                    # Limit passed
-                    # Forcefully call
-                    self.betAmt = 0
-
-                else:
-                    self.betAmt = self.limit - self.playerBetAmt
-
-    def toBlinds(self):
-        """
-            Converts the monetary value to the nearest big blind multiple.
-            
-            - If the bet amount is explicitly a check/fold or call scenario, this method does nothing.
-            - Otherwise, it calculates the bet amount relative to the call value, rounds it to the nearest big blind multiple, and updates the bet amount.
-        """
-        
-        if self.betAmt in [-1, 0]:
-            # Explicitly check/fold or call scenario
-            pass
-        else:
-            bet = self.betAmt - self.callValue
-            bet = round(bet/self.bigBlind) * self.bigBlind
-        
-            initBetAmt = bet + self.callValue
-
-            if (initBetAmt > self.betAmt):
-                while (initBetAmt > self.betAmt):
-                    initBetAmt -= self.bigBlind
-                self.betAmt = initBetAmt
 
     def bluffer(self):
         """
