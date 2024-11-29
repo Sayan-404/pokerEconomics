@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 # Add the current working directory to the Python path to allow imports from the project.
 sys.path.append(os.getcwd())
 
-from components import Player, Logger, Streamer, Inspector
+from components import Player, Logger
 from Game import Game
 
 # Load environment variables from a .env file.
@@ -184,12 +184,10 @@ def initialise_run_config(config, id=0, inspector=None, benchmark=False, test=Fa
     # Initialise the game object
     num = data["runs"]
     logger = Logger(log_hands=data["log_hands"], benchmark=benchmark, strategies=[player.strategy_name for player in players], number_of_hands=num, simul=data["simulation"])
-    streamer = Streamer()
     game = Game(
         players,
         logger,
-        inspector,
-        streamer,
+        inspector=inspector,
         number_of_hands=num,
         simul=data["simulation"],
         seed=seed,
@@ -244,13 +242,11 @@ def initialise_run_manual(runs, seed, limit, strats, iniLimitMultiplier, bankrol
     # Set up parameters of Game object
     players = [player1, player2]
     logger = Logger(log_hands=False, benchmark=benchmark, strategies=[player.strategy_name for player in players], number_of_hands=runs, simul=True)
-    streamer = Streamer()
 
     # Create the game object and return it
     game = Game(
         players,
         logger,
-        streamer,
         number_of_hands=runs,
         simul=True,
         seed=seed,

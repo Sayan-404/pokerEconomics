@@ -23,7 +23,6 @@ class Game:
         self,
         players,
         logger,
-        streamer,
         inspector,
         number_of_hands=1,
         deck=Deck,
@@ -45,7 +44,6 @@ class Game:
         self.simul = simul
         self.round = 0
         self.logger = logger
-        self.streamer = None
         self.inspector = inspector
         self.hand_number = 0
         self.all_in = 0
@@ -1022,16 +1020,6 @@ class Game:
 
         self.stats['hand_number'] = self.hand_number
         self.stats['round'] = self.round
-
-        # TODO: Remove streamer
-        if self.streamer:
-            self.streamer.sendObj = self.stats
-            self.streamer.stream()
-
-        # TODO Remove this shit
-        if self.hand_number == 90000 or self.hand_number == 50000:
-            with open(f'game_stats_{self.id}.json', 'w') as f:
-                json.dump(self.stats, f)
 
         for player in self.players:
             pp = self.stats[player.id]["b"] + self.stats[player.id]["r"] + 0.5*self.stats[player.id]["c"]

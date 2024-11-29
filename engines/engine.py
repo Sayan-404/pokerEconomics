@@ -63,8 +63,9 @@ if __name__ == "__main__":
                     inspector.log()
                     while 'y' not in input('Press "y" to stop inspector: '):
                         continue
-
-                    inspector.stop_server()
+                    
+                    if inspector.server:
+                        inspector.stop_server()
 
 
                 break

@@ -8,6 +8,7 @@ class Inspector:
     def __init__(self):
         self.journal = {}
         self.history = {}
+        self.server = False
         
         # Automatically start server on a free port
         # self.server, self.port = self._start_server()
@@ -62,6 +63,8 @@ class Inspector:
         server_thread = threading.Thread(target=server.serve_forever)
         server_thread.daemon = True
         server_thread.start()
+
+        self.server = True
         
         return server, port
 
