@@ -23,7 +23,7 @@ class Game:
         self,
         players,
         logger,
-        inspector,
+        inspector=None,
         number_of_hands=1,
         deck=Deck,
         simul=False,
