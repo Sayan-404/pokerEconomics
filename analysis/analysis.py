@@ -45,15 +45,15 @@ def plot(file_path):
                 y_sayan_smooth = spl_sayan(x_new)
                 y_sourjya_smooth = spl_sourjya(x_new)
 
-                # Extract aggression factor
-                aggression_factor_keys = [name for index, name in enumerate(
+                # Extract tendency index
+                tendency_index_keys = [name for index, name in enumerate(
                     df.columns) if 2 < index < len(df.columns) - 2]
-                aggression_factors = [df[i].loc[[1][0]] for i in aggression_factor_keys]
+                tendency_index = [df[i].iloc[-1] for i in tendency_index_keys]
 
                 # Plot the smooth curves
                 plt.figure(figsize=(10, 5))
-                plt.plot(x_new, y_sayan_smooth, label=f"{players[0]} {aggression_factors[0]}", linestyle="dashed")
-                plt.plot(x_new, y_sourjya_smooth, label=f"{players[1]} {aggression_factors[1]}")
+                plt.plot(x_new, y_sayan_smooth, label=f"{players[0]} {tendency_index[0]}", linestyle="dashed")
+                plt.plot(x_new, y_sourjya_smooth, label=f"{players[1]} {tendency_index[1]}")
                 plt.title("Scores Over Rounds")
                 plt.xlabel("Hand Number")
                 plt.ylabel("Scores")
