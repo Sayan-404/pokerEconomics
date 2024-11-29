@@ -371,26 +371,16 @@ class Game:
             if self.simul:
                 # Ensure player stats are initialized
                 if f"{player.id}" not in self.stats:
-                    self.stats = {players[0].id: {"prodigals": 0, "frugals": 0,"b": [], "r": [], "f": [], "c": [], "ch": []}, players[1].id: {"prodigals": 0, "frugals": 0,"b": [], "r": [], "f": [], "c": [], "ch": []}}
+                    self.stats = {players[0].id: {"b": 0, "r": 0, "c": 0, "ch": 0, "f": 0}, players[1].id: {"b": 0, "r": 0, "c": 0, "ch": 0, "f": 0}}
     
                 action, bet = player.decide(
                     self.package_state(player_index, call_value=callsize)
                 )
-
-                self.stats[f"{player.id}"][action].append(bet)
-
-
-                if action in ["b", "r"]:
-                    if "prodigals" in self.stats[f"{player.id}"]:
-                        self.stats[f"{player.id}"]["prodigals"] += 1
-                    else:
-                        self.stats[f"{player.id}"]["prodigals"] = 1
-
-                if action in ["c", "ch"]:
-                    if "frugals" in self.stats[f"{player.id}"]:
-                        self.stats[f"{player.id}"]["frugals"] += 1
-                    else:
-                        self.stats[f"{player.id}"]["frugals"] = 1
+                
+                if action in self.stats[f"{player.id}"]:
+                    self.stats[f"{player.id}"][action] += 1
+                else:
+                    self.stats[f"{player.id}"][action] = 1
 
                 self.logger.print(action)
             else:
@@ -1028,40 +1018,40 @@ class Game:
         self.logger.print(f"\nWinner: {winner}")
         self.logger.print("Hand Ended")
         bankrolls = {player.id: player.bankroll for player in self.players}
-        af = {}
+        tendency = {}
 
         self.stats['hand_number'] = self.hand_number
         self.stats['round'] = self.round
 
+        # TODO: Remove streamer
         if self.streamer:
             self.streamer.sendObj = self.stats
             self.streamer.stream()
 
+        # TODO Remove this shit
         if self.hand_number == 90000 or self.hand_number == 50000:
             with open(f'game_stats_{self.id}.json', 'w') as f:
                 json.dump(self.stats, f)
 
         for player in self.players:
-            total_moves = self.stats[player.id]["frugals"] + self.stats[player.id]["prodigals"]
-            prodigalness = 0
-            frugalness = 0
-
-            if total_moves > 0:
-                prodigalness = self.stats[player.id]["prodigals"]/total_moves
-                frugalness = self.stats[player.id]["frugals"]/total_moves
-
-            af[player.id] = (prodigalness, frugalness)
+            pp = self.stats[player.id]["b"] + self.stats[player.id]["r"] + 0.5*self.stats[player.id]["c"]
+            fp = self.stats[player.id]["ch"] + self.stats[player.id]["f"] + 0.5*self.stats[player.id]["c"]
+            
+            if (pp == fp == 0):
+                tendency[player.id] = 0
+            else:
+                tendency[player.id] = (pp - fp)/(pp + fp)
 
         # Sorting is important since order changes after every round but logger should have consistently ordered columns in the csv
         bankrolls = dict(sorted(bankrolls.items()))
-        af = dict(sorted(af.items()))
+        tendency = dict(sorted(tendency.items()))
 
         log_data = {
             "hand_no": self.hand_number,
             "winner": winner,
             "round": self.round,
             "bankrolls": [],
-            "af": []
+            "tendency": []
         }
 
         self.logger.current_hand_data["gameover"] = {
@@ -1075,8 +1065,8 @@ class Game:
             self.logger.print(f"{id} stack: {bankrolls[id]}")
             log_data["bankrolls"].append(bankrolls[id])
 
-        for id in af:
-            log_data["af"].append(af[id])
+        for id in tendency:
+            log_data["tendency"].append(tendency[id])
 
         self.logger.log_result(log_data)
 

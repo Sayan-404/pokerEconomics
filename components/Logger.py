@@ -180,5 +180,5 @@ class Logger:
     def log_result(self, data):
         writer = csv.writer(self.games_file)
 
-        row = [data["hand_no"] + 1]  + [p for p in data["bankrolls"]] + [p for p in data['af']] + [data["winner"], data["round"]]
+        row = [data["hand_no"] + 1]  + [p for p in data["bankrolls"]] + [p for p in data['tendency']] + [data["winner"], data["round"]]
         writer.writerow(row)
