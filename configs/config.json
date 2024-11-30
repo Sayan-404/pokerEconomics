@@ -1,17 +1,17 @@
 {
   "log_hands": false,
-  "runs": 100,
+  "runs": 50000,
   "simulation": true,
   "player1": {
     "id": "Sayan",
-    "bankroll": 100000000000,
-    "strategy": "loose",
+    "bankroll": 1000000000000,
+    "strategy": "balanced",
     "limit": 5000,
     "iniLimitMul": 100
   },
   "player2": {
     "id": "Sourjya",
-    "bankroll": 1000000000000,
+    "bankroll": 100000000000,
     "strategy": "balanced",
     "limit": 5000,
     "iniLimitMul": 100
