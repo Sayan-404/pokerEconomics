@@ -4,7 +4,7 @@
   "simulation": true,
   "player1": {
     "id": "Sayan",
-    "bankroll": 1000000000000,
+    "bankroll": 100000000000,
     "strategy": "balanced",
     "limit": 5000,
     "iniLimitMul": 100
@@ -12,7 +12,7 @@
   "player2": {
     "id": "Sourjya",
     "bankroll": 100000000000,
-    "strategy": "balanced",
+    "strategy": "loose",
     "limit": 5000,
     "iniLimitMul": 100
   },
