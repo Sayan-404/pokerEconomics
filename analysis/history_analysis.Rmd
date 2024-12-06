@@ -16,7 +16,7 @@ history <- history %>%
 plot1_data <- history %>%
     #filter(`ul-mu` < 0) %>%
     select(`hs-sp`)
-total_len <-  length(plot1_data$`hs-sp`)
+total_len <- length(plot1_data$`hs-sp`)
 
 plot1 <- ggplot(data = plot1_data, aes(`hs-sp`)) +
     geom_histogram(binwidth = 0.001) +
@@ -62,4 +62,14 @@ plot3
 
 # print(paste("Number of points where mu exceeded ul:", length(plot1_data$`hs-sp`)))
 print(paste("Total number of data points:", total_len))
+print(paste("% of points with ul-mu == 0:", (history %>% filter(`ul-mu` == 0) %>% count() / total_len) * 100))
+
+plot4 <- ggplot(data = history, aes(`ul-mu`)) +
+  geom_histogram(binwidth = 0.001) +
+  labs(
+    title = "ul-mu frequency",
+    x = "ul - mu",
+    y = "frequency"
+  )
+plot4
 ```

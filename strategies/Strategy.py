@@ -156,6 +156,9 @@ class Strategy:
                     self.inspector.trackHistory(f"{self.information['player']['id']}", f"{self.information['hand_number']}.{self.information['round']}", {
                         "hs": self.hs,
                         "sp": self.sp,
+                        "mu": self.mu,
+                        "ps": self.ps,
+                        "ul": self.ul,
                         "betAmt": self.betAmt,
                         "callValue": self.callValue,
                         "bigBlind": self.bigBlind,
@@ -190,7 +193,7 @@ class Strategy:
         self.ps = round(self.callValue/self.pot, 6)
 
         self.ul_ = round((self.sp + self.risk) if self.round in [1, 2] else (self.hs + self.risk), 6)
-        self.mu = round(((1 + self.hs) * self.ps) + self.shift, 6)
+        self.mu = round((self.hs * self.ps) + self.shift, 6)
 
         # self.ul = max(self.ul_, self.mu)
         self.ul = round(max(self.ul_, self.mu), 6)
@@ -210,7 +213,7 @@ class Strategy:
         if (self.ul != self.ll):
             # Get odds from the odds function and then derive the bet amount
             # The odd is decided randomly from player's playing range
-            self.r = odds(self.ll, self.ul, self.mu)
+            self.r = round(odds(self.ll, self.ul, self.mu), 6)
 
             if (self.r < self.ps):
                 # Strategy is in out of money
