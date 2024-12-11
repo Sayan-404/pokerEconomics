@@ -193,7 +193,7 @@ class Strategy:
         self.ps = round(self.callValue/self.pot, 6)
 
         self.ul_ = round((self.sp + self.risk) if self.round in [1, 2] else (self.hs + self.risk), 6)
-        self.mu = round((self.hs * self.ps) + self.shift, 6)
+        self.mu = round((self.hs + self.shift), 6)
 
         # self.ul = max(self.ul_, self.mu)
         self.ul = round(max(self.ul_, self.mu), 6)
