@@ -1,0 +1,20 @@
+{
+    "log_hands": false,
+    "runs": 100,
+    "simulation": true,
+    "player1": {
+        "id": "balanced_medium_risk",
+        "bankroll": 100000000000,
+        "strategy": "balanced_medium_risk",
+        "limit": 5000,
+        "iniLimitMul": 100
+    },
+    "player2": {
+        "id": "balanced_high_risk",
+        "bankroll": 100000000000,
+        "strategy": "balanced_high_risk",
+        "limit": 5000,
+        "iniLimitMul": 100
+    },
+    "seed": 69096069
+}

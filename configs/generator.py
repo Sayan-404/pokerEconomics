@@ -25,14 +25,14 @@ def create_single_config():
 
 def generate_round_robin_strategy_configs():
     strats = []
-    types = ["action", "rational"]
-    for ty in types:
-        files = os.listdir(f"strategies/{ty}/")
-        for strat in files:
-            x = re.search(".py$", strat)
-            if x:
-                y = f"{ty}.{x.string.split('.')[0]}"
-                strats.append(y)
+    # types = ["action", "rational"]
+    # for ty in types:
+    #     files = os.listdir(f"strategies/{ty}/")
+    #     for strat in files:
+    #         x = re.search(".py$", strat)
+    #         if x:
+    #             y = f"{ty}.{x.string.split('.')[0]}"
+    #             strats.append(y)
     
     import csv
 
@@ -58,11 +58,18 @@ def generate_round_robin_strategy_configs():
     log_hands = True if input(
         "Enter y to log individual hands: ") == "y" else False
     runs = int(input("Enter number of runs: "))
-    seed = input("Enter seed if present: ")
+    seed = int(input("Enter seed if present: "))
     if not seed:
         seed = time.time()
-    bankroll = input("Enter bankroll (-1 for default of 1000000000): ")
-    bankroll = bankroll if bankroll != -1 else 1000000000
+    bankroll = int(input("Enter bankroll (-1 for default of 1000000000): "))
+    bankroll = bankroll if bankroll != -1 else 100000000000
+    
+    limit = int(input("Enter limit (-1 for default of 5000): "))
+    limit = limit if limit != -1 else 5000
+
+    initlimit = int(input("Enter iniLimitMul (-1 for default of 100): "))
+    initlimit = initlimit if initlimit != -1 else 100
+
     for i in range(len(strats)):
         for j in range(i+1, len(strats)):
             s1 = strats[i]
@@ -70,17 +77,17 @@ def generate_round_robin_strategy_configs():
             # Replace / with _
             filename = f"configs/{s1.replace('/', '_')}_vs_{s2.replace('/', '_')}"
             create_config_file(
-                filename, log_hands, bankroll, runs, s1, s2, seed)
+                filename, log_hands, bankroll, runs, s1, s2, limit, initlimit, seed)
 
 
-def create_config_file(filename, log_hands, bankroll, runs, strat1, strat2, seed=None):
+def create_config_file(filename, log_hands, bankroll, runs, strat1, strat2, limit, initlimit, seed=None):
     with open(f"{filename}.json", "w") as f:
         json.dump({
             "log_hands": log_hands,
             "runs": runs,
             "simulation": True,
-            "player1": {"id": strat1, "bankroll": int(bankroll), "strategy": strat1},
-            "player2": {"id": strat2, "bankroll": int(bankroll), "strategy": strat2},
+            "player1": {"id": strat1, "bankroll": int(bankroll), "strategy": strat1, "limit": limit, "iniLimitMul": initlimit},
+            "player2": {"id": strat2, "bankroll": int(bankroll), "strategy": strat2, "limit": limit, "iniLimitMul": initlimit},
             "seed": seed if seed else None
         }, f, indent=4)
 
