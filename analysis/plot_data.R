@@ -7,6 +7,8 @@ library(tidyr)
 data_path <- commandArgs()[6]
 game_dirs <- list.dirs(data_path, full.names = TRUE)
 
+custom_colors <- c("#04ff00", "#000099")
+
 for (i in 2:length(game_dirs)) {
   current_game_dir <- game_dirs[i]
   current_game_file <- paste(current_game_dir, "/games.csv", sep = "")
@@ -24,9 +26,13 @@ for (i in 2:length(game_dirs)) {
       pivot_longer(cols = columns[2:(length(columns) - 4)],
                    names_to = "Player",
                    values_to = "Score")
+
+    player_colors <- setNames(custom_colors[1:length(unique(game_long$Player))], unique(game_long$Player))
+
     plot <- ggplot(data = game_long,
-                   aes(x = hand_no, y = Score, linetype = Player)) +
+                   aes(x = hand_no, y = Score, colour = Player)) +
       geom_line() +
+      scale_color_manual(values = player_colors) +
       labs(
         x = "Hand Number", y = "Score",
         title = paste("Comparison:", paste(columns[2:(length(columns) - 4)], collapse = " vs ")),
