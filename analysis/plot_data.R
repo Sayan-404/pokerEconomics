@@ -4,13 +4,13 @@ library(magrittr)
 library(ggplot2)
 library(tidyr)
 
-data_path <- commandArgs()[6]
+data_path <- commandArgs(trailingOnly = TRUE)[1]
 game_dirs <- list.dirs(data_path, full.names = TRUE)
 
 custom_colors <- c("#04ff00", "#000099")
 
-for (i in 2:length(game_dirs)) {
-  current_game_dir <- game_dirs[i]
+for (dir_index in 2:length(game_dirs)) {
+  current_game_dir <- game_dirs[dir_index]
   current_game_file <- paste(current_game_dir, "/games.csv", sep = "")
   if (file.exists(current_game_file)) {
     game <- read.csv(current_game_file,
@@ -45,6 +45,11 @@ for (i in 2:length(game_dirs)) {
                                            ti = ti, win_ratio = win_ratio))
     }
     print(metrics)
+
+    ending_round <- game %>%
+      count(.data[["ending_round"]])
+    print(ending_round)
+
     game_long <- game %>%
       pivot_longer(cols = columns[2:(length(columns) - 4)],
                    names_to = "Player",
@@ -71,6 +76,18 @@ for (i in 2:length(game_dirs)) {
       theme(legend.position = "bottom")
     output_file <- file.path(current_game_dir, "plot.png")
     ggsave(output_file, plot = plot, width = 10, height = 6)
+    message(paste("Plot saved to:", output_file))
+
+    plot <- ggplot(data = ending_round,
+                   aes(x = ending_round, y = n)) +
+      geom_bar(stat = "identity") +
+      labs(
+        x = "Ending Round", y = "Count",
+        title = "Ending Round Distribution"
+      )
+    output_file <- file.path(current_game_dir, "ending_round.png")
+    ggsave(output_file, plot = plot, width = 10, height = 6)
+    message(paste("Plot saved to:", output_file))
   } else {
     print(paste(current_game_file, "not found"))
   }
