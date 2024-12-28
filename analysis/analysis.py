@@ -2,9 +2,7 @@ import argparse
 import os
 
 import matplotlib.pyplot as plt
-import numpy as np
 import pandas as pd
-from scipy.interpolate import make_interp_spline
 from tqdm import tqdm
 
 def plot(file_path):
@@ -28,22 +26,13 @@ def plot(file_path):
                 # Load the CSV data
                 df = pd.read_csv(csv_file)
 
-                # Interpolate data to create smooth curves
                 x = df["hand_no"]
-                x_new = np.linspace(
-                    x.min(), x.max(), 10000
-                )  # Increase the number of points for smoothness
 
+                # Extract players and standardise scores
                 players = [name for index, name in enumerate(
                     df.columns) if 0 < index < len(df.columns) - 4]
                 for i in range(2):
                     df[players[i]] -= df[players[i]][0]
-                # Create smooth curves for Sayan and Sourjya
-                spl_sayan = make_interp_spline(x, df[players[0]], k=3)
-                spl_sourjya = make_interp_spline(x, df[players[1]], k=3)
-
-                y_sayan_smooth = spl_sayan(x_new)
-                y_sourjya_smooth = spl_sourjya(x_new)
 
                 # Extract tendency index
                 tendency_index_keys = [name for index, name in enumerate(
@@ -52,8 +41,8 @@ def plot(file_path):
 
                 # Plot the smooth curves
                 plt.figure(figsize=(10, 5))
-                plt.plot(x_new, y_sayan_smooth, label=f"{players[0]} {tendency_index[0]}", linestyle="dashed")
-                plt.plot(x_new, y_sourjya_smooth, label=f"{players[1]} {tendency_index[1]}")
+                plt.plot(x, df[players[0]], label=f"{players[0]} {tendency_index[0]}", linestyle="dotted")
+                plt.plot(x, df[players[1]], label=f"{players[1]} {tendency_index[1]}")
                 plt.title("Scores Over Rounds")
                 plt.xlabel("Hand Number")
                 plt.ylabel("Scores")
@@ -61,7 +50,7 @@ def plot(file_path):
                 plt.grid(True)
                 plt.savefig(f"{subdir_path}/_analysis.png")
 
-                # # Optionally, show the plot
+                # Optionally, show the plot
                 # plt.show()
             except Exception as e:
                 print(e)
