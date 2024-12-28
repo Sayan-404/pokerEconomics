@@ -25,7 +25,7 @@ for (dir_index in 2:length(game_dirs)) {
 
     entity_counts <- entity_counts %>%
       mutate(win_ratio = n / sum(.data[["n"]]),
-             winner = paste(winner, "(", winner, ")", sep = ""))
+             winner = winner)
 
     metrics <- data.frame(
       player = character(),
@@ -38,9 +38,11 @@ for (dir_index in 2:length(game_dirs)) {
       ti <- game %>%
         pull(.data[[columns[i + total_players]]]) %>%
         last()
+      player_name <- sub("\\(.*", "", player)
       win_ratio <- entity_counts %>%
-        filter(.data[["winner"]] == player) %>%
+        filter(grepl(player_name, .data[["winner"]])) %>%
         pull(.data[["win_ratio"]])
+
       metrics <- rbind(metrics, data.frame(player = player,
                                            ti = ti, win_ratio = win_ratio))
     }
@@ -74,7 +76,7 @@ for (dir_index in 2:length(game_dirs)) {
                          sep = "\n")
       ) +
       theme(legend.position = "bottom")
-    output_file <- file.path(current_game_dir, "plot.png")
+    output_file <- file.path(current_game_dir, "bankroll_line.png")
     ggsave(output_file, plot = plot, width = 10, height = 6)
     message(paste("Plot saved to:", output_file))
 
@@ -85,7 +87,7 @@ for (dir_index in 2:length(game_dirs)) {
         x = "Ending Round", y = "Count",
         title = "Ending Round Distribution"
       )
-    output_file <- file.path(current_game_dir, "ending_round.png")
+    output_file <- file.path(current_game_dir, "ending_round_hist.png")
     ggsave(output_file, plot = plot, width = 10, height = 6)
     message(paste("Plot saved to:", output_file))
   } else {
