@@ -13,14 +13,27 @@ sys.path.append(os.getcwd())
 
 def create_single_config():
     filename = input("Enter config name: ")
-    filename = f"configs/{filename}.json"
+    filename = f"configs/{filename}"
     runs = int(input("Enter number of runs: "))
     log_hands = True if input(
         "Enter y to log individual hand data: ") == "y" else False
     strat1 = input("Enter strategy(type.name) for player 1: ")
     strat2 = input("Enter strategy(type.name) for player 2: ")
     seed = input("Enter seed if present: ")
-    create_config_file(filename, log_hands, runs, strat1, strat2, seed)
+    if (not seed) :
+        seed = None
+    limit = int(input("Enter limit: "))
+    iniLimit = int(input("Enter iniLimit: "))
+    create_config_file(
+        filename=filename, 
+        log_hands=log_hands, 
+        runs=runs, 
+        bankroll=100000000000,
+        strat1=strat1, 
+        strat2=strat2, 
+        limit=limit, 
+        initlimit=iniLimit, 
+        seed=seed)
 
 
 def generate_round_robin_strategy_configs():
