@@ -1,6 +1,29 @@
-# pokerEconomics
+# Simulation Model
 
-## to-do
+## The model
+
+Describe the model briefly.
+Mention the formula along with parameters.
+
+## Repo Components
+
+| Folder | Function |
+| ------ | -------- |
+| analysis |  |
+| checks |  |
+| components |  |
+| configs |  |
+| data |  |
+| engines |  |
+| hand_evaluator |  |
+| poker_metrics |  |
+| strategies |  |
+
+PS: Detailed READMEs for each folder will be added in the future.
+
+## Misc
+
+### To-Do
 
 - [x] clean up repository
   - [x] Remove chen from private value
@@ -13,7 +36,7 @@
 - [x] Decide something for the seed
 - [x] clean up requirements.txt
 - [x] create an all encompassing setup script that compiles shared library, creates virtual python environment and installs all dependencies
-- [ ] finalise all parameters (for strategies and others)
+- [x] finalise all parameters (for strategies and others)
 - [x] final code review
 - [x] documentation (comments and other documentation for strategies)
 - [x] change preflop betting
@@ -23,12 +46,12 @@
 - [x] parameter evaluation demo
 - [x] Bluffer limit implementation
 
-## System Checks Before Final Simulation
+### System Checks Before Final Simulation
 
-- [x] Aggression factor showing after end of simulation
+- [x] Aggression factor displaying after end of simulation
 - [x] Maths of strategy verified
 
-## Run docker
+### Run docker
 
 Run `docker-compose up -d` to build and start container.
 Local storage bounded, no need to build image again on code change.
