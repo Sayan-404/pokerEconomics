@@ -48,14 +48,14 @@ This repository implements a stochastic game-theoretic model of human behavior i
 ### Truncated Normal Distribution
 
 The truncated normal distribution is defined as:  
-$$
+$
 \psi(\bar{\mu}, \bar{\sigma}, ll, ul; x) =
 \begin{cases} 
     0 & x \leq ll; \\\\
     \frac{\phi(\bar{\mu}, \bar{\sigma}^2; x)}{\Phi(\bar{\mu}, \bar{\sigma}^2; ul) - \Phi(\bar{\mu}, \bar{\sigma}^2; ll)} & ll < x < ul; \\\\
     0 & x \geq ul.
 \end{cases}
-$$  
+$
 where:  
 - $\bar{\mu}$: Mean of the underlying normal distribution before truncation.  
 - $\bar{\sigma}$: Standard deviation of the underlying normal distribution before truncation, calculated as $((ul - ll) / 3)$.  
