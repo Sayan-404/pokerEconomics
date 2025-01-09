@@ -13,30 +13,30 @@ This repository implements a stochastic game-theoretic model of human behavior i
 ### Variables Involved
 
 1. **$\bar{\mu}$**: A measure of how an entity perceives its current condition. It is calculated as:  
-   <img src="https://latex.codecogs.com/png.latex?\bar{\mu}=(1+hs)\cdot{ps}" alt="\bar{\mu}=(1+hs)\cdot{ps}" />  
+   <img src="https://latex.codecogs.com/png.latex?\bg_black&fg=ffffff&\bar{\mu}=(1+hs)\cdot{ps}" alt="\bar{\mu}=(1+hs)\cdot{ps}" />  
    where:  
    - $hs$: Hand strength.  
    - $ps$: Pot share of the entity.  
 
 2. **$ps$**: The portion of the pot an entity is expected to win based on its equity in the current hand. It is calculated as:  
-   <img src="https://latex.codecogs.com/png.latex?ps=\frac{\text{call\_value}}{\text{pot}}" alt="ps=\frac{call_value}{pot}" />  
+   <img src="https://latex.codecogs.com/png.latex?\bg_black&fg=ffffff&ps=\frac{\text{call\_value}}{\text{pot}}" alt="ps=\frac{call_value}{pot}" />  
 
 3. **$ll$**: The lower limit of the truncated normal distribution, fixed at $0$.
 
 4. **$ul'$**: The upper limit of an entity's playing range, determined as:  
-   <img src="https://latex.codecogs.com/png.latex?ul'=\begin{cases}sp+risk&\text{if}\;round\in\{1,2\};\\hs+risk&\text{otherwise};\end{cases}" alt="ul' definition" />  
+   <img src="https://latex.codecogs.com/png.latex?\bg_black&fg=ffffff&ul'=\begin{cases}sp+risk&\text{if}\;round\in\{1,2\};\\hs+risk&\text{otherwise};\end{cases}" alt="ul' definition" />  
    where:  
    - $sp$: Future potential.  
    - $risk$: The entity's risk appetite.  
    - $round$: Poker game round (pre-flop for 0, flop for 1, so on).
 
 5. **$ul$**: The actual upper limit of the truncated normal distribution, defined as:  
-   <img src="https://latex.codecogs.com/png.latex?ul=\max(\bar{\mu},ul')" alt="ul=max(mu_bar,ul_prime)" />  
+   <img src="https://latex.codecogs.com/png.latex?\bg_black&fg=ffffff&ul=\max(\bar{\mu},ul')" alt="ul=max(mu_bar,ul_prime)" />  
 
 ### Truncated Normal Distribution
 
 The truncated normal distribution is defined as:  
-<img src="https://latex.codecogs.com/png.latex?\psi(\bar{\mu},\bar{\sigma},ll,ul;x)=\begin{cases}0&x\leq{ll};\\\frac{\phi(\bar{\mu},\bar{\sigma}^2;x)}{\Phi(\bar{\mu},\bar{\sigma}^2;ul)-\Phi(\bar{\mu},\bar{\sigma}^2;ll)}&ll<x<ul;\\0&x\geq{ul};\end{cases}" alt="Truncated normal distribution formula" />  
+<img src="https://latex.codecogs.com/png.latex?\bg_black&fg=ffffff&\psi(\bar{\mu},\bar{\sigma},ll,ul;x)=\begin{cases}0&x\leq{ll};\\\frac{\phi(\bar{\mu},\bar{\sigma}^2;x)}{\Phi(\bar{\mu},\bar{\sigma}^2;ul)-\Phi(\bar{\mu},\bar{\sigma}^2;ll)}&ll<x<ul;\\0&x\geq{ul};\end{cases}" alt="Truncated normal distribution formula" />  
 
 where:  
 - $\bar{\mu}$: Mean of the underlying normal distribution before truncation.  
@@ -48,10 +48,10 @@ where:
 - $\Phi(\bar{\mu}, \bar{\sigma}^2; a)$: Cumulative distribution function (CDF) of the normal distribution at $a$.
 
 The PDF of the normal distribution is:  
-<img src="https://latex.codecogs.com/png.latex?\phi(x)=\frac{1}{\sqrt{2\pi\bar{\sigma}^2}}e^{-\frac{(x-\bar{\mu})^2}{2\bar{\sigma}^2}}" alt="PDF formula" />  
+<img src="https://latex.codecogs.com/png.latex?\bg_black&fg=ffffff&\phi(x)=\frac{1}{\sqrt{2\pi\bar{\sigma}^2}}e^{-\frac{(x-\bar{\mu})^2}{2\bar{\sigma}^2}}" alt="PDF formula" />  
 
 The CDF is:  
-<img src="https://latex.codecogs.com/png.latex?\Phi(x)=\int_{-\infty}^x\phi(t)\,dt" alt="CDF formula" />  
+<img src="https://latex.codecogs.com/png.latex?\bg_black&fg=ffffff&\Phi(x)=\int_{-\infty}^x\phi(t)\,dt" alt="CDF formula" />  
 
 ### Workflow Summary
 
