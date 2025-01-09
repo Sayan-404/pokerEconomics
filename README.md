@@ -2,36 +2,38 @@
 
 ## Disclaimer
 
-This repository is part of ongoing academic research. The source code for [PokerHandEvaluator](https://github.com/HenryRLee/PokerHandEvaluator) used in this repository is governed by its respective license. All rights are reserved for the remaining source code.
+This repository is part of an ongoing academic research project. The source code for [PokerHandEvaluator](https://github.com/HenryRLee/PokerHandEvaluator) used in this repository is governed by its respective license. All rights are reserved for the remaining source code.
 
 ---
 
 ## The Model
 
-This repository implements a stochastic game-theoretic model of human behavior in an incomplete information game (poker). The behavior modeled is non-deterministic, yet not entirely random, tending toward specific trends over the long term. A truncated normal distribution is utilized to simulate this behavior.
+This repository implements a stochastic game-theoretic model of human behaviour in an incomplete information game (poker). The behaviour modeled is non-deterministic, yet not uniformly random; it tends to conform to specific trends over a long term. A truncated normal distribution is utilised to simulate this behaviour.
 
 ### Variables Involved
 
 1. **$\bar{\mu}$**: A measure of how an entity perceives its current condition. It is calculated as:  
-   $$\bar{\mu} = (1 + hs) \cdot ps$$  
+   $$\bar{\mu} = hs + shift$$  
    where:  
    - $hs$: Hand strength.  
-   - $ps$: Pot share of the entity.  
+   - $shift$: The self-proclaimed level of confidence the entity has on their current position.  
 
 2. **$ps$**: The portion of the pot an entity is expected to win based on its equity in the current hand. It is calculated as:  
    $$ps = \frac{\text{callValue}}{\text{pot}}$$  
 
 3. **$ll$**: The lower limit of the truncated normal distribution, fixed at $0$.
 
-4. **$ul'$**: The upper limit of an entity's playing range, determined as:  
+4. **$ul'$**: The upper limit of an entity's playing range, determined as:
+
   <p align="center">
     <img src="./docs/equations/ul_formulation.png" />
   </p>
 
-   where:  
-   - $sp$: Future potential.  
-   - $risk$: The entity's risk appetite.
-   - $round$: Poker game round (pre-flop for 0, flop for 1, so on).
+   where:
+
+- $sp$: Future potential.  
+- $risk$: The entity's risk appetite.
+- $round$: Poker game round (0 for pre-flop, 1 for flop, and so on).
 
 5. **$ul$**: The actual upper limit of the truncated normal distribution, defined as:  
    $$ul = \max(\bar{\mu}, ul')$$  
@@ -44,9 +46,10 @@ The truncated normal distribution is defined as:
 </p>
 
 where:  
+
 - $\bar{\mu}$: Mean of the underlying normal distribution before truncation.  
-- $\bar{\sigma}$: Standard deviation of the underlying normal distribution before truncation, calculated as $((ul - ll) / 3)$.  
-- $ll$: Lower bound for truncation (fixed at $0$).  
+- $\bar{\sigma}$: Standard deviation of the underlying normal distribution before truncation, calculated as $(ul - ll) / 3$.
+- $ll$: Lower bound for truncation (fixed at $0$).
 - $ul$: Upper bound for truncation.  
 - $x$: The random variable being evaluated.  
 - $\phi(\bar{\mu}, \bar{\sigma}^2; x)$: Probability density function (PDF) of the normal distribution.  
@@ -60,7 +63,7 @@ $$\Phi(x) = \int_{-\infty}^x \phi(t) \, dt$$
 
 ### Workflow Summary
 
-After calculating the parameters of an entity's decision-making process, a decision factor is derived using the truncated normal distribution. This factor is then used to make a decision.
+After calculating the parameters of an entity's decision-making process, a decision factor is sampled using the truncated normal distribution which is then used, along with `ps` to make a decision.
 
 ---
 
