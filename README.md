@@ -19,39 +19,24 @@ This repository implements a stochastic game-theoretic model of human behavior i
    - $ps$: Pot share of the entity.  
 
 2. **$ps$**: The portion of the pot an entity is expected to win based on its equity in the current hand. It is calculated as:  
-   $$ps = \frac{\text{call\_value}}{\text{pot}}$$  
+   $$ps = \frac{\text{callValue}}{\text{pot}}$$  
 
 3. **$ll$**: The lower limit of the truncated normal distribution, fixed at $0$.
 
 4. **$ul'$**: The upper limit of an entity's playing range, determined as:  
-   $$
-   ul' = 
-   \begin{cases} 
-      sp + risk & \text{if } round \in \{1, 2\}; \\\\
-      hs + risk & \text{otherwise};
-   \end{cases}
-   $$  
+   $$ul' = \begin{cases} sp + risk & \text{if } round \in \{1, 2\}; \\\\ hs + risk & \text{otherwise};\end{cases}$$  
    where:  
    - $sp$: Future potential.  
    - $risk$: The entity's risk appetite.
    - $round$: Poker game round (pre-flop for 0, flop for 1, so on).
 
 5. **$ul$**: The actual upper limit of the truncated normal distribution, defined as:  
-   $$
-   ul = \max(\bar{\mu}, ul')
-   $$  
+   $$ul = \max(\bar{\mu}, ul')$$  
 
 ### Truncated Normal Distribution
 
 The truncated normal distribution is defined as:  
-$$
-\psi(\bar{\mu}, \bar{\sigma}, ll, ul; x) =
-\begin{cases} 
-    0 & x \leq ll; \\\\
-    \frac{\phi(\bar{\mu}, \bar{\sigma}^2; x)}{\Phi(\bar{\mu}, \bar{\sigma}^2; ul) - \Phi(\bar{\mu}, \bar{\sigma}^2; ll)} & ll < x < ul; \\\\
-    0 & x \geq ul.
-\end{cases}
-$$
+$$\psi(\bar{\mu}, \bar{\sigma}, ll, ul; x) = \begin{cases} 0 & x \leq ll; \\\\\frac{\phi(\bar{\mu}, \bar{\sigma}^2; x)}{\Phi(\bar{\mu}, \bar{\sigma}^2; ul) - \Phi(\bar{\mu}, \bar{\sigma}^2; ll)} & ll < x < ul; \\\\0 & x \geq ul.\end{cases}$$
 where:  
 - $\bar{\mu}$: Mean of the underlying normal distribution before truncation.  
 - $\bar{\sigma}$: Standard deviation of the underlying normal distribution before truncation, calculated as $((ul - ll) / 3)$.  
@@ -62,14 +47,10 @@ where:
 - $\Phi(\bar{\mu}, \bar{\sigma}^2; a)$: Cumulative distribution function (CDF) of the normal distribution at $a$.
 
 The PDF of the normal distribution is:  
-$$
-\phi(x) = \frac{1}{\sqrt{2 \pi \bar{\sigma}^2}} e^{-\frac{(x - \bar{\mu})^2}{2 \bar{\sigma}^2}}
-$$  
+$$\phi(x) = \frac{1}{\sqrt{2 \pi \bar{\sigma}^2}} e^{-\frac{(x - \bar{\mu})^2}{2 \bar{\sigma}^2}}$$  
 
 The CDF is:  
-$$
-\Phi(x) = \int_{-\infty}^x \phi(t) \, dt
-$$  
+$$\Phi(x) = \int_{-\infty}^x \phi(t) \, dt$$  
 
 ### Workflow Summary
 
