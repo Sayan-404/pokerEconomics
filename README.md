@@ -24,7 +24,10 @@ This repository implements a stochastic game-theoretic model of human behavior i
 3. **$ll$**: The lower limit of the truncated normal distribution, fixed at $0$.
 
 4. **$ul'$**: The upper limit of an entity's playing range, determined as:  
-   $$ul' = \begin{cases} sp + risk & \text{if } round \in \{1, 2\}; \\\\ hs + risk & \text{otherwise};\end{cases}$$  
+  <p align="center">
+    <img src="https://latex.codecogs.com/png.latex?\dpi{300}\bg{ffffff}ul'=\begin{cases}sp+risk & \text{if } round\in\{1,2\};\\ hs+risk & \text{otherwise};\end{cases}" />
+  </p>
+
    where:  
    - $sp$: Future potential.  
    - $risk$: The entity's risk appetite.
@@ -36,7 +39,10 @@ This repository implements a stochastic game-theoretic model of human behavior i
 ### Truncated Normal Distribution
 
 The truncated normal distribution is defined as:  
-$$\psi(\bar{\mu}, \bar{\sigma}, ll, ul; x) = \begin{cases} 0 & x \leq ll; \\\\\frac{\phi(\bar{\mu}, \bar{\sigma}^2; x)}{\Phi(\bar{\mu}, \bar{\sigma}^2; ul) - \Phi(\bar{\mu}, \bar{\sigma}^2; ll)} & ll < x < ul; \\\\0 & x \geq ul.\end{cases}$$
+<p align="center">
+  <img src="https://latex.codecogs.com/png.latex?\dpi{300}\bg{ffffff}\psi(\bar{\mu},\bar{\sigma},ll,ul;x)=\begin{cases}0 & x\leq ll;\\ \frac{\phi(\bar{\mu},\bar{\sigma}^2;x)}{\Phi(\bar{\mu},\bar{\sigma}^2;ul)-\Phi(\bar{\mu},\bar{\sigma}^2;ll)} & ll<x<ul;\\0 & x\geq ul.\end{cases}" />
+</p>
+
 where:  
 - $\bar{\mu}$: Mean of the underlying normal distribution before truncation.  
 - $\bar{\sigma}$: Standard deviation of the underlying normal distribution before truncation, calculated as $((ul - ll) / 3)$.  
