@@ -25,7 +25,7 @@ This repository implements a stochastic game-theoretic model of human behavior i
 
 4. **$ul'$**: The upper limit of an entity's playing range, determined as:  
   <p align="center">
-    <img src="https://latex.codecogs.com/png.latex?\dpi{300}\bg{ffffff}ul'=\begin{cases}sp+risk & \text{if } round\in\{1,2\};\\ hs+risk & \text{otherwise};\end{cases}" />
+    <img src="./docs/equations/ul_formulation.png" />
   </p>
 
    where:  
@@ -40,7 +40,7 @@ This repository implements a stochastic game-theoretic model of human behavior i
 
 The truncated normal distribution is defined as:  
 <p align="center">
-  <img src="https://latex.codecogs.com/png.latex?\dpi{300}\bg{ffffff}\psi(\bar{\mu},\bar{\sigma},ll,ul;x)=\begin{cases}0 & x\leq ll;\\ \frac{\phi(\bar{\mu},\bar{\sigma}^2;x)}{\Phi(\bar{\mu},\bar{\sigma}^2;ul)-\Phi(\bar{\mu},\bar{\sigma}^2;ll)} & ll<x<ul;\\0 & x\geq ul.\end{cases}" />
+  <img src="./docs/equations/normal_dist_formulation.png" />
 </p>
 
 where:  
