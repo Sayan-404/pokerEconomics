@@ -76,9 +76,11 @@ for (dir_index in 2:length(game_dirs)) {
                          sep = "\n")
       ) +
       theme(legend.position = "bottom")
-    output_file <- file.path(current_game_dir, "bankroll_line.png")
-    ggsave(output_file, plot = plot, width = 10, height = 6)
-    message(paste("Plot saved to:", output_file))
+  output_file <- file.path(current_game_dir, "bankroll_line.svg")
+  svg(output_file, width = 10, height = 6)
+  print(plot)  # Ensure the plot is rendered
+  dev.off()  # Close the svg device
+  message(paste("Plot saved to:", output_file))
 
     plot <- ggplot(data = ending_round,
                    aes(x = ending_round, y = n)) +
@@ -87,9 +89,11 @@ for (dir_index in 2:length(game_dirs)) {
         x = "Ending Round", y = "Count",
         title = "Ending Round Distribution"
       )
-    output_file <- file.path(current_game_dir, "ending_round_hist.png")
-    ggsave(output_file, plot = plot, width = 10, height = 6)
-    message(paste("Plot saved to:", output_file))
+  output_file <- file.path(current_game_dir, "ending_round_hist.svg")
+  svg(output_file, width = 10, height = 6)
+  print(plot)  # Ensure the plot is rendered
+  dev.off()  # Close the svg device
+  message(paste("Plot saved to:", output_file))
   } else {
     print(paste(current_game_file, "not found"))
   }
