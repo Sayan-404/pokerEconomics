@@ -54,8 +54,9 @@ for (dir_index in 2:length(game_dirs)) {
 
     game_long <- game %>%
       pivot_longer(cols = columns[2:(length(columns) - 4)],
-                   names_to = "Player",
-                   values_to = "Score")
+             names_to = "Player",
+             values_to = "Score") %>%
+      mutate(Score = log10(Score)) # logarithmic scaling of the bankrolls
 
     player_colors <- setNames(custom_colors[1:length(unique(game_long$Player))],
                               unique(game_long$Player))
@@ -76,24 +77,26 @@ for (dir_index in 2:length(game_dirs)) {
                          sep = "\n")
       ) +
       theme(legend.position = "bottom")
-  output_file <- file.path(current_game_dir, "bankroll_line.svg")
-  svg(output_file, width = 10, height = 6)
-  print(plot)  # Ensure the plot is rendered
-  dev.off()  # Close the svg device
-  message(paste("Plot saved to:", output_file))
+    output_file <- file.path(current_game_dir, "bankroll_line.svg")
+    svg(output_file, width = 10, height = 6)
+    print(plot)
+    dev.off()  # Close the svg device
+    message(paste("Plot saved to:", output_file))
 
     plot <- ggplot(data = ending_round,
-                   aes(x = ending_round, y = n)) +
+                    aes(x = ending_round, y = n)) +
       geom_bar(stat = "identity") +
       labs(
         x = "Ending Round", y = "Count",
         title = "Ending Round Distribution"
       )
-  output_file <- file.path(current_game_dir, "ending_round_hist.svg")
-  svg(output_file, width = 10, height = 6)
-  print(plot)  # Ensure the plot is rendered
-  dev.off()  # Close the svg device
-  message(paste("Plot saved to:", output_file))
+    output_file <- file.path(current_game_dir, "ending_round_hist.svg")
+    svg(output_file, width = 10, height = 6)
+    print(plot)
+    dev.off()  # Close the svg device
+    message(paste("Plot saved to:", output_file))
+
+
   } else {
     print(paste(current_game_file, "not found"))
   }
