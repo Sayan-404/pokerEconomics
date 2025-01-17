@@ -92,6 +92,61 @@ def generate_round_robin_strategy_configs():
             create_config_file(
                 filename, log_hands, bankroll, runs, s1, s2, limit, initlimit, seed)
 
+def generate_batch_comparison_configs(n):
+    strats = []
+    
+    import csv
+
+    with open(f"configs/config.csv", "r") as f:
+        reader = csv.reader(f)
+        next(reader)
+        for row in reader:
+            strats.append(row[0])
+
+    enum_strats = {i: strats[i] for i in range(len(strats))}
+    print("Enter the numbers (separated by spaces) corresponding to the strategies according to the list below: ")
+    for key in enum_strats:
+        print(f"{key}: {enum_strats[key]}")
+    
+    strats = []
+
+    for i in range(n):
+        print(f"Enter keys for batch {i+1}")
+        keys = input().split()
+        t_strats = []
+        for key in keys:
+            key = int(key)
+            if key not in enum_strats:
+                print(f"Key: {key} not found, skipping.")
+            else:
+                t_strats.append(enum_strats[key])
+        strats.append(t_strats)
+
+    log_hands = True if input(
+        "Enter y to log individual hands: ") == "y" else False
+    runs = int(input("Enter number of runs: "))
+    seed = int(input("Enter seed if present: "))
+    if not seed:
+        seed = time.time()
+    bankroll = int(input("Enter bankroll (-1 for default of 1000000000): "))
+    bankroll = bankroll if bankroll != -1 else 100000000000
+    
+    limit = int(input("Enter limit (-1 for default of 5000): "))
+    limit = limit if limit != -1 else 5000
+
+    initlimit = int(input("Enter iniLimitMul (-1 for default of 100): "))
+    initlimit = initlimit if initlimit != -1 else 100
+
+    for i in range(len(strats)):
+        for j in range(len(strats[i])):
+            for k in range(i+1, len(strats)):
+                for l in range(len(strats[k])):
+                    s1 = strats[i][j]
+                    s2 = strats[k][l]
+                    # Replace / with _
+                    filename = f"configs/{s1.replace('/', '_')}_vs_{s2.replace('/', '_')}"
+                    create_config_file(
+                        filename, log_hands, bankroll, runs, s1, s2, limit, initlimit, seed)
 
 def create_config_file(filename, log_hands, bankroll, runs, strat1, strat2, limit, initlimit, seed=None):
     with open(f"{filename}.json", "w") as f:
@@ -107,8 +162,13 @@ def create_config_file(filename, log_hands, bankroll, runs, strat1, strat2, limi
 
 if __name__ == "__main__":
     ch = input(
-        "Enter 1 to generate single config and 2 to generate configs for multiple strategy pairs: ")
+        "1: to generate single config\n2: to generate round robin configs for a group of strategies\n3: to generate configs to compare n batches of strategies\nEnter choice: ")
     if ch == "1":
         create_single_config()
     elif ch == "2":
         generate_round_robin_strategy_configs()
+    elif ch == "3":
+        n = int(input("Enter number of batches: "))
+        generate_batch_comparison_configs(n)
+    else:
+        print("Invalid choice")
