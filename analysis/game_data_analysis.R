@@ -46,11 +46,15 @@ for (dir_index in seq(2, length(game_dirs))) {
       metrics <- rbind(metrics, data.frame(player = player,
                                            ti = ti, win_ratio = win_ratio))
     }
-    print(metrics)
+    output_csv_file <- file.path(current_game_dir, "metrics.csv")
+    write.csv(metrics, file = output_csv_file, row.names = FALSE)
+    message(paste("Metrics saved to:", output_csv_file))
 
     ending_round <- game %>%
       count(.data[["ending_round"]])
-    print(ending_round)
+    output_csv_file <- file.path(current_game_dir, "ending_round.csv")
+    write.csv(ending_round, file = output_csv_file, row.names = FALSE)
+    message(paste("Ending round data saved to:", output_csv_file))
 
     game_long <- game %>%
       pivot_longer(cols = columns[2:(2 + total_players - 1)],
@@ -81,7 +85,7 @@ for (dir_index in seq(2, length(game_dirs))) {
     svg(output_file, width = 10, height = 6)
     print(plot)
     dev.off()  # Close the svg device
-    message(paste("Plot saved to:", output_file))
+    message(paste("Bankroll plot saved to:", output_file))
 
     plot <- ggplot(data = ending_round,
                     aes(x = ending_round, y = n)) +
@@ -94,7 +98,7 @@ for (dir_index in seq(2, length(game_dirs))) {
     svg(output_file, width = 10, height = 6)
     print(plot)
     dev.off()  # Close the svg device
-    message(paste("Plot saved to:", output_file))
+    message(paste("Ending round histogram saved to:", output_file))
 
     size <- 1000
     convergence_metrics <- data.frame(
@@ -177,21 +181,77 @@ for (dir_index in seq(2, length(game_dirs))) {
     svg(output_file, width = 10, height = 6)
     print(plot1)
     dev.off()  # Close the svg device
-    message(paste("Plot saved to:", output_file))
+    message(paste("Win Ratio convergence plot saved to:", output_file))
     output_file <- file.path(current_game_dir, "win_ratio.svg")
     svg(output_file, width = 10, height = 6)
     print(plot2)
     dev.off()  # Close the svg device
-    message(paste("Plot saved to:", output_file))
+    message(paste("Profitability convergence plot saved to:", output_file))
+
     confidence_intervals <- data.frame(
       player = character(),
       p_value = numeric(),
-      win_rate_lower = numeric(),
-      win_rate_upper = numeric(),
+      win_ratio_lower = numeric(),
+      win_ratio_upper = numeric(),
       profitability_lower = numeric(),
       profitability_upper = numeric(),
+      win_ratio_CI_diff = numeric(),
+      profitability_CI_diff = numeric(),
       stringsAsFactors = FALSE
     )
+    for (i in seq(2, 2 + total_players - 1)) {
+      player <- columns[i]
+      p_value_z_score_matrix <- matrix(
+        c(0.10, 1.65, 0.05, 1.96, 0.01, 2.58), 
+        nrow = 3, 
+        byrow = TRUE
+      )
+      mu_win_ratio <- convergence_metrics %>%
+        filter(player == !!player) %>%
+        pull(.data[["win_ratio"]]) %>%
+        mean()
+      sigma_win_ratio <- convergence_metrics %>%
+        filter(player == !!player) %>%
+        pull(.data[["win_ratio"]]) %>%
+        sd()
+      mu_profitability <- convergence_metrics %>%
+        filter(player == !!player) %>%
+        pull(.data[["profitability_per_hand"]]) %>%
+        mean()
+      sigma_profitability <- convergence_metrics %>%
+        filter(player == !!player) %>%
+        pull(.data[["profitability_per_hand"]]) %>%
+        sd()
+      n <- convergence_metrics %>%
+        filter(player == !!player) %>%
+        nrow()
+      sem_win_ratio <- sigma_win_ratio / sqrt(n)
+      sem_profitability <- sigma_profitability / sqrt(n)
+      for (i in seq_len(nrow(p_value_z_score_matrix))) {
+        p_value <- p_value_z_score_matrix[i, 1]
+        z_score <- p_value_z_score_matrix[i, 2]
+        win_ratio_lower <- mu_win_ratio - z_score * sem_win_ratio
+        win_ratio_upper <- mu_win_ratio + z_score * sem_win_ratio
+        profitability_lower <- mu_profitability - z_score * sem_profitability
+        profitability_upper <- mu_profitability + z_score * sem_profitability
+        confidence_intervals <- rbind(confidence_intervals, data.frame(
+          player = player,
+          p_value = p_value,
+          win_ratio_lower = win_ratio_lower,
+          win_ratio_upper = win_ratio_upper,
+          profitability_lower = profitability_lower,
+          profitability_upper = profitability_upper,
+          win_ratio_CI_diff = win_ratio_upper - win_ratio_lower,
+          profitability_CI_diff = profitability_upper - profitability_lower
+        ))
+      }
+    }
+    output_csv_file <- file.path(current_game_dir, "confidence_intervals.csv")
+    write.csv(confidence_intervals, file = output_csv_file, row.names = FALSE)
+    message(paste("Confidence intervals saved to:", output_csv_file))
+    # output_csv_file <- file.path(current_game_dir, "convergence_metrics.csv")
+    # write.csv(convergence_metrics, file = output_csv_file, row.names = FALSE)
+    # message(paste("Convergence metrics saved to:", output_csv_file))
   } else {
     print(paste(current_game_file, "not found"))
   }
