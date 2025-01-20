@@ -110,11 +110,15 @@ for (dir_index in seq(2, length(game_dirs))) {
       profitability_per_hand = numeric(),
       stringsAsFactors = FALSE
     )
-    for (j in seq(size, nrow(game), size)) {
+    sliced_game <- game %>%
+      slice(seq_len(min(size, nrow(game))))
+    sliced_game <- game %>%
+      slice(seq_len(min(size, nrow(game))))
+    for (j in seq(size, nrow(game) - size, size)) {
       sliced_game_cumm <- game %>%
-        slice(1: min(j + size, nrow(game)))
+        slice(seq_len(min(j + size, nrow(game))))
       sliced_game <- game %>%
-        slice(j: min(j + size - 1, nrow(game)))
+        slice((j + 1): min(j + size, nrow(game)))
       entity_counts_cumm <- sliced_game_cumm %>%
         count(.data[["winner"]])
       entity_counts_cumm <- entity_counts_cumm %>%
