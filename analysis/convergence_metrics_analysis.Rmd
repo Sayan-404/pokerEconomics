@@ -1,0 +1,147 @@
+---
+title: "R Notebook"
+output: html_notebook
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(patchwork)
+library(coda)
+
+head(convergence_metrics)
+players <- convergence_metrics$player %>%
+            unique()
+head(players)
+plot_data <- convergence_metrics %>%
+              filter(player == "s-0.1_r-0.1_b6(s-0.1_r-0.1_b6)")
+plot1 <- ggplot(data = plot_data, aes(`win_ratio`)) +
+        geom_histogram(binwidth = 0.001) +
+        theme_minimal()
+
+plot2 <- ggplot(data = plot_data, aes(`profitability_per_hand`)) +
+        geom_histogram(binwidth = 5) +
+        theme_minimal()
+plot1 + plot2
+
+plot3 <- ggplot(data = plot_data, aes(`win_ratio_cumm`)) +
+        geom_histogram(binwidth = 0.00001) +
+        theme_minimal()
+
+plot4 <- ggplot(data = plot_data, aes(`profitability_per_hand_cumm`)) +
+        geom_histogram(binwidth = 0.1) +
+        theme_minimal()
+plot3 + plot4
+
+x_1 <- 0.1 # proportion of first part
+x_2 <- 0.5 # proportion of last part
+
+# print(nrow(plot_data))
+# print(as.integer(x_1 * nrow(plot_data)))
+# print(as.integer((1 - x_2) * nrow(plot_data)))
+
+win_ratio_acf_values <- acf(plot_data$win_ratio)
+profitability_per_hand_acf_values <- acf(plot_data$profitability_per_hand)
+win_ratio_ess <- effectiveSize(plot_data$win_ratio)
+profitability_per_hand_ess <- effectiveSize(plot_data$profitability_per_hand)
+# virtually 0 correlation since not an MCMC, hence use t test
+
+win_ratio_cumm_acf_values <- acf(plot_data$win_ratio_cumm)
+profitability_per_hand_cumm_acf_values <- acf(plot_data$profitability_per_hand_cumm)
+win_ratio_cumm_ess <- effectiveSize(plot_data$win_ratio_cumm)
+profitability_per_hand_cumm_ess <- effectiveSize(plot_data$profitability_per_hand_cumm)
+# extremely high acf and low ess since this is a rolling average 
+
+data_first_part <- plot_data[seq_len(as.integer(x_1 * nrow(plot_data))), ]
+data_last_part <- plot_data[as.integer((1 - x_2) * nrow(plot_data) + 1):nrow(plot_data), ]
+
+plot5 <- ggplot(data = data_first_part, aes(`win_ratio`)) +
+        geom_histogram(binwidth = 0.001) +
+        labs(
+          title = "First Part",
+          subtitle = paste("mu = ", mean(data_first_part$win_ratio)),
+          ) +
+        theme_minimal()
+
+plot6 <- ggplot(data = data_last_part, aes(`win_ratio`)) +
+        geom_histogram(binwidth = 0.001) +
+        labs(
+          title = "Last Part",
+          subtitle = paste("mu = ", mean(data_last_part$win_ratio))
+          ) +
+        theme_minimal()
+plot5 + plot6
+
+plot7 <- ggplot(data = data_first_part, aes(`profitability_per_hand`)) +
+        geom_histogram(binwidth = 5) +
+        labs(
+          title = "First Part",
+          subtitle = paste("mu = ", mean(data_first_part$profitability_per_hand))
+          ) +
+        theme_minimal()
+
+plot8 <- ggplot(data = data_last_part, aes(`profitability_per_hand`)) +
+        geom_histogram(binwidth = 5) +
+        labs(
+          title = "Last Part",
+          subtitle = paste("mu = ", mean(data_last_part$profitability_per_hand))
+             ) +
+        theme_minimal()
+plot7 + plot8
+
+n_1 <- nrow(data_first_part)
+n_2 <- nrow(data_last_part)
+
+win_ratio_mu_1 <- mean(data_first_part$win_ratio)
+win_ratio_mu_2 <- mean(data_last_part$win_ratio)
+win_ratio_sd_1 <- sd(data_first_part$win_ratio)
+win_ratio_sd_2 <- sd(data_last_part$win_ratio)
+win_ratio_s_dash_square <- (((n_1 - 1)*(win_ratio_sd_1^2)) + ((n_2 - 1)*(win_ratio_sd_2^2))) / (n_1 + n_2 - 2)
+win_ratio_s_dash <- sqrt(win_ratio_s_dash_square)
+win_ratio_t <- (win_ratio_mu_1 - win_ratio_mu_2) / (win_ratio_s_dash * sqrt((1 / n_1) + (1 / n_2)))
+win_ratio_df <- n_1 + n_2 - 2
+win_ratio_p <- 2 * (1 - pt(abs(win_ratio_t), win_ratio_df))
+
+profitability_mu_1 <- mean(data_first_part$profitability_per_hand)
+profitability_mu_2 <- mean(data_last_part$profitability_per_hand)
+profitability_sd_1 <- sd(data_first_part$profitability_per_hand)
+profitability_sd_2 <- sd(data_last_part$profitability_per_hand)
+profitability_s_dash_square <- (((n_1 - 1)*(profitability_sd_1^2)) + ((n_2 - 1)*(profitability_sd_2^2))) / (n_1 + n_2 - 2)
+profitability_s_dash <- sqrt(profitability_s_dash_square)
+profitability_t <- (profitability_mu_1 - profitability_mu_2) / (profitability_s_dash * sqrt((1 / n_1) + (1 / n_2)))
+profitability_df <- n_1 + n_2 - 2
+profitability_p <- 2 * (1 - pt(abs(profitability_t), profitability_df))
+
+analysis_metrics <- data.frame(
+  variable = c("win_ratio", "profitability_per_hand"),
+  p = c(win_ratio_p, profitability_p),
+  t_statistic = c(win_ratio_t, profitability_t)
+)
+# each sample is 1000
+# first part is 10%
+# last part is 50%
+
+plot9 <- ggplot(data = data_first_part, aes(`win_ratio_cumm`)) +
+        geom_histogram(binwidth = 0.00001) +
+        labs(title = "First Part") +
+        theme_minimal()
+
+plot10 <- ggplot(data = data_last_part, aes(`win_ratio_cumm`)) +
+        geom_histogram(binwidth = 0.00001) +
+        labs(title = "Last Part") +
+        theme_minimal()
+# plot9 + plot10
+
+plot11 <- ggplot(data = data_first_part, aes(`profitability_per_hand_cumm`)) +
+        geom_histogram(binwidth = 0.1) +
+        labs(title = "First Part") +
+        theme_minimal()
+
+plot12 <- ggplot(data = data_last_part, aes(`profitability_per_hand_cumm`)) +
+        geom_histogram(binwidth = 0.1) +
+        labs(title = "Last Part") +
+        theme_minimal()
+# plot11 + plot12
+```
