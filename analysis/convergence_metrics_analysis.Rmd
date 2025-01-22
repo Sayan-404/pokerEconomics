@@ -2,21 +2,27 @@
 title: "R Notebook"
 output: html_notebook
 editor_options: 
-  chunk_output_type: console
+  chunk_output_type: inline
 ---
+
+# Analysis of Convergence Metrics
 
 ```{r}
 library(ggplot2)
 library(dplyr)
+library(tidyr)
 library(patchwork)
 library(coda)
+library(trend)
+
+# import games.csv and convergence_metrics.csv
 
 head(convergence_metrics)
 players <- convergence_metrics$player %>%
             unique()
 head(players)
 plot_data <- convergence_metrics %>%
-              filter(player == "s-0.1_r-0.1_b6(s-0.1_r-0.1_b6)")
+              filter(player == players[1])
 plot1 <- ggplot(data = plot_data, aes(`win_ratio`)) +
         geom_histogram(binwidth = 0.001) +
         theme_minimal()
@@ -35,113 +41,192 @@ plot4 <- ggplot(data = plot_data, aes(`profitability_per_hand_cumm`)) +
         theme_minimal()
 plot3 + plot4
 
-x_1 <- 0.1 # proportion of first part
-x_2 <- 0.5 # proportion of last part
-
-# print(nrow(plot_data))
-# print(as.integer(x_1 * nrow(plot_data)))
-# print(as.integer((1 - x_2) * nrow(plot_data)))
-
 win_ratio_acf_values <- acf(plot_data$win_ratio)
 profitability_per_hand_acf_values <- acf(plot_data$profitability_per_hand)
 win_ratio_ess <- effectiveSize(plot_data$win_ratio)
 profitability_per_hand_ess <- effectiveSize(plot_data$profitability_per_hand)
-# virtually 0 correlation since not an MCMC, hence use t test
 
 win_ratio_cumm_acf_values <- acf(plot_data$win_ratio_cumm)
 profitability_per_hand_cumm_acf_values <- acf(plot_data$profitability_per_hand_cumm)
 win_ratio_cumm_ess <- effectiveSize(plot_data$win_ratio_cumm)
 profitability_per_hand_cumm_ess <- effectiveSize(plot_data$profitability_per_hand_cumm)
-# extremely high acf and low ess since this is a rolling average 
+```
+# Finalised metrics
+```{r}
+library(tidyr)
+library(dplyr)
+library(ggplot2)
+library(trend)
+library(TTR)
+library(randtests)
+library(tseries)
 
-data_first_part <- plot_data[seq_len(as.integer(x_1 * nrow(plot_data))), ]
-data_last_part <- plot_data[as.integer((1 - x_2) * nrow(plot_data) + 1):nrow(plot_data), ]
+players <- convergence_metrics$player %>%
+            unique()
+game <- games[-1, ]
+columns <- colnames(game)
+total_players <- (length(columns) - 3) / 2 # 2 columns for each player signifying the bankroll and the tendency index
+game_long <- game %>%
+      pivot_longer(cols = columns[2:(2 + total_players - 1)],
+             names_to = "Player",
+             values_to = "Score")
 
-plot5 <- ggplot(data = data_first_part, aes(`win_ratio`)) +
-        geom_histogram(binwidth = 0.001) +
-        labs(
-          title = "First Part",
-          subtitle = paste("mu = ", mean(data_first_part$win_ratio)),
-          ) +
-        theme_minimal()
+plot <- ggplot(data = game_long,
+                   aes(x = hand_no, y = Score, colour = Player)) +
+      geom_line() +
+      theme(legend.position = "bottom")
+#plot
 
-plot6 <- ggplot(data = data_last_part, aes(`win_ratio`)) +
-        geom_histogram(binwidth = 0.001) +
-        labs(
-          title = "Last Part",
-          subtitle = paste("mu = ", mean(data_last_part$win_ratio))
-          ) +
-        theme_minimal()
-plot5 + plot6
+size_limit <- 100
+step <- nrow(game) / size_limit
+truncated_game <- game[seq(1, nrow(game), by = step), ]
+truncated_game_long <- truncated_game %>%
+      pivot_longer(cols = columns[2:(2 + total_players - 1)],
+             names_to = "Player",
+             values_to = "Score") %>%
+      group_by(Player) %>%
+      #mutate(Score = EMA(Score, n = 100)) %>%
+      ungroup()
 
-plot7 <- ggplot(data = data_first_part, aes(`profitability_per_hand`)) +
-        geom_histogram(binwidth = 5) +
-        labs(
-          title = "First Part",
-          subtitle = paste("mu = ", mean(data_first_part$profitability_per_hand))
-          ) +
-        theme_minimal()
+plot1 <- ggplot(data = truncated_game_long,
+                   aes(x = hand_no, y = Score, colour = Player)) +
+      geom_line() +
+      theme(legend.position = "bottom")
+plot1
 
-plot8 <- ggplot(data = data_last_part, aes(`profitability_per_hand`)) +
-        geom_histogram(binwidth = 5) +
-        labs(
-          title = "Last Part",
-          subtitle = paste("mu = ", mean(data_last_part$profitability_per_hand))
-             ) +
-        theme_minimal()
-plot7 + plot8
+player_bankroll <- truncated_game_long %>%
+    filter(Player == !!players[1]) %>%
+    pull(Score)
+plot(player_bankroll, type = "l", col = "blue", 
+     xlab = "Index", ylab = "Value", 
+     main = "Plot")
+grid()
+running_average <- cumsum(player_bankroll) / seq_along(player_bankroll)
+lines(running_average, type = "l", col = "red", lwd = 2)
 
-n_1 <- nrow(data_first_part)
-n_2 <- nrow(data_last_part)
+results <- mk.test(running_average)
+print(results)
+#results <- cox.stuart.test(running_average)
+#print(results)
+#adf_results <- adf.test(running_average) # stationarity of a time series
+#print(adf_results)
+#sen_slope <- sens.slope(running_average)
+#print(sen_slope)
 
-win_ratio_mu_1 <- mean(data_first_part$win_ratio)
-win_ratio_mu_2 <- mean(data_last_part$win_ratio)
-win_ratio_sd_1 <- sd(data_first_part$win_ratio)
-win_ratio_sd_2 <- sd(data_last_part$win_ratio)
-win_ratio_s_dash_square <- (((n_1 - 1)*(win_ratio_sd_1^2)) + ((n_2 - 1)*(win_ratio_sd_2^2))) / (n_1 + n_2 - 2)
-win_ratio_s_dash <- sqrt(win_ratio_s_dash_square)
-win_ratio_t <- (win_ratio_mu_1 - win_ratio_mu_2) / (win_ratio_s_dash * sqrt((1 / n_1) + (1 / n_2)))
-win_ratio_df <- n_1 + n_2 - 2
-win_ratio_p <- 2 * (1 - pt(abs(win_ratio_t), win_ratio_df))
+player_bankroll_diff <- truncated_game_long %>%
+    group_by(hand_no) %>%
+    transmute(score_diff = Score[Player == !!players[1]] - Score[Player == !!players[2]]) %>%
+    unique()
+plot(player_bankroll_diff$score_diff, type = "l", col = "blue", 
+     xlab = "Index", ylab = "Value", 
+     main = "Diff Plot")
+grid()
 
-profitability_mu_1 <- mean(data_first_part$profitability_per_hand)
-profitability_mu_2 <- mean(data_last_part$profitability_per_hand)
-profitability_sd_1 <- sd(data_first_part$profitability_per_hand)
-profitability_sd_2 <- sd(data_last_part$profitability_per_hand)
-profitability_s_dash_square <- (((n_1 - 1)*(profitability_sd_1^2)) + ((n_2 - 1)*(profitability_sd_2^2))) / (n_1 + n_2 - 2)
-profitability_s_dash <- sqrt(profitability_s_dash_square)
-profitability_t <- (profitability_mu_1 - profitability_mu_2) / (profitability_s_dash * sqrt((1 / n_1) + (1 / n_2)))
-profitability_df <- n_1 + n_2 - 2
-profitability_p <- 2 * (1 - pt(abs(profitability_t), profitability_df))
+mean_diff <- mean(player_bankroll_diff$score_diff)
+sd_diff <- sd(player_bankroll_diff$score_diff)
+cohens_d <- mean_diff / sd_diff
+print(paste("Cohen's d:", round(cohens_d, 3)))
+
+spearman <- cor(running_average, seq_along(running_average), method = "spearman")
+print(paste("Spearman rank correlation:", spearman))
 
 analysis_metrics <- data.frame(
-  variable = c("win_ratio", "profitability_per_hand"),
-  p = c(win_ratio_p, profitability_p),
-  t_statistic = c(win_ratio_t, profitability_t)
+  p = results$p.value,
+  S = results$estimates[1],
+  rho = spearman,
+  d = cohens_d
 )
-# each sample is 1000
-# first part is 10%
-# last part is 50%
+matchup <- gsub(".*\\((.*)\\).*", "\\1", players)
+rownames(analysis_metrics) <- paste(matchup, collapse = " ")
+```
+# Rolling window analysis
+```{r}
+library(tidyr)
+library(dplyr)
+library(ggplot2)
+library(trend)
+library(TTR)
+library(randtests)
 
-plot9 <- ggplot(data = data_first_part, aes(`win_ratio_cumm`)) +
-        geom_histogram(binwidth = 0.00001) +
-        labs(title = "First Part") +
-        theme_minimal()
+size_limit <- 10000
 
-plot10 <- ggplot(data = data_last_part, aes(`win_ratio_cumm`)) +
-        geom_histogram(binwidth = 0.00001) +
-        labs(title = "Last Part") +
-        theme_minimal()
-# plot9 + plot10
+players <- convergence_metrics$player %>%
+            unique()
+analysis_metrics <- data.frame(
+      player = character(),
+      S = numeric(),
+      p = numeric(),
+      Z = numeric(),
+      "0.10" = logical(),
+      "0.05" = logical(),
+      "0.01" = logical(),
+      stringsAsFactors = FALSE
+    )
 
-plot11 <- ggplot(data = data_first_part, aes(`profitability_per_hand_cumm`)) +
-        geom_histogram(binwidth = 0.1) +
-        labs(title = "First Part") +
-        theme_minimal()
+game <- games[-1, ]
+columns <- colnames(game)
+total_players <- (length(columns) - 3) / 2 # 2 columns for each player signifying the bankroll and the tendency index
+game_long <- game %>%
+      pivot_longer(cols = columns[2:(2 + total_players - 1)],
+             names_to = "Player",
+             values_to = "Score")
 
-plot12 <- ggplot(data = data_last_part, aes(`profitability_per_hand_cumm`)) +
-        geom_histogram(binwidth = 0.1) +
-        labs(title = "Last Part") +
-        theme_minimal()
-# plot11 + plot12
+plot <- ggplot(data = game_long,
+                   aes(x = hand_no, y = Score, colour = Player)) +
+      geom_line() +
+      theme(legend.position = "bottom")
+#plot
+
+step <- nrow(game) / size_limit
+truncated_game <- game[seq(1, nrow(game), by = step), ]
+print(nrow(truncated_game))
+truncated_game_long <- truncated_game %>%
+      pivot_longer(cols = columns[2:(2 + total_players - 1)],
+             names_to = "Player",
+             values_to = "Score")
+
+plot1 <- ggplot(data = truncated_game_long,
+                   aes(x = hand_no, y = Score, colour = Player)) +
+      geom_line() +
+      theme(legend.position = "bottom")
+plot1
+
+truncated_game_long <- truncated_game_long %>%
+  group_by(Player) %>%
+  #mutate(Score = EMA(Score, n = 100)) %>%
+  filter(!is.na(Score)) %>% # Remove NA values
+  ungroup()
+
+plot2 <- ggplot(data = truncated_game_long,
+                   aes(x = hand_no, y = Score, colour = Player)) +
+      geom_line() +
+      theme(legend.position = "bottom")
+plot2
+
+player_bankroll <- truncated_game_long %>%
+  filter(Player == !!players[1]) %>%
+  pull(Score)
+
+#results <- smk.test(ts(player_bankroll, start = 1, frequency = 100))
+#results <- mk.test(player_bankroll)
+#print(results)
+
+plot(player_bankroll, type = "l", col = "blue", 
+     xlab = "Index", ylab = "Value", 
+     main = "Plot")
+grid()
+running_average <- cumsum(player_bankroll) / seq_along(player_bankroll)
+lines(running_average, type = "l", col = "red", lwd = 2)
+library(Kendall)
+
+# Define window size (e.g., 500 observations)
+window_size <- 500
+rolling_trends <- sapply(1:(length(player_bankroll) - window_size), function(i) {
+  mk_test <- MannKendall(player_bankroll[i:(i + window_size)])
+  return(mk_test$tau)  # Use Kendall's tau to measure trend strength
+})
+
+# Plot rolling trend results
+plot(rolling_trends, type = "l", main = "Rolling Kendall's Tau",
+     xlab = "Window Start Index", ylab = "Kendall's Tau")
 ```

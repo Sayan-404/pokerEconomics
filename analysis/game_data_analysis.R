@@ -3,6 +3,7 @@ library(dplyr)
 library(magrittr)
 library(ggplot2)
 library(tidyr)
+library(trend)
 
 data_path <- commandArgs(trailingOnly = TRUE)[1]
 game_dirs <- list.dirs(data_path, full.names = TRUE)
@@ -159,149 +160,52 @@ for (dir_index in seq(2, length(game_dirs))) {
         ))
       }
     }
-    plot1 <- ggplot(data = convergence_metrics,
-                   aes(x = index, y = profitability_per_hand_cumm, colour = player)) +
-      geom_line() +
-      scale_color_manual(values = player_colors) +
-      labs(
-        x = "Index", y = "Profitability per Hand",
-        title = paste("Profitability per Hand Convergence"),
-        subtitle = paste(metrics$player,
-                          collapse = " vs ")
-      ) +
-      theme(legend.position = "bottom")
-    plot2 <- ggplot(data = convergence_metrics,
-                   aes(x = index, y = win_ratio_cumm, colour = player)) +
-      geom_line() +
-      scale_color_manual(values = player_colors) +
-      labs(
-        x = "Index", y = "Win Ratio",
-        title = paste("Win Ratio Convergence"),
-        subtitle = paste(metrics$player,
-                         collapse = " vs ")
-      ) +
-      theme(legend.position = "bottom")
-    output_file <- file.path(current_game_dir, "profitability_per_hand.svg")
-    svg(output_file, width = 10, height = 6)
-    print(plot1)
-    dev.off()  # Close the svg device
-    message(paste("Win Ratio convergence plot saved to:", output_file))
-    output_file <- file.path(current_game_dir, "win_ratio.svg")
-    svg(output_file, width = 10, height = 6)
-    print(plot2)
-    dev.off()  # Close the svg device
-    message(paste("Profitability convergence plot saved to:", output_file))
+    players <- convergence_metrics$player %>%
+      unique()
+    size_limit <- 100
+    step <- nrow(game) / size_limit
+    truncated_game <- game[seq(1, nrow(game), by = step), ]
+    truncated_game_long <- truncated_game %>%
+      pivot_longer(cols = columns[2:(2 + total_players - 1)],
+                   names_to = "Player",
+                   values_to = "Score") %>%
+      group_by(Player) %>%
+      #mutate(Score = EMA(Score, n = 100)) %>%
+      ungroup()
 
-    # confidence_intervals <- data.frame(
-    #   player = character(),
-    #   alpha = numeric(),
-    #   win_ratio_lower = numeric(),
-    #   win_ratio_upper = numeric(),
-    #   profitability_lower = numeric(),
-    #   profitability_upper = numeric(),
-    #   win_ratio_CI_diff = numeric(),
-    #   profitability_CI_diff = numeric(),
-    #   stringsAsFactors = FALSE
-    # )
-    x_1 <- 0.1 # proportion of first part
-    x_2 <- 0.5 # proportion of last part
+    player_bankroll <- truncated_game_long %>%
+      filter(Player == !!players[1]) %>%
+      pull(Score)
+    running_average <- cumsum(player_bankroll) / seq_along(player_bankroll)
+
+    results <- mk.test(running_average)
+
+    player_bankroll_diff <- truncated_game_long %>%
+      group_by(hand_no) %>%
+      transmute(score_diff = Score[Player == !!players[1]] - Score[Player == !!players[2]]) %>%
+      unique()
+
+    mean_diff <- mean(player_bankroll_diff$score_diff)
+    sd_diff <- sd(player_bankroll_diff$score_diff)
+    cohens_d <- mean_diff / sd_diff
+
+    spearman <- cor(running_average, seq_along(running_average), method = "spearman")
+    matchup <- gsub(".*\\((.*)\\).*", "\\1", players)
+
     analysis_metrics <- data.frame(
-      player = character(),
-      variable = character(),
-      p = numeric(),
-      t_statistic = numeric(),
-      stringsAsFactors = FALSE
+      match = paste(matchup, collapse = " "),
+      p = results$p.value,
+      S = results$estimates[1],
+      rho = spearman,
+      d = cohens_d
     )
-    for (i in seq(2, 2 + total_players - 1)) {
-      player <- columns[i]
-      player_data <- convergence_metrics %>%
-        filter(player == !!player)
-      data_first_part <- player_data[seq_len(as.integer(x_1 * nrow(player_data))), ]
-      data_last_part <- player_data[as.integer((1 - x_2) * nrow(player_data) + 1):nrow(player_data), ]
-
-      n_1 <- nrow(data_first_part)
-      n_2 <- nrow(data_last_part)
-
-      win_ratio_mu_1 <- mean(data_first_part$win_ratio)
-      win_ratio_mu_2 <- mean(data_last_part$win_ratio)
-      win_ratio_sd_1 <- sd(data_first_part$win_ratio)
-      win_ratio_sd_2 <- sd(data_last_part$win_ratio)
-      win_ratio_s_dash_square <- (((n_1 - 1)*(win_ratio_sd_1^2)) + ((n_2 - 1)*(win_ratio_sd_2^2))) / (n_1 + n_2 - 2)
-      win_ratio_s_dash <- sqrt(win_ratio_s_dash_square)
-      win_ratio_t <- (win_ratio_mu_1 - win_ratio_mu_2) / (win_ratio_s_dash * sqrt((1 / n_1) + (1 / n_2)))
-      win_ratio_df <- n_1 + n_2 - 2
-      win_ratio_p <- 2 * (1 - pt(abs(win_ratio_t), win_ratio_df))
-
-      profitability_mu_1 <- mean(data_first_part$profitability_per_hand)
-      profitability_mu_2 <- mean(data_last_part$profitability_per_hand)
-      profitability_sd_1 <- sd(data_first_part$profitability_per_hand)
-      profitability_sd_2 <- sd(data_last_part$profitability_per_hand)
-      profitability_s_dash_square <- (((n_1 - 1)*(profitability_sd_1^2)) + ((n_2 - 1)*(profitability_sd_2^2))) / (n_1 + n_2 - 2)
-      profitability_s_dash <- sqrt(profitability_s_dash_square)
-      profitability_t <- (profitability_mu_1 - profitability_mu_2) / (profitability_s_dash * sqrt((1 / n_1) + (1 / n_2)))
-      profitability_df <- n_1 + n_2 - 2
-      profitability_p <- 2 * (1 - pt(abs(profitability_t), profitability_df))
-
-      analysis_metrics <- rbind(analysis_metrics, data.frame(
-        player = c(player, player),
-        variable = c("win_ratio", "profitability_per_hand"),
-        p = c(win_ratio_p, profitability_p),
-        t_statistic = c(win_ratio_t, profitability_t)
-      ))
-      # alpha_z_score_matrix <- matrix(
-      #   c(0.10, 1.65, 0.05, 1.96, 0.01, 2.58),
-      #   nrow = 3,
-      #   byrow = TRUE
-      # )
-      # mu_win_ratio <- convergence_metrics %>%
-      #   filter(player == !!player) %>%
-      #   pull(.data[["win_ratio"]]) %>%
-      #   mean()
-      # sigma_win_ratio <- convergence_metrics %>%
-      #   filter(player == !!player) %>%
-      #   pull(.data[["win_ratio"]]) %>%
-      #   sd()
-      # mu_profitability <- convergence_metrics %>%
-      #   filter(player == !!player) %>%
-      #   pull(.data[["profitability_per_hand"]]) %>%
-      #   mean()
-      # sigma_profitability <- convergence_metrics %>%
-      #   filter(player == !!player) %>%
-      #   pull(.data[["profitability_per_hand"]]) %>%
-      #   sd()
-      # n <- convergence_metrics %>%
-      #   filter(player == !!player) %>%
-      #   nrow()
-      # sem_win_ratio <- sigma_win_ratio / sqrt(n)
-      # sem_profitability <- sigma_profitability / sqrt(n)
-      # for (i in seq_len(nrow(alpha_z_score_matrix))) {
-      #   alpha <- alpha_z_score_matrix[i, 1]
-      #   z_score <- alpha_z_score_matrix[i, 2]
-      #   win_ratio_lower <- mu_win_ratio - z_score * sem_win_ratio
-      #   win_ratio_upper <- mu_win_ratio + z_score * sem_win_ratio
-      #   profitability_lower <- mu_profitability - z_score * sem_profitability
-      #   profitability_upper <- mu_profitability + z_score * sem_profitability
-      #   confidence_intervals <- rbind(confidence_intervals, data.frame(
-      #     player = player,
-      #     alpha = alpha,
-      #     win_ratio_lower = win_ratio_lower,
-      #     win_ratio_upper = win_ratio_upper,
-      #     profitability_lower = profitability_lower,
-      #     profitability_upper = profitability_upper,
-      #     win_ratio_CI_diff = win_ratio_upper - win_ratio_lower,
-      #     profitability_CI_diff = profitability_upper - profitability_lower
-      #   ))
-      # }
-    }
-    output_csv_file <- file.path(current_game_dir, "analysis_metrics.csv")
+    output_csv_file <- file.path(current_game_dir, "test_results.csv")
     write.csv(analysis_metrics, file = output_csv_file, row.names = FALSE)
-    message(paste("Analysis metrics saved to:", output_csv_file))
-    # output_csv_file <- file.path(current_game_dir, "confidence_intervals.csv")
-    # write.csv(confidence_intervals, file = output_csv_file, row.names = FALSE)
-    # message(paste("Confidence intervals saved to:", output_csv_file))
+    message(paste("Test results saved to:", output_csv_file))
     # output_csv_file <- file.path(current_game_dir, "convergence_metrics.csv")
     # write.csv(convergence_metrics, file = output_csv_file, row.names = FALSE)
     # message(paste("Convergence metrics saved to:", output_csv_file))
+    message("---------------------------------------------------------")
   } else {
     print(paste(current_game_file, "not found"))
   }
