@@ -62,4 +62,8 @@ plot <- ggplot(data, aes(x = x, y = y)) +
   )
 
 # Save the plot to a file
-ggsave("truncated_normal_distribution_with_lines.png", plot = plot, width = 8, height = 6)
+output_file <- "truncated_normal_distribution_with_lines.svg"
+svg(output_file, width = 10, height = 6)
+print(plot)
+dev.off()  # Close the svg device
+message(paste("Bankroll plot saved to:", output_file))
