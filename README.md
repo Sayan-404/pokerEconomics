@@ -1,3 +1,6 @@
+> **Note:** This repository is no longer maintained. Active development and maintenance now take place in a different repository.
+> Please visit [main repository](https://github.com/Rumis-Cube/pokerEconomics) for the latest updates and contributions.
+
 # Simulation Model
 
 ## Disclaimer
