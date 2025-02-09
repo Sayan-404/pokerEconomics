@@ -1,5 +1,7 @@
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14840266.svg)](https://doi.org/10.5281/zenodo.14840266)
+
 > **Note:** This repository is no longer maintained. Active development and maintenance now take place in a different repository.
-> Please visit [main repository](https://github.com/Rumis-Cube/pokerEconomics) for the latest updates and contributions.
+> Please visit [main repository](https://github.com/Rumis-Cube/pokerEconomics) or the DOI for the latest updates and contributions.
 
 # Simulation Model
 
