@@ -1,4 +1,8 @@
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14840266.svg)](https://doi.org/10.5281/zenodo.14840266)
+# Key Publications
+
+**Code Repository**: [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14840266.svg)](https://doi.org/10.5281/zenodo.14840266)
+
+**Preprint Article**: [![DOI](https://zenodo.org/badge/DOI/10.21203/rs.3.rs-6015303/v1.svg)](https://doi.org/10.21203/rs.3.rs-6015303/v1)
 
 > **Note:** This repository is no longer maintained. Active development and maintenance now take place in a different repository.
 > Please visit [main repository](https://github.com/Rumis-Cube/pokerEconomics) or the DOI for the latest updates and contributions.
@@ -7,7 +11,7 @@
 
 ## Disclaimer
 
-This repository is part of an ongoing academic research project. The source code for [PokerHandEvaluator](https://github.com/HenryRLee/PokerHandEvaluator) used in this repository is governed by its respective license. All rights are reserved for the remaining source code.
+This repository is part of an academic research project. The source code for [PokerHandEvaluator](https://github.com/HenryRLee/PokerHandEvaluator) used in this repository is governed by its respective license.
 
 ---
 
